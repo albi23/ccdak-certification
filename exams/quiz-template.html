@@ -108,6 +108,23 @@
             color: var(--text);
         }
 
+        #examSel {
+            min-width: 300px;
+            max-width: 100%;
+            font-weight: 600;
+        }
+
+        #examSel optgroup {
+            font-weight: 800;
+            font-style: normal;
+            padding: 4px 0;
+        }
+
+        #examSel option {
+            font-weight: 500;
+            padding: 4px 12px;
+        }
+
         .timer {
             font-variant-numeric: tabular-nums;
             font-weight: 700;
@@ -973,16 +990,71 @@
     // ---------- rendering ----------
     const $ = id => document.getElementById(id);
 
+    // folder label -> colour (cycled for unknown folders)
+    const GROUP_STYLE = {
+        medium: {icon: '🟢', color: '#16a34a', bg: '#f0fdf4'},
+        harder: {icon: '🟠', color: '#ea580c', bg: '#fff7ed'},
+        repeat: {icon: '🔵', color: '#2563eb', bg: '#eff6ff'},
+    };
+    const EXTRA_STYLES = [
+        {icon: '🟣', color: '#9333ea', bg: '#faf5ff'},
+        {icon: '🔴', color: '#dc2626', bg: '#fef2f2'},
+        {icon: '🟡', color: '#ca8a04', bg: '#fefce8'},
+    ];
+    const groupStyles = {};
+    function groupStyle(g) {
+        if (!groupStyles[g]) {
+            groupStyles[g] = GROUP_STYLE[g] || EXTRA_STYLES[Object.keys(groupStyles).length % EXTRA_STYLES.length];
+        }
+        return groupStyles[g];
+    }
+
+    function paintExamSelect() {
+        const sel = $('examSel');
+        const opt = sel.selectedOptions[0];
+        if (!opt) return;
+        const st = groupStyle(opt.dataset.group);
+        sel.style.borderColor = st.color;
+        sel.style.borderLeftWidth = '6px';
+        sel.style.background = st.bg;
+    }
+
     function buildExamSelect() {
         const sel = $('examSel');
         sel.innerHTML = '';
+        const groups = {};
         DATA.exams.forEach(e => {
+            // names look like "medium · Exam 7"; a single-folder build has no prefix
+            const parts = e.name.split(' · ');
+            const group = parts.length > 1 ? parts[0] : '';
+            const label = parts.length > 1 ? parts.slice(1).join(' · ') : e.name;
+            let parent = sel;
+            if (group) {
+                if (!groups[group]) {
+                    const st = groupStyle(group);
+                    const og = document.createElement('optgroup');
+                    const n = DATA.exams.filter(x => x.name.startsWith(group + ' · ')).length;
+                    og.label = `${st.icon} ${group.toUpperCase()} — ${n} exams`;
+                    og.style.color = st.color;
+                    og.style.background = st.bg;
+                    groups[group] = og;
+                    sel.appendChild(og);
+                }
+                parent = groups[group];
+            }
             const o = document.createElement('option');
             o.value = e.id;
-            o.textContent = `${e.name} (${e.questions.length} q)`;
-            sel.appendChild(o);
+            o.dataset.group = group;
+            o.textContent = `${label} (${e.questions.length} q)`;
+            if (group) {
+                const st = groupStyle(group);
+                o.style.color = st.color;
+                o.style.background = st.bg;
+            }
+            parent.appendChild(o);
         });
         sel.value = state.currentExam;
+        paintExamSelect();
     }
 
     function renderGrid() {
@@ -1497,7 +1569,7 @@
     }
 
     // ---------- wire up ----------
-    $('examSel').onchange = e => switchExam(e.target.value);
+    $('examSel').onchange = e => { switchExam(e.target.value); paintExamSelect(); };
     $('restartBtn').onclick = restartExam;
     $('finishRestartBtn').onclick = restartExam;
     $('nextBtn').onclick = next;
