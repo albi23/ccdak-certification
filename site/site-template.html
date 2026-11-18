@@ -646,6 +646,88 @@
             background: #fff
         }
 
+        .imgwrap {
+            position: relative;
+            display: inline-block;
+            max-width: 100%
+        }
+
+        .imgwrap .expand {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .92);
+            color: #334155;
+            font-size: 17px;
+            line-height: 1;
+            cursor: pointer;
+            opacity: .75;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+            transition: opacity .15s
+        }
+
+        .imgwrap:hover .expand, .imgwrap .expand:focus {
+            opacity: 1
+        }
+
+        #imgmodal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            background: rgba(10, 12, 20, .88);
+            overflow: auto;
+            padding: 56px 16px 24px;
+            text-align: center
+        }
+
+        #imgmodal.open {
+            display: block
+        }
+
+        #imgmodal img {
+            max-width: 100%;
+            height: auto;
+            background: #fff;
+            border-radius: 8px;
+            cursor: zoom-in
+        }
+
+        #imgmodal.full img {
+            max-width: none;
+            cursor: zoom-out
+        }
+
+        #imgmodal .close {
+            position: fixed;
+            top: 12px;
+            right: 16px;
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .2);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer
+        }
+
+        #imgmodal .close:hover {
+            background: rgba(255, 255, 255, .35)
+        }
+
+        #imgmodal .hint {
+            position: fixed;
+            top: 20px;
+            left: 16px;
+            color: #cbd5e1;
+            font-size: 13px
+        }
+
         .md hr {
             border: 0;
             border-top: 1px solid var(--border);
@@ -941,6 +1023,111 @@
             visibility: hidden
         }
 
+        /* ===== collapsible sidebar (desktop) ===== */
+        aside {
+            transition: transform .2s
+        }
+
+        main {
+            transition: margin-left .2s
+        }
+
+        aside {
+            display: flex;
+            flex-direction: column
+        }
+
+        aside > * {
+            flex-shrink: 0
+        }
+
+        .collapse-btn {
+            position: sticky;
+            bottom: -30px;
+            margin: auto -14px -30px;
+            width: calc(100% + 28px);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 0;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--muted);
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer
+        }
+
+        .collapse-btn:hover {
+            color: var(--text);
+            background: var(--panel2)
+        }
+
+        .collapse-btn svg, #expand-side svg {
+            width: 16px;
+            height: 16px;
+            flex: none
+        }
+
+        .collapse-btn .ico-expand {
+            display: none
+        }
+
+        @media (min-width: 901px) {
+            body.side-collapsed {
+                --side: 64px
+            }
+
+            body.side-collapsed aside {
+                padding: 14px 8px 30px;
+                overflow-x: hidden
+            }
+
+            body.side-collapsed aside .t, body.side-collapsed aside .ck, body.side-collapsed aside .progress,
+            body.side-collapsed .collapse-btn .lbl {
+                display: none
+            }
+
+            body.side-collapsed aside h4 {
+                font-size: 0;
+                margin: 10px 14px;
+                height: 0;
+                border-top: 1px solid var(--border)
+            }
+
+            body.side-collapsed .nav {
+                justify-content: center;
+                padding: 8px 0
+            }
+
+            body.side-collapsed .nav.done .n {
+                box-shadow: 0 0 0 2px var(--ok)
+            }
+
+            body.side-collapsed .collapse-btn {
+                justify-content: center;
+                padding: 12px 0;
+                margin-left: -8px;
+                margin-right: -8px;
+                width: calc(100% + 16px)
+            }
+
+            body.side-collapsed .collapse-btn .ico-collapse {
+                display: none
+            }
+
+            body.side-collapsed .collapse-btn .ico-expand {
+                display: block
+            }
+        }
+
+        @media (max-width: 900px) {
+            .collapse-btn {
+                display: none
+            }
+        }
+
         @media (max-width: 1180px) {
             .toc {
                 display: none
@@ -1045,6 +1232,9 @@
     <iframe id="examframe" title="CCDAK practice exam"></iframe>
 </section>
 
+<div id="imgmodal"><span class="hint">Click image to toggle full size · Esc to close</span>
+    <button class="close" title="Close">✕</button>
+    <img alt=""></div>
 <script id="data" type="application/json">__DATA__</script>
 <script>
     const DATA = JSON.parse(document.getElementById('data').textContent);
@@ -1077,14 +1267,22 @@
     function renderSide() {
         const core = M.filter(m => m.kind === 'core'), extra = M.filter(m => m.kind === 'extra');
         const doneCount = core.filter(m => done[m.id]).length, pct = Math.round(doneCount / core.length * 100);
-        const item = m => `<button class="nav ${m.kind} ${currentId === m.id ? 'active' : ''} ${done[m.id] ? 'done' : ''}" onclick="go('m/${m.id}')"><span class="n">${m.id}</span><span class="t">${m.title}</span><span class="ck">✔</span></button>`;
+        const item = m => `<button class="nav ${m.kind} ${currentId === m.id ? 'active' : ''} ${done[m.id] ? 'done' : ''}" title="${m.id}. ${m.title}" onclick="go('m/${m.id}')"><span class="n">${m.id}</span><span class="t">${m.title}</span><span class="ck">✔</span></button>`;
         $('#side').innerHTML = `
-    <button class="nav ${currentId === null ? 'active' : ''}" onclick="go('home')"><span class="n">⌂</span><span class="t">Overview &amp; exam scope</span></button>
+    <button class="nav ${currentId === null ? 'active' : ''}" title="Overview &amp; exam scope" onclick="go('home')"><span class="n">⌂</span><span class="t">Overview &amp; exam scope</span></button>
     <h4>Progress</h4><div class="progress">${doneCount} of ${core.length} exam modules studied<div class="bar"><div style="width:${pct}%"></div></div></div>
     <h4>Exam modules</h4>${core.map(item).join('')}
     <h4>Supplementary</h4>${extra.map(item).join('')}
-    <h4>Practice</h4><button class="nav" onclick="go('exam')"><span class="n">✎</span><span class="t">Practice exam</span></button>`;
+    <h4>Practice</h4><button class="nav" title="Practice exam" onclick="go('exam')"><span class="n">✎</span><span class="t">Practice exam</span></button>
+    <button class="collapse-btn" title="Collapse / expand sidebar" onclick="setSide(!document.body.classList.contains('side-collapsed'))"><svg class="ico-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v12M14 8H6M10 4L6 8l4 4"/></svg><svg class="ico-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v12M6 8h8M10 4l4 4-4 4"/></svg><span class="lbl">Collapse sidebar</span></button>`;
     }
+
+    function setSide(collapsed) {
+        document.body.classList.toggle('side-collapsed', collapsed);
+        store.set('ccdak_side_collapsed', collapsed)
+    }
+
+    document.body.classList.toggle('side-collapsed', !!store.get('ccdak_side_collapsed', false));
 
     /* ---------- views ---------- */
     function home() {
@@ -1157,6 +1355,18 @@
                 setTimeout(() => b.textContent = 'Copy', 1200)
             };
             pre.appendChild(b)
+        });
+        md.querySelectorAll('img').forEach(img => {
+            const w = document.createElement('span');
+            w.className = 'imgwrap';
+            img.replaceWith(w);
+            w.appendChild(img);
+            const b = document.createElement('button');
+            b.className = 'expand';
+            b.title = 'View full size';
+            b.textContent = '⛶';
+            b.onclick = () => openImg(img.src, img.alt);
+            w.appendChild(b)
         });
         md.querySelectorAll('a[href^="http"]').forEach(a => {
             a.target = '_blank';
@@ -1277,6 +1487,33 @@
             if (e.key === 'ArrowLeft' && M[i - 1]) go('m/' + M[i - 1].id);
         }
     });
+    const modal = $('#imgmodal'), modalImg = modal.querySelector('img');
+
+    function openImg(src, alt) {
+        modalImg.src = src;
+        modalImg.alt = alt || '';
+        modal.classList.remove('full');
+        modal.classList.add('open');
+        modal.scrollTop = 0;
+        document.body.style.overflow = 'hidden'
+    }
+
+    function closeImg() {
+        modal.classList.remove('open');
+        document.body.style.overflow = ''
+    }
+
+    modalImg.onclick = () => modal.classList.toggle('full');
+    modal.querySelector('.close').onclick = closeImg;
+    modal.onclick = e => {
+        if (e.target === modal) closeImg()
+    };
+    addEventListener('keydown', e => {
+        if (!modal.classList.contains('open')) return;
+        e.stopImmediatePropagation();
+        if (e.key === 'Escape') closeImg()
+    }, true);
+
     route();
 </script>
 </body>

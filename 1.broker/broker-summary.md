@@ -112,7 +112,7 @@ The following configurations are **required** in KRaft mode:
 ## Partition Management
 
 - **Basics**: A Kafka topic is divided into one or more partitions distributed across brokers.
-- **Replication Factor**: Each partition has N replicas; one is the leader, the rest are followers.
+- **Replication Factor**: Each partition has N replicas. One is the leader, the rest are followers.
 - **Immutability and Ordering**: Data written to a partition is immutable. Kafka guarantees **order within a partition** but NOT across partitions.
 - **Partition count**: Can only be **increased**, never decreased.
 - **Preferred Replica**: The first replica in the replica list is the "preferred leader". Kafka attempts to restore leadership to preferred replicas (`auto.leader.rebalance.enable=true`).
@@ -163,6 +163,31 @@ log.retention.hours    → tertiary (default: 168 = 7 days)
 - **Eligible Leader Replicas (ELR)**: New in Kafka 4.0+ — replicas not in ISR but safe to elect as leader without data loss. Tracked by the KRaft controller.
 - **Out-of-sync**: A replica is removed from ISR if it doesn't fetch from the leader within `replica.lag.time.max.ms` (default: 30 seconds).
 - **Replication factor** should not exceed the number of brokers.
+
+### Epochs (fencing stale state)
+
+Kafka uses several monotonically increasing numbers called *epochs* to reject requests from "zombies" — nodes that still act on outdated state.
+
+| Epoch | Scope | Incremented when | Used for |
+|---|---|---|---|
+| **Broker epoch** | One broker registration | A broker (re)registers with the controller (start, restart, session expiry) | Controller ignores requests from an **old incarnation** of a broker |
+| **Leader epoch** | One partition | A new partition leader is elected | Fences stale leaders. Follower log truncation after failover |
+| **Controller / quorum epoch** | Whole cluster | A new active KRaft controller is elected | Fences a stale (deposed) controller |
+
+**Broker epoch — what it is for**
+
+- Assigned by the **controller** each time a broker registers. In KRaft it is the **metadata log offset** of that broker's `RegisterBrokerRecord` (in old ZooKeeper clusters it was the zxid of the broker's ephemeral znode), so a restarted broker always gets a **higher** epoch.
+- The broker sends its epoch in controller-bound requests (heartbeat, `AlterPartition`, ...) and the controller includes the target broker's epoch in requests it sends (`LeaderAndIsr`, `UpdateMetadata`, `StopReplica`).
+- If the epoch in a request is **lower than the current one**, it is rejected with `STALE_BROKER_EPOCH`. This prevents a broker that was restarted, partitioned or paused (long GC) from applying or sending outdated leadership / ISR changes after the cluster has moved on.
+- It is internal bookkeeping: it is not a configuration and clients never see it.
+
+**Leader epoch — related, more exam-relevant**
+
+- Stored in every record batch and in each log's `leader-epoch-checkpoint` file (`epoch → first offset of that epoch`).
+- When a follower restarts or a leader changes, the follower asks the new leader for the end offset of its last known epoch (`OffsetForLeaderEpoch`) and **truncates diverging records** — this is more reliable than using the high watermark alone, which could cause log divergence or data loss.
+- Requests carrying an older leader epoch get `FENCED_LEADER_EPOCH`. Consumers also use it to detect stale metadata.
+
+> 💡 **Remember:** epochs only go up. A higher epoch always wins. Requests with a lower epoch are fenced (rejected).
 
 ---
 
@@ -235,7 +260,7 @@ Kafka achieves high-throughput message delivery using the **Zero Copy** principl
 
 - **Encryption**: SSL/TLS (`SASL_SSL` or `SSL` security protocol) encrypts data in transit.
 - **Authentication**: SASL supports `GSSAPI` (Kerberos), `PLAIN`, `SCRAM-SHA-256/512`, `OAUTHBEARER`.
-- **Authorization**: ACLs managed by `StandardAuthorizer` (the KRaft authorizer; `AclAuthorizer` was the ZooKeeper-era class) — fine-grained control over read/write/create/delete operations.
+- **Authorization**: ACLs managed by `StandardAuthorizer` (the KRaft authorizer. `AclAuthorizer` was the ZooKeeper-era class) — fine-grained control over read/write/create/delete operations.
 - **Listeners**: Multiple listeners can be configured for different security protocols (internal PLAINTEXT, external SASL_SSL).
 
 ```properties
@@ -325,7 +350,7 @@ advertised.listeners=INTERNAL://broker1.internal:9092,EXTERNAL://broker1.example
 | `RequestsPerSec` | Request rate per type (Produce, Fetch, Metadata, etc.). |
 
 ### Log and Disk Monitoring
-- Monitor `UnderReplicatedPartitions` — fluctuating values indicate performance issues; stable non-zero = broker offline.
+- Monitor `UnderReplicatedPartitions` — fluctuating values indicate performance issues. Stable non-zero = broker offline.
 - Monitor disk usage — Kafka does NOT stop writing when disk is full — it crashes!
 - Monitor `log.dirs` for I/O wait time.
 
@@ -410,17 +435,17 @@ Cluster
  │         ├── Replicas (1 leader + followers; ISR = in-sync subset)
  │         └── Segments (files on disk: .log, .index, .timeindex; one active segment)
  │              └── Records (offset, timestamp, key, value, headers)
- └── Consumer Group (tracked by group coordinator; committed offsets stored in __consumer_offsets)
+ └── Consumer Group (tracked by group coordinator. Committed offsets stored in __consumer_offsets)
 ```
 
-- **Topic** = logical; **partition** = physical unit of ordering, parallelism and replication; **segment** = unit of retention/deletion (only closed segments are deleted/compacted).
-- A partition lives on one broker as leader; each replica is a full copy on a different broker.
+- **Topic** = logical **partition** = physical unit of ordering, parallelism and replication **segment** = unit of retention/deletion (only closed segments are deleted/compacted).
+- A partition lives on one broker as leader. Each replica is a full copy on a different broker.
 - ACL resource types: Cluster, Topic, Group, TransactionalId, DelegationToken.
 - Offsets are unique **per partition**, not per topic.
 
 ## Request Lifecycle in Kafka (CCDAK)
 
-1. Client finds the partition leader via a **Metadata request** (any broker answers) and caches the metadata; a `NOT_LEADER_OR_FOLLOWER` error triggers a metadata refresh.
+1. Client finds the partition leader via a **Metadata request** (any broker answers) and caches the metadata. A `NOT_LEADER_OR_FOLLOWER` error triggers a metadata refresh.
 2. Client sends a Produce/Fetch request **to the partition leader** over TCP.
 3. A broker **network (acceptor/processor) thread** reads the request and puts it on the **request queue**.
 4. An **I/O (request handler) thread** takes it from the queue, validates it, and:
@@ -428,8 +453,8 @@ Cluster
    - **Fetch**: reads from the log (zero-copy `sendfile`). If less than `fetch.min.bytes` is available the request waits in purgatory up to `fetch.max.wait.ms`.
 5. The response is placed on the **response queue** and the network thread sends it to the client.
 
-- Consumers (default) fetch only from the leader; followers fetch from the leader like consumers. With `client.rack` + `replica.selector.class` consumers can fetch from the closest follower (KIP-392).
-- Consumers only see records up to the **high watermark** (replicated to all ISR); with `read_committed` only up to the Last Stable Offset.
+- Consumers (default) fetch only from the leader. Followers fetch from the leader like consumers. With `client.rack` + `replica.selector.class` consumers can fetch from the closest follower (KIP-392).
+- Consumers only see records up to the **high watermark** (replicated to all ISR). With `read_committed` only up to the Last Stable Offset.
 - Thread pools: `num.network.threads` (network), `num.io.threads` (request handlers).
 
-<img src="./../img/kafka-request-lifecycle.svg" alt="Kafka request lifecycle" width="1400" height="2200">
+<img src="./../img/kafka-request-lifecycle.svg" alt="Kafka request lifecycle" width="1960" height="3080">
