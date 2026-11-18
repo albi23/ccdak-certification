@@ -13,7 +13,7 @@ Confluent Schema Registry and Avro serialization provide a robust way to ensure 
 The following schema formats are supported out-of-the-box with Confluent Platform, with serializers, deserializers, and command line tools available for each format:
 
 - **Avro:** Relies on schemas. When Avro data is read, the schema used when writing it is always present.
-- **JSON:** A lightweight data-interchange format. It's easy for humans to read and write, and it's easy for machines to parse and generate. JSON itself does not rely on schemas; Schema Registry adds validation using JSON Schema.
+- **JSON:** A lightweight data-interchange format. It's easy for humans to read and write, and it's easy for machines to parse and generate. JSON itself does not rely on schemas. Schema Registry adds validation using JSON Schema.
 - **ProtoBuf:** Protocol Buffers (ProtoBuf) are Google's language-neutral, platform-neutral, extensible mechanism for serializing structured data – think XML, but smaller, faster, and simpler.
 
 ### Avro 
@@ -60,9 +60,9 @@ Forward compatibility: Concentrate on what the **old system can handle from the 
 - **Forward**: Old schema can read data written in new schema. This allows applications using an older schema to read data that was produced with a newer schema. Allowed changes:
 1. Adding a field (with or without a default)
 2. Removing a field that has a default value
-- **Full**: both; only add or remove fields that have default values.
+- **Full**: both. Only add or remove fields that have default values.
 - **Breaking**: Such as changing field types incompatibly, renaming a record or field (without aliases), adding a required field (no default) under BACKWARD, or removing a required field (no default) under FORWARD.
-- **Transitive** variants (`BACKWARD_TRANSITIVE`, `FORWARD_TRANSITIVE`, `FULL_TRANSITIVE`) check against all previous versions; the non-transitive modes check only the latest version.
+- **Transitive** variants (`BACKWARD_TRANSITIVE`, `FORWARD_TRANSITIVE`, `FULL_TRANSITIVE`) check against all previous versions. The non-transitive modes check only the latest version.
   
 ```
 ┌──────────────────────────┬──────────┬─────────┬──────┐
@@ -249,14 +249,14 @@ Think of "BA" in "BAckward" as standing for "Adding". (Adding, optional, default
 
 #### 6. 🚫 Multi-Datacenter Setup
 - Schema Registry supports multi-datacenter deployments for high availability and disaster recovery.
-- In a multi-datacenter setup, each datacenter has its own Schema Registry instances, but only the primary datacenter accepts writes; the secondary instances are configured as not leader-eligible (`leader.eligibility=false`).
+- In a multi-datacenter setup, each datacenter has its own Schema Registry instances, but only the primary datacenter accepts writes. The secondary instances are configured as not leader-eligible (`leader.eligibility=false`).
 - The `_schemas` topic is copied from the primary to the secondary Kafka cluster with a cross-cluster tool (Confluent Replicator or MirrorMaker), not by Kafka's internal replication.
 - Producers and consumers in each datacenter interact with their local Schema Registry cluster for schema registration and retrieval.
 - Schema replication in a multi-datacenter setup works as follows:
  - One datacenter is designated as the primary (or master) datacenter, and the others are secondary (or slave) datacenters.
  - When a schema is registered or updated in the primary datacenter, the Schema Registry cluster in the primary datacenter writes the schema to a special Kafka topic (`_schemas` by default).
  - The Schema Registry instances in the secondary datacenters consume the replicated `_schemas` topic and apply the changes locally.
- - Replication is asynchronous, so secondary datacenters are eventually consistent; on primary failure an operator must promote a secondary.
+ - Replication is asynchronous, so secondary datacenters are eventually consistent. On primary failure an operator must promote a secondary.
 
 #### 7. 🚫 Schema Registry Security
 - Schema Registry supports authentication and authorization to secure access to schemas and the API.

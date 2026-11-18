@@ -23,7 +23,7 @@ After adding partitions later, it cannot be guaranteed that old messages will be
 
 #### `acks`
 - **Scope**: Producer
-- **Description**: Determines the number of acknowledgments the producer requires from brokers before considering a request complete. Valid values are `0`, `1`, or `all` (`-1`); the default is `all` since Kafka 3.0.
+- **Description**: Determines the number of acknowledgments the producer requires from brokers before considering a request complete. Valid values are `0`, `1`, or `all` (`-1`). The default is `all` since Kafka 3.0.
 - **Impact**: This setting impacts data durability and producer throughput. Setting `acks=all` ensures higher data safety as it waits for all in-sync replicas to acknowledge (combine with topic-level `min.insync.replicas` >= 2 to enforce a minimum ISR size). However, this may lower throughput compared to `acks=1` or `acks=0`, where the latter offers the highest throughput but with potential data loss.
 
 #### `replication.factor`
@@ -86,10 +86,10 @@ After adding partitions later, it cannot be guaranteed that old messages will be
 
 - **Partitions can only be increased, never decreased** (`kafka-topics.sh --alter --partitions N`). To reduce, create a new topic and migrate data.
 - **Increasing partitions breaks key→partition mapping** (`murmur2(key) % numPartitions` changes): new records for an existing key may go to a different partition → per-key ordering and Streams/state co-partitioning are affected, and existing data is **not** moved. Preferably create a new topic with the right partition count and copy/replay data to it.
-- **Replication factor** cannot be changed with `--alter`; use `kafka-reassign-partitions.sh` with a JSON reassignment that lists more/fewer replicas (use `--throttle` to limit impact).
+- **Replication factor** cannot be changed with `--alter`. Use `kafka-reassign-partitions.sh` with a JSON reassignment that lists more/fewer replicas (use `--throttle` to limit impact).
 - **Config changes** are dynamic and need no restart: `kafka-configs.sh --alter --entity-type topics --entity-name T --add-config retention.ms=...` (use `--delete-config` to fall back to the broker default). Topic-level overrides take priority over broker defaults.
 - Changing `cleanup.policy` or retention can immediately delete data older than the new retention — check before lowering `retention.ms`.
-- Deleting a topic requires `delete.topic.enable=true` (default true) and is irreversible; consumers/producers with auto-create enabled might recreate it.
+- Deleting a topic requires `delete.topic.enable=true` (default true) and is irreversible. Consumers/producers with auto-create enabled might recreate it.
 - Partition count sizing: target throughput / per-partition throughput, ≥ max number of consumers in a group, but too many partitions increase open files, leader election time and end-to-end latency. Over-provision a bit (e.g. 2–3x) to avoid later increases.
 - Don't rely on `auto.create.topics.enable` in production — create topics explicitly with deliberate partitions and RF.
 - Message size changes must be consistent end to end: `message.max.bytes` (broker/topic `max.message.bytes`), `replica.fetch.max.bytes`, producer `max.request.size`, consumer `max.partition.fetch.bytes`.

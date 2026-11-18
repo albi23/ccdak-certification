@@ -102,7 +102,7 @@ Here are the important internal topics:
    - Enables secure storage and retrieval of sensitive configuration values, such as passwords and API keys.
    - Provides a centralized and encrypted storage for secrets used across the Confluent Platform.
 
-11. (removed) `__consumer_timestamps` is not an Apache Kafka or Confluent internal topic; consumer progress is tracked only via committed offsets in `__consumer_offsets`.
+11. (removed) `__consumer_timestamps` is not an Apache Kafka or Confluent internal topic. Consumer progress is tracked only via committed offsets in `__consumer_offsets`.
 
 12. 🚫 `_confluent-metrics`:
    - A topic used by Confluent Control Center to store and manage metrics data.

@@ -137,11 +137,11 @@ Co-partitioning is a concept in Kafka where two or more topics have their partit
 
 ### Parallel processing
 
-Kafka Streams scales by allowing multiple threads of execution within one instance of the application and by supporting load balancing between distributed instances of the application. You can run the Streams application on one machine with multiple threads or on multiple machines; in either case, all active threads in the application will balance the data processing work.
+Kafka Streams scales by allowing multiple threads of execution within one instance of the application and by supporting load balancing between distributed instances of the application. You can run the Streams application on one machine with multiple threads or on multiple machines. In either case, all active threads in the application will balance the data processing work.
 
 The Streams engine parallelizes the execution of a topology by splitting it into tasks. The number of tasks is determined by the Streams engine and depends on the number of partitions in the topics that the application processes. Each task is responsible for a subset of the partitions: the task subscribes to those partitions and consumes events from them. For every event it consumes, the task executes all the processing steps that apply to this partition in order before eventually writing the result to the sink. These tasks are the basic unit of parallelism in Kafka Streams, as each task can execute independently of others.
 
-The maximum parallelism equals the number of tasks (driven by the number of input partitions). Set `num.stream.threads` to the desired number of threads per instance; threads beyond the number of tasks stay idle, so there is no benefit in exceeding the number of partitions.
+The maximum parallelism equals the number of tasks (driven by the number of input partitions). Set `num.stream.threads` to the desired number of threads per instance. Threads beyond the number of tasks stay idle, so there is no benefit in exceeding the number of partitions.
 
 ### Repartitioning
 
@@ -253,7 +253,7 @@ Kafka Streams offers a comprehensive set of tools and functionalities for buildi
 | Nature | Low-level clients | Library on top of them (embedded in your app, no separate cluster) |
 | State | You manage it yourself | Built-in **state stores** (RocksDB + changelog topics) |
 | Operations | Manual | Declarative: map, filter, groupBy, aggregate, join, windowing |
-| Scaling | Consumer group | Consumer group underneath; **tasks** = partitions (max parallelism = number of input partitions); threads (`num.stream.threads`) + more instances |
+| Scaling | Consumer group | Consumer group underneath. **Tasks** = partitions (max parallelism = number of input partitions). Threads (`num.stream.threads`) + more instances |
 | Fault tolerance | Manual | Automatic state restore from changelog topics, standby replicas (`num.standby.replicas`) |
 | Exactly-once | Manual transactions | `processing.guarantee=exactly_once_v2` |
 | Output | Topic-to-anywhere | Kafka topic → Kafka topic only (use Connect for other systems) |
@@ -271,7 +271,7 @@ Kafka Streams offers a comprehensive set of tools and functionalities for buildi
 - Downstream consumers need `isolation.level=read_committed`.
 - `commit.interval.ms` defaults to **100 ms** with EOS (30 000 ms with at-least-once) — lower latency but more transactions.
 - Requires broker `transaction.state.log.replication.factor` / `min.isr` (3 / 2 by default in production).
-- EOS covers Kafka → Kafka processing only; side effects (HTTP calls, DB writes) are not covered.
+- EOS covers Kafka → Kafka processing only. Side effects (HTTP calls, DB writes) are not covered.
 
 ## DSL vs Processor API (CCDAK)
 
@@ -285,4 +285,4 @@ Kafka Streams offers a comprehensive set of tools and functionalities for buildi
 
 - They can be mixed: DSL `process()` / `transform()` (`processValues`) hook a custom `Processor` into a DSL topology.
 - Use the Processor API when you need custom timing (punctuate), non-standard state access, or logic the DSL can't express.
-- Topology is a DAG of **source** → **processor** nodes → **sink**; `topology.describe()` prints it.
+- Topology is a DAG of **source** → **processor** nodes → **sink**. `topology.describe()` prints it.

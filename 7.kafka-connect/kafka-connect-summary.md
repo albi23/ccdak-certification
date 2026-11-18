@@ -256,15 +256,15 @@ Connectors in Kafka Connect are responsible for breaking down the data copying j
 - Source connector offsets are stored in a Kafka topic specified by the `offset.storage.topic` property (distributed mode).
 - The `offset.flush.interval.ms` property controls how frequently offsets are flushed to the offset storage topic.
 - Sink connector offsets are stored as regular consumer group offsets (`__consumer_offsets`), not in the Connect offsets topic. In standalone mode, source offsets are stored in a file (`offset.storage.file.filename`).
-- By default, Connect provides at-least-once delivery; offset management enables fault tolerance and resuming after failures.
+- By default, Connect provides at-least-once delivery. Offset management enables fault tolerance and resuming after failures.
 
 ### 7. Exactly-Once Semantics (EOS)
 - Kafka Connect delivers at-least-once by default.
 - Exactly-once for **source connectors** is supported since Kafka 3.3 (KIP-618) and must be enabled and supported by the connector:
- - Worker config: `exactly.once.source.support=enabled` (or `preparing` during a rolling upgrade); default is `disabled`.
+ - Worker config: `exactly.once.source.support=enabled` (or `preparing` during a rolling upgrade). Default is `disabled`.
  - Connector config: `exactly.once.support=requested|required` and optionally `transaction.boundary` (`poll`, `interval`, `connector`).
  - Source records and offsets are written to Kafka in a transaction by the worker's producer.
-- For **sink connectors**, Connect cannot guarantee exactly-once by itself; it depends on the connector writing idempotently to (or transactionally with offsets in) the external system.
+- For **sink connectors**, Connect cannot guarantee exactly-once by itself. It depends on the connector writing idempotently to (or transactionally with offsets in) the external system.
 - EOS requires careful configuration and compatibility between the connector and the external system.
 
 ### 🚫 8. Schema Evolution
@@ -291,10 +291,10 @@ Connectors in Kafka Connect are responsible for breaking down the data copying j
 
 ## Connector Scalability (CCDAK)
 
-- **Connector** = job definition (config); **Task** = unit of parallelism that actually copies data; **Worker** = JVM process that runs connectors/tasks.
-- `tasks.max` is the **upper bound**; the connector decides the real number via `taskConfigs(maxTasks)` (e.g. JDBC source: max one task per table; sink connectors: bounded by the number of topic partitions — each partition goes to exactly one task).
-- **Scale out**: add workers (same `group.id` in distributed mode) → tasks are rebalanced automatically across workers; if a worker fails, its tasks move to the others (fault tolerance). Raising `tasks.max` beyond the data's natural parallelism has no effect.
+- **Connector** = job definition (config). **Task** = unit of parallelism that actually copies data. **Worker** = JVM process that runs connectors/tasks.
+- `tasks.max` is the **upper bound**. The connector decides the real number via `taskConfigs(maxTasks)` (e.g. JDBC source: max one task per table; sink connectors: bounded by the number of topic partitions — each partition goes to exactly one task).
+- **Scale out**: add workers (same `group.id` in distributed mode) → tasks are rebalanced automatically across workers. If a worker fails, its tasks move to the others (fault tolerance). Raising `tasks.max` beyond the data's natural parallelism has no effect.
 - **Standalone mode**: single worker, no fault tolerance, offsets in a local file (`offset.storage.file.filename`) — for dev/testing. **Distributed mode** for production (config/offset/status stored in internal Kafka topics: `config.storage.topic`, `offset.storage.topic`, `status.storage.topic`).
-- Sink connector consumer group is named `connect-<connector-name>`; scaling the tasks beyond partition count leaves tasks idle.
+- Sink connector consumer group is named `connect-<connector-name>`. Scaling the tasks beyond partition count leaves tasks idle.
 - Connect rebalances use incremental cooperative rebalancing (`connect.protocol=sessioned`/`compatible`).
-- Offsets: source connectors store source offsets in the offsets topic (e.g. DB timestamp/ID, file position); sink connectors use normal consumer offsets (`__consumer_offsets`).
+- Offsets: source connectors store source offsets in the offsets topic (e.g. DB timestamp/ID, file position). Sink connectors use normal consumer offsets (`__consumer_offsets`).

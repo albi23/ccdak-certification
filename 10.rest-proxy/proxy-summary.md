@@ -26,7 +26,7 @@ The Kafka REST Proxy provides a RESTful interface to a Kafka cluster, enabling t
 
 #### Security and Authentication
 - 🚫 **`authentication.method`**: `NONE` (default) or `BASIC` (with `authentication.roles` and `authentication.realm` and a JAAS login module) to control access to the REST Proxy.
-- 🚫 **HTTPS**: Use an `https://` URL in `listeners` plus `ssl.keystore.*` settings (there is no `ssl.enabled` property); proxy-to-broker security uses `client.*` settings.
+- 🚫 **HTTPS**: Use an `https://` URL in `listeners` plus `ssl.keystore.*` settings (there is no `ssl.enabled` property). Proxy-to-broker security uses `client.*` settings.
 
 ### Advanced REST Proxy Configurations for Fine-Tuning
 #### Request and Consumer Settings
@@ -36,7 +36,7 @@ The Kafka REST Proxy provides a RESTful interface to a Kafka cluster, enabling t
 #### Producing and Consuming Enhancements
 - **`consumer.request.max.bytes`**: Maximum number of bytes of message data returned in a single consume response.
 - **`consumer.fetch.min.bytes`** (and other `consumer.`-prefixed settings): Passed through to the embedded Kafka consumers.
-- Legacy: the old v1 API and its simple consumer settings (e.g. `simple.consumer.pool.size.max`) are deprecated; use the v2 (and v3) APIs.
+- Legacy: the old v1 API and its simple consumer settings (e.g. `simple.consumer.pool.size.max`) are deprecated. Use the v2 (and v3) APIs.
 
 ### Key Considerations for Scalability and Reliability
 #### Load Balancing
@@ -52,13 +52,13 @@ The Kafka REST Proxy provides a RESTful interface to a Kafka cluster, enabling t
 #### Data Formats
 - The REST Proxy supports various embedded data formats for producing and consuming messages, including JSON, binary, Avro, Protobuf and JSON Schema. The format is chosen via the `Content-Type` header when producing (e.g. `application/vnd.kafka.json.v2+json`) and the `format` field when creating a consumer instance.
 - It integrates with the Confluent Schema Registry for schema-based serialization and deserialization (`value_schema` / `value_schema_id` fields).
-- For the binary format the data must be base64 encoded by the producer (and is returned base64 encoded to consumers); JSON and schema-based formats are sent as plain JSON.
-- Produce requests use `POST /topics/{topic}`; consumers are created with `POST /consumers/{group}`, then subscribed, polled with `GET .../records`, and offsets committed explicitly or automatically. Offsets are stored by the Kafka brokers in `__consumer_offsets`.
+- For the binary format the data must be base64 encoded by the producer (and is returned base64 encoded to consumers). JSON and schema-based formats are sent as plain JSON.
+- Produce requests use `POST /topics/{topic}`. Consumers are created with `POST /consumers/{group}`, then subscribed, polled with `GET .../records`, and offsets committed explicitly or automatically. Offsets are stored by the Kafka brokers in `__consumer_offsets`.
 - The REST Proxy is a Confluent component (also reimplemented by Karapace), not part of Apache Kafka.
 
 #### Authentication and Authorization
 - 🚫 The REST Proxy supports HTTP Basic authentication and TLS (HTTPS, optionally client certificates) for access control at the HTTP layer.
-- 🚫 Towards Kafka, the proxy uses its own configured principal, so Kafka ACLs apply to the proxy's identity; per-user principal propagation requires Confluent security plugins (RBAC, out of exam scope).
+- 🚫 Towards Kafka, the proxy uses its own configured principal, so Kafka ACLs apply to the proxy's identity. Per-user principal propagation requires Confluent security plugins (RBAC, out of exam scope).
 
 #### Error Handling and Response Codes
 - The REST Proxy handles errors and returns appropriate HTTP response codes for different scenarios, such as invalid requests, authentication failures, or Kafka-related errors.

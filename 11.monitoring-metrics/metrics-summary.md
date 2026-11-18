@@ -15,7 +15,7 @@ Monitoring and Metrics in Kafka Kafka exposes rich metrics to monitor the health
 
 #### `kafka.metrics.reporters` (legacy, broker-side Yammer metrics)
 - **Default**: ""
-- **Description**: Comma-separated list of classes to report Kafka's **Yammer** (server-side) metrics. These reporters implement the `kafka.metrics.KafkaMetricsReporter` interface. This is the older broker-only mechanism; most modern monitoring uses `metric.reporters` (the Kafka Metrics framework) plus the built-in `JmxReporter`.
+- **Description**: Comma-separated list of classes to report Kafka's **Yammer** (server-side) metrics. These reporters implement the `kafka.metrics.KafkaMetricsReporter` interface. This is the older broker-only mechanism. Most modern monitoring uses `metric.reporters` (the Kafka Metrics framework) plus the built-in `JmxReporter`.
 - **Trade-offs**: Adding custom reporters can enhance monitoring capabilities but might introduce additional overhead.
 
 #### `metric.reporters`
@@ -56,20 +56,20 @@ Monitoring and Metrics in Kafka Kafka exposes rich metrics to monitor the health
 - `RequestsPerSec`: Rate of requests per request type. Use case: Monitoring broker load.
 - `FetchMessageConversionsPerSec`: Rate of message format conversions during fetch requests. Use case: Tracking message format compatibility.
 - 🚫 `ZooKeeperRequestLatencyMs`: Latency of ZooKeeper requests made by Kafka. Use case: Monitoring ZooKeeper performance. (Legacy: ZooKeeper was removed in Kafka 4.0; KRaft clusters use `kafka.controller` / `kafka.server:type=raft-metrics` instead.)
-- `ControllerState`: State of the controller (e.g. idle or running a particular operation) - it does not tell whether a node is the active controller; `ActiveControllerCount` (1 if active, 0 if not) does. Use case: Monitoring controller health.
+- `ControllerState`: State of the controller (e.g. idle or running a particular operation) - it does not tell whether a node is the active controller. `ActiveControllerCount` (1 if active, 0 if not) does. Use case: Monitoring controller health.
 - `LogFlushRateAndTimeMs`: Monitors the rate and time of log flushes. High values can indicate I/O bottlenecks. Use case: Identifying disk performance issues.
 - `LeaderElectionRateAndTimeMs`: Monitors the rate and time taken for leader election. High values may indicate issues with the controller or network. Use case: Tracking controller performance and stability.
 - `HeapMemoryUsage` (JVM MBean `java.lang:type=Memory`, not a Kafka-defined metric): Tracks heap usage, helping to identify potential memory leaks or insufficient heap sizes. Use case: Monitoring broker memory utilization.
 - `CollectionTime` / `CollectionCount` (JVM MBean `java.lang:type=GarbageCollector,name=*`): Time spent in garbage collection. High values can indicate potential performance issues. Use case: Identifying JVM garbage collection overhead.
 - 🚫 `ZooKeeperDisconnectsPerSec`: Rate of disconnects from ZooKeeper. Legacy (ZooKeeper removed in Kafka 4.0).
-- `Size` (`kafka.log:type=Log,name=Size`): On-disk size of each partition log. Kafka does not expose free disk space over JMX; monitor it at OS level.
+- `Size` (`kafka.log:type=Log,name=Size`): On-disk size of each partition log. Kafka does not expose free disk space over JMX. Monitor it at OS level.
 
 ### Consumer Metrics:
 - `records-lag-max`: Maximum lag in terms of number of records for any partition in this window. Use case: Monitoring consumer lag.
 - `fetch-latency-avg`: Average time taken for a fetch request. Use case: Monitoring consumer performance.
 - `records-consumed-rate`: The average number of records consumed per second. Use case: Tracking consumer throughput.
 - `fetch-rate`: Number of fetch requests per second. Use case: Monitoring consumer activity (broker side: `TotalFetchRequestsPerSec`).
-- `records-lag` (per partition) / consumer lag: how many messages the consumer is behind. Lag is not a single broker JMX bean; it is also available from `kafka-consumer-groups.sh --describe` or tools such as Burrow.
+- `records-lag` (per partition) / consumer lag: how many messages the consumer is behind. Lag is not a single broker JMX bean. It is also available from `kafka-consumer-groups.sh --describe` or tools such as Burrow.
 
 ### Producer Metrics:
 - `record-send-rate`: The average number of records sent per second. Use case: Monitoring producer throughput.
@@ -137,11 +137,11 @@ Monitoring and Metrics in Kafka Kafka exposes rich metrics to monitor the health
 
 - Kafka brokers and tools use **Log4j** (Kafka ≤ 3.x: `config/log4j.properties`; Kafka 4.0+ moved to **Log4j2**: `config/log4j2.yaml`). Clients (producer/consumer) use **SLF4J** — you supply the binding (log4j/logback) in your application.
 - Key broker log files / appenders: `server.log` (general), `controller.log`, `state-change.log` (partition/replica state changes — useful for leader-election debugging), `kafka-request.log` (per request, `TRACE`/`DEBUG` only for debugging), `log-cleaner.log` (compaction), `kafka-authorizer.log` (ACL allow/deny audit).
-- Appenders usually `DailyRollingFileAppender`/rolling file; levels: `TRACE < DEBUG < INFO < WARN < ERROR < FATAL`.
+- Appenders usually `DailyRollingFileAppender`/rolling file. Levels: `TRACE < DEBUG < INFO < WARN < ERROR < FATAL`.
 - **Change at runtime** (no restart): `kafka-configs.sh --bootstrap-server ... --entity-type broker-loggers --entity-name 0 --alter --add-config kafka.server.KafkaApis=DEBUG` (dynamic logger levels via the Admin API / JMX `Log4jController`).
-- Select the config at startup with `KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:/path/log4j.properties"` (Log4j2: `-Dlog4j2.configurationFile=`); `LOG_DIR` env var sets the log directory.
+- Select the config at startup with `KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:/path/log4j.properties"` (Log4j2: `-Dlog4j2.configurationFile=`). `LOG_DIR` env var sets the log directory.
 - **Don't confuse**: `server.log` (application logs, `LOG_DIR`) ≠ **data/commit logs** (`log.dirs`, the topic segments).
-- Kafka Connect: `connect-log4j.properties`; Connect REST API can change logger levels at runtime: `PUT /admin/loggers/{logger}` with `{"level":"DEBUG"}`, and `GET /admin/loggers`. Connect adds connector context (`[connector|task-0]`) to log lines (`connector.client.config.override.policy`, MDC).
+- Kafka Connect: `connect-log4j.properties`. Connect REST API can change logger levels at runtime: `PUT /admin/loggers/{logger}` with `{"level":"DEBUG"}`, and `GET /admin/loggers`. Connect adds connector context (`[connector|task-0]`) to log lines (`connector.client.config.override.policy`, MDC).
 - Kafka Streams: log level for `org.apache.kafka.streams` — use `DEBUG` to see task assignment / state restoration.
 - Avoid `DEBUG`/`TRACE` globally in production (volume and latency).
 
@@ -149,17 +149,17 @@ Monitoring and Metrics in Kafka Kafka exposes rich metrics to monitor the health
 
 | Error / exception | Meaning / typical cause | Fix |
 |---|---|---|
-| `NotEnoughReplicasException` / `NotEnoughReplicasAfterAppendException` | ISR size < `min.insync.replicas` with `acks=all` | Restore brokers; check `min.insync.replicas` vs RF |
-| `NotLeaderOrFollowerException` (formerly `NotLeaderForPartition`) | Request sent to a broker that is no longer leader (retriable) | Metadata refresh happens automatically; retries |
+| `NotEnoughReplicasException` / `NotEnoughReplicasAfterAppendException` | ISR size < `min.insync.replicas` with `acks=all` | Restore brokers. Check `min.insync.replicas` vs RF |
+| `NotLeaderOrFollowerException` (formerly `NotLeaderForPartition`) | Request sent to a broker that is no longer leader (retriable) | Metadata refresh happens automatically. Retries |
 | `LeaderNotAvailableException` | Leader election in progress / no leader (retriable) | Wait/retry |
 | `TimeoutException` (e.g. "Topic not present in metadata after max.block.ms", "Expiring N records... delivery.timeout.ms") | Broker unreachable, wrong `bootstrap.servers`/`advertised.listeners`, topic missing, or batch not delivered in time | Check connectivity/listeners, `delivery.timeout.ms`, `max.block.ms` |
 | `RecordTooLargeException` / `MessageSizeTooLargeException` | Record > `max.request.size` / `message.max.bytes` | Raise limits consistently or reduce size/compress |
-| `SerializationException` / `RecordDeserializationException` | Wrong or mismatched serializer/deserializer, bad data (poison pill) | Align serdes; skip/DLQ bad record |
+| `SerializationException` / `RecordDeserializationException` | Wrong or mismatched serializer/deserializer, bad data (poison pill) | Align serdes. Skip/DLQ bad record |
 | `CommitFailedException` | Consumer lost partitions (rebalance, `max.poll.interval.ms` exceeded) before committing | Reduce `max.poll.records`, speed processing, raise `max.poll.interval.ms` |
 | `RebalanceInProgressException` | Commit/operation during a rebalance | Retry after rebalance |
 | `OffsetOutOfRangeException` | Offset deleted by retention or beyond end | `auto.offset.reset` or seek |
 | `UnknownTopicOrPartitionException` | Topic doesn't exist (and auto-create disabled) | Create topic |
-| `TopicAuthorizationException` / `GroupAuthorizationException` / `SaslAuthenticationException` | Missing ACL or bad credentials | Add ACLs; check `sasl.jaas.config` |
+| `TopicAuthorizationException` / `GroupAuthorizationException` / `SaslAuthenticationException` | Missing ACL or bad credentials | Add ACLs. Check `sasl.jaas.config` |
 | `SSLHandshakeException` / "unable to find valid certification path" | Bad truststore/keystore or hostname mismatch (`ssl.endpoint.identification.algorithm`) | Fix certs/SANs |
 | `ProducerFencedException` / `InvalidProducerEpochException` | Another producer with the same `transactional.id` took over | Close fenced producer |
 | `InvalidTopicException`, `InvalidReplicationFactorException` | RF > number of alive brokers, bad topic name | Fix request |
@@ -167,7 +167,7 @@ Monitoring and Metrics in Kafka Kafka exposes rich metrics to monitor the health
 | Consumer stuck / constant rebalances | Processing time > `max.poll.interval.ms`, or heartbeat/`session.timeout.ms` too low | Tune poll/heartbeat settings |
 | "Connection to node -1 could not be established" | Cannot reach bootstrap server / wrong listener | Check `advertised.listeners`, network, security protocol |
 
-- **Retriable** errors (`NotLeaderOrFollower`, `LeaderNotAvailable`, `NotEnoughReplicas`, timeouts) are retried by the producer; **non-retriable** (`RecordTooLarge`, `Serialization`, authorization) fail immediately.
+- **Retriable** errors (`NotLeaderOrFollower`, `LeaderNotAvailable`, `NotEnoughReplicas`, timeouts) are retried by the producer. **Non-retriable** (`RecordTooLarge`, `Serialization`, authorization) fail immediately.
 
 ## Configuring Alerts (CCDAK)
 

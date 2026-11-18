@@ -64,7 +64,7 @@ Securing Kafka involves configuring encryption, authentication, and authorizatio
 - **Security Impact**: Determines the level of security for data in transit between clients and brokers.
 
 #### `ssl.endpoint.identification.algorithm`
-- **Description**: The algorithm to use for host name verification of server certificates. Defaults to `https` (hostname verification enabled) since Kafka 2.0; an empty string disables it.
+- **Description**: The algorithm to use for host name verification of server certificates. Defaults to `https` (hostname verification enabled) since Kafka 2.0. An empty string disables it.
 - **Security Impact**: Protects against man-in-the-middle attacks by verifying the server's hostname matches its certificate.
 
 #### `sasl.login.callback.handler.class`
@@ -87,7 +87,7 @@ Securing Kafka involves configuring encryption, authentication, and authorizatio
 
 Apache Kafka ships with a pluggable, out-of-the-box Authorizer. In KRaft mode (the only mode since Kafka 4.0, when ZooKeeper and `AclAuthorizer` were removed) this is `StandardAuthorizer`, which stores ACLs in the cluster metadata log (`__cluster_metadata`). Setting ACLs is crucial because, without them, access to resources is limited to super users when an Authorizer is configured. By default (`allow.everyone.if.no.acl.found=false`), if a resource has no associated ACLs, no one except super users is allowed to access it.
 
-ACLs authorize authenticated principals; they do not authenticate. Operations include Read (consume), Write (produce), Create, Delete, Alter, Describe, DescribeConfigs, AlterConfigs, IdempotentWrite. Resources: Topic, Group, Cluster, TransactionalId, DelegationToken, User (there is no Partition resource). Without a matching allow ACL the client gets an authorization exception (e.g. `TopicAuthorizationException`).
+ACLs authorize authenticated principals. They do not authenticate. Operations include Read (consume), Write (produce), Create, Delete, Alter, Describe, DescribeConfigs, AlterConfigs, IdempotentWrite. Resources: Topic, Group, Cluster, TransactionalId, DelegationToken, User (there is no Partition resource). Without a matching allow ACL the client gets an authorization exception (e.g. `TopicAuthorizationException`).
 
 Access Control Lists (ACLs) provide essential authorization controls for your enterprise's Kafka cluster data.
 
@@ -164,4 +164,4 @@ kerberos.removeRealmFromPrincipal=true
 
 ### 🚫 Migrating to Secure ZooKeeper ACLs (legacy)
 
-The `zookeeper-security-migration` tool secured ZooKeeper znodes in legacy clusters; it is not relevant for KRaft.
+The `zookeeper-security-migration` tool secured ZooKeeper znodes in legacy clusters. It is not relevant for KRaft.

@@ -553,7 +553,7 @@ BROKER level (default for all topics):
 
 | Tool | Purpose |
 |---|---|
-| `MockProducer<K,V>` / `MockConsumer<K,V>` (`kafka-clients` test utils) | Unit-test producer/consumer code with **no broker**: `MockProducer` records `history()` of sent records and can simulate errors/transactions; `MockConsumer` is fed records via `addRecord()`, `assign()/updateBeginningOffsets()` |
+| `MockProducer<K,V>` / `MockConsumer<K,V>` (`kafka-clients` test utils) | Unit-test producer/consumer code with **no broker**: `MockProducer` records `history()` of sent records and can simulate errors/transactions. `MockConsumer` is fed records via `addRecord()`, `assign()/updateBeginningOffsets()` |
 | `TopologyTestDriver` (`kafka-streams-test-utils`) | Unit-test a Kafka Streams topology without a broker: `createInputTopic()` / `createOutputTopic()`, `TestInputTopic.pipeInput()`, `TestOutputTopic.readKeyValue()`, `getKeyValueStore()`. Synchronous, advance time with `advanceWallClockTime`. Not a full integration (no real consumers/threads/rebalancing) |
 | **Testcontainers** (`KafkaContainer`) | Integration tests against a real Kafka broker in Docker |
 | Embedded Kafka (`EmbeddedKafkaCluster`, Spring `@EmbeddedKafka`) | In-JVM broker for integration tests |
@@ -565,7 +565,7 @@ BROKER level (default for all topics):
 | `kafka-dump-log.sh`, `kafka-get-offsets.sh` | Inspect on-disk segments and offsets while debugging |
 | Schema Registry / Connect REST (`curl`) | Test schemas, compatibility, connector config validation |
 
-- Unit tests (Mock*, TopologyTestDriver) → fast, no network; integration tests (Testcontainers/Embedded) → real broker semantics.
+- Unit tests (Mock*, TopologyTestDriver) → fast, no network. Integration tests (Testcontainers/Embedded) → real broker semantics.
 - `kafka-topics.sh --describe` and `kafka-consumer-groups.sh --describe` verify results of a test (partitions, ISR, lag).
 
 ## Horizontal vs Vertical Scaling
@@ -573,11 +573,11 @@ BROKER level (default for all topics):
 | | **Horizontal** (scale out) | **Vertical** (scale up) |
 |---|---|---|
 | Meaning | Add more instances/brokers | Bigger machine (CPU, RAM, disk, network) |
-| **Consumers** | Add consumers to the group → more partitions processed in parallel; limited by **partition count** (extra consumers idle) | More threads (consumer is single-threaded per instance; use one consumer per thread) / bigger processing power |
+| **Consumers** | Add consumers to the group → more partitions processed in parallel. Limited by **partition count** (extra consumers idle) | More threads (consumer is single-threaded per instance; use one consumer per thread) / bigger processing power |
 | **Producers** | Add producer instances | Tune `batch.size`, `linger.ms`, `compression.type`, `buffer.memory` |
 | **Brokers** | Add brokers, then **reassign partitions** (`kafka-reassign-partitions.sh`) — new brokers don't get existing partitions automatically | More RAM (page cache), faster disks/network, `num.io.threads`, `num.network.threads` |
 | **Topics** | More partitions (raises max parallelism, can't be reduced, changes key mapping) | n/a |
-| **Streams** | Start more instances with same `application.id` (tasks rebalanced); max = number of input partitions | Raise `num.stream.threads` |
+| **Streams** | Start more instances with same `application.id` (tasks rebalanced). Max = number of input partitions | Raise `num.stream.threads` |
 | **Connect** | Add workers, raise `tasks.max` | Larger worker heap/CPU |
 
 - Kafka favours **horizontal** scaling. Consumer group size > partitions is useless.
@@ -585,10 +585,10 @@ BROKER level (default for all topics):
 
 ## Common Deployment Frameworks
 
-- **Docker / Docker Compose** — local dev and testing clusters (`apache/kafka`, `confluentinc/cp-kafka` images); expose `advertised.listeners` correctly for host vs container networks.
-- **Kubernetes** — production: StatefulSets with persistent volumes; operators such as **Strimzi** (open source) and **Confluent for Kubernetes (CFK)** manage brokers, topics (CRDs: `Kafka`, `KafkaTopic`, `KafkaUser`, `KafkaConnect`), rolling upgrades, TLS certs. **Helm charts** for packaging.
+- **Docker / Docker Compose** — local dev and testing clusters (`apache/kafka`, `confluentinc/cp-kafka` images). Expose `advertised.listeners` correctly for host vs container networks.
+- **Kubernetes** — production: StatefulSets with persistent volumes. Operators such as **Strimzi** (open source) and **Confluent for Kubernetes (CFK)** manage brokers, topics (CRDs: `Kafka`, `KafkaTopic`, `KafkaUser`, `KafkaConnect`), rolling upgrades, TLS certs. **Helm charts** for packaging.
 - **Ansible** (`cp-ansible`), **Terraform** — provisioning bare-metal/VM clusters and managed resources.
 - **Confluent Cloud / managed Kafka** (MSK, Aiven) — fully managed.
-- Stateless apps (producers, consumers, Streams) deploy as normal Deployments; Streams with state benefit from StatefulSets/persistent volumes (faster restore) or standby replicas.
-- Rolling restarts: one broker at a time, wait until `UnderReplicatedPartitions=0` before restarting the next; controlled shutdown (`controlled.shutdown.enable=true`) moves leaders first.
+- Stateless apps (producers, consumers, Streams) deploy as normal Deployments. Streams with state benefit from StatefulSets/persistent volumes (faster restore) or standby replicas.
+- Rolling restarts: one broker at a time, wait until `UnderReplicatedPartitions=0` before restarting the next. Controlled shutdown (`controlled.shutdown.enable=true`) moves leaders first.
 - KRaft mode (no ZooKeeper) is the default in Kafka 4.x.

@@ -51,8 +51,8 @@ Kafka producers send records to topics. The efficiency, reliability, and perform
 
 #### `retries`
 - **Default**: 2147483647 (Integer.MAX_VALUE)
-- **Description**: Number of retries on transient errors; in practice bounded by `delivery.timeout.ms`.
-- **Trade-offs**: Ensures delivery; may reorder or duplicate records if idempotence is disabled and `max.in.flight.requests.per.connection` is greater than 1.
+- **Description**: Number of retries on transient errors. In practice bounded by `delivery.timeout.ms`.
+- **Trade-offs**: Ensures delivery. May reorder or duplicate records if idempotence is disabled and `max.in.flight.requests.per.connection` is greater than 1.
 
 #### `delivery.timeout.ms`
 - **Default**: 120000 (2 minutes)
@@ -134,7 +134,7 @@ Handling non-retriable errors requires:
 | **Exactly-once across topics/partitions** | Idempotence + **transactions**: `transactional.id`, `initTransactions()`, `beginTransaction()`, `send()`, `sendOffsetsToTransaction()`, `commitTransaction()` / `abortTransaction()` |
 
 - Transactions are atomic over multiple partitions and the consumed offsets (consume-transform-produce loop). Consumers must use `isolation.level=read_committed`. Same `transactional.id` after a restart **fences** the old (zombie) producer (`ProducerFencedException`).
-- `acks=all` durability also needs `min.insync.replicas>=2` and `replication.factor>=3`; otherwise `NotEnoughReplicasException`.
+- `acks=all` durability also needs `min.insync.replicas>=2` and `replication.factor>=3`. Otherwise `NotEnoughReplicasException`.
 
 ## Partitioner (CCDAK)
 
@@ -144,31 +144,31 @@ Handling non-retriable errors requires:
   2. **Key not null** → `partition = toPositive(murmur2(keyBytes)) % numPartitions`. Same key → same partition (as long as the partition count doesn't change!), giving per-key ordering.
   3. **Key null** → **sticky** behaviour: the producer sticks to one partition until the batch is full (`batch.size`) or `linger.ms` expires, then switches (Kafka ≥ 2.4 sticky; ≥ 3.3 built-in uniform sticky/adaptive). Older versions used round-robin per record.
 - Custom partitioner: implement `org.apache.kafka.clients.producer.Partitioner` and set `partitioner.class` (e.g. to route a hot key or VIP customers to a dedicated partition).
-- **Adding partitions** to a topic changes `hash % numPartitions` → same key may land on a different partition; ordering per key is broken across the change.
-- The partitioner only chooses the partition; the **leader of that partition** receives the data.
+- **Adding partitions** to a topic changes `hash % numPartitions` → same key may land on a different partition. Ordering per key is broken across the change.
+- The partitioner only chooses the partition. The **leader of that partition** receives the data.
 - Hot keys (skewed key distribution) lead to uneven partitions.
 
 ## Serialization (CCDAK)
 
-- `key.serializer` and `value.serializer` are **required** producer configs; the broker only stores `byte[]`.
-- Built-in: `StringSerializer`, `IntegerSerializer`, `LongSerializer`, `DoubleSerializer`, `ByteArraySerializer`, `UUIDSerializer`, `ByteBufferSerializer`, `VoidSerializer`; Avro/Protobuf/JSON-Schema via Schema Registry (`KafkaAvroSerializer`, etc.).
+- `key.serializer` and `value.serializer` are **required** producer configs. The broker only stores `byte[]`.
+- Built-in: `StringSerializer`, `IntegerSerializer`, `LongSerializer`, `DoubleSerializer`, `ByteArraySerializer`, `UUIDSerializer`, `ByteBufferSerializer`, `VoidSerializer`. Avro/Protobuf/JSON-Schema via Schema Registry (`KafkaAvroSerializer`, etc.).
 - Custom serializer: implement `Serializer<T>` (`byte[] serialize(String topic, T data)`). Consumers must use the matching deserializer.
 - A mismatch (e.g. producer `StringSerializer`, consumer `IntegerDeserializer`) → `SerializationException` on the consumer.
 - Common data formats: **String/JSON** (human readable, no schema enforcement, larger), **Avro** (compact binary, schema in Schema Registry, best evolution support), **Protobuf**, **JSON Schema**, raw bytes. Prefer a schema-based format for contracts between teams.
 
 ## Record Headers (CCDAK)
 
-- Headers are **key (String) → value (byte[])** pairs attached to a record, **separate from key and value**: `record.headers().add("trace-id", bytes)`; read with `record.headers().lastHeader("trace-id")`.
+- Headers are **key (String) → value (byte[])** pairs attached to a record, **separate from key and value**: `record.headers().add("trace-id", bytes)`. Read with `record.headers().lastHeader("trace-id")`.
 - Available since Kafka 0.11. Headers are **not** used for partitioning or compaction and are **not** part of the key.
 - Design: use for **metadata** — tracing/correlation IDs, source system, content type, schema/version, routing hints, audit info — so the payload stays untouched and consumers can filter or route without deserializing the value.
-- Keep them small (they count toward message size); duplicate header keys are allowed (order preserved).
-- Kafka Connect: SMTs `InsertHeader`, `HeaderFrom`, `DropHeaders`; DLQ can add error context headers.
+- Keep them small (they count toward message size). Duplicate header keys are allowed (order preserved).
+- Kafka Connect: SMTs `InsertHeader`, `HeaderFrom`, `DropHeaders`. DLQ can add error context headers.
 - Console consumer: `--property print.headers=true`.
 
 ## Key Design for Partition Strategy (CCDAK)
 
 - Same key ⇒ same partition ⇒ **ordering guaranteed per key** only (not per topic).
-- Choose a key with **high cardinality and even distribution** (e.g. `customerId`, `orderId`); avoid skewed keys (country, boolean) → hot partitions.
+- Choose a key with **high cardinality and even distribution** (e.g. `customerId`, `orderId`). Avoid skewed keys (country, boolean) → hot partitions.
 - Need ordering across entities → use a common key (e.g. all events of an account use `accountId`).
 - No ordering needed → null key for best distribution.
 - Compacted topics **require** a non-null key.
