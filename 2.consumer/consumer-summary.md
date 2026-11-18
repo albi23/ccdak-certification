@@ -16,22 +16,37 @@ When a consumer wants to join a group, it sends a JoinGroup request to the group
 
 ### Partition Assignors
 
-A `PartitionAssignor` is a class that, given consumers and the topics they subscribed to, decides which partitions will be assigned to which consumer. Kafka provides four built-in assignment strategies (`partition.assignment.strategy`); since Kafka 3.0 the default is `[RangeAssignor, CooperativeStickyAssignor]`:
+A `PartitionAssignor` is a class that, given consumers and the topics they subscribed to, decides which partitions will be assigned to which consumer. Kafka provides four built-in assignment strategies (`partition.assignment.strategy`). Since Kafka 3.0 the default is `[RangeAssignor, CooperativeStickyAssignor]`:
 
 #### 1. Range Assignor
 * **How It Works**: Divides the sorted list of partitions into contiguous ranges and assigns each range to a consumer. The assignment is sequential based on the sorted order of consumer IDs.
-* **Key Points**: Simple and predictable; however, it can lead to imbalanced workloads if the number of partitions is not a multiple of the number of consumers. It is still the first (primary) default assignor.
-* **Example Scenario**: Imagine a topic with 12 partitions (P0 to P11) and 3 consumers (C0, C1, C2). The assignment might look like this: C0: P0, P1, P2, P3   -   C1: P4, P5, P6, P7  -  C2: P8, P9, P10, P11
+* **Key Points**: Simple and predictable. However, it can lead to imbalanced workloads if the number of partitions is not a multiple of the number of consumers. It is still the first (primary) default assignor.
+* **Example Scenario**: Imagine a topic with 12 partitions (P0 to P11) and 3 consumers (C0, C1, C2). The assignment might look like this: 
+```
+C0: P0, P1, P2, P3   
+C1: P4, P5, P6, P7   
+C2: P8, P9, P10, P11
+```
 
 #### 2. Round Robin Assignor
 * **How It Works**: Assigns partitions to consumers in a round-robin fashion across all consumers, ensuring each consumer gets a partition before any consumer gets a second one.
 * **Key Points**: Provides better load balancing compared to the Range Assignor, especially when the number of partitions is not evenly divisible by the number of consumers. However, it can lead to rebalancing when consumers are added or removed.
-* **Example Scenario**: Using the same topic with 12 partitions (P0 to P11) and 3 consumers (C0, C1, C2), the assignment would be: C0: P0, P3, P6, P9   -   C1: P1, P4, P7, P10   -   C2: P2, P5, P8, P11
-
+* **Example Scenario**: Using the same topic with 12 partitions (P0 to P11) and 3 consumers (C0, C1, C2), the assignment would be: 
+```
+C0: P0, P3, P6, P9
+C1: P1, P4, P7, P10 
+C2: P2, P5, P8, P11
+```
 #### 3. Sticky Assignor
 * **How It Works**: Aims to maintain a sticky relationship between consumers and partitions across rebalances, minimizing the number of partitions that get reassigned to different consumers.
-* **Key Points**: Reduces the amount of data that needs to be re-fetched when partitions are reassigned; offers a good balance between fairness and stability. It was introduced in Kafka 0.11 and is not the default (the default list is Range + CooperativeSticky).
-* **Example Scenario**: After an initial assignment, if a new consumer (C3) joins, the Sticky Assignor would try to minimize partition movement. It might reassign only a few partitions from the existing consumers to the new one, like this: C0: P0, P3, P6   -   C1: P1, P4, P7   -   C2: P2, P5, P11   -   C3: P8, P9, P10
+* **Key Points**: Reduces the amount of data that needs to be re-fetched when partitions are reassigned. Offers a good balance between fairness and stability. It was introduced in Kafka 0.11 and is not the default (the default list is Range + CooperativeSticky).
+* **Example Scenario**: After an initial assignment, if a new consumer (C3) joins, the Sticky Assignor would try to minimize partition movement. It might reassign only a few partitions from the existing consumers to the new one, like this: 
+```
+C0: P0, P3, P6
+C1: P1, P4, P7
+C2: P2, P5, P11
+C3: P8, P9, P10
+```
 
 #### 4. Cooperative Sticky Assignor
 * **How It Works**: Similar to the Sticky Assignor but allows for more cooperative rebalancing. It minimizes the impact on consumers by only reassigning partitions that need to be moved instead of revoking all partitions and redistributing them.
@@ -56,7 +71,7 @@ A `PartitionAssignor` is a class that, given consumers and the topics they subsc
 
 #### `max.poll.interval.ms`
 - **Default**: 300000 (5 minutes)
-- **Description**: Maximum delay between invocations of poll() when using consumer group management. Exceeding this will cause the consumer to leave the group.
+- **Description**: Maximum delay between invocations of poll() when using consumer group management. Exceeding this will cause the consumer to **leave the group**.
 - **Trade-offs**: Higher values provide more leeway for processing, but risk slower recovery from failures.
 
 #### `max.poll.records`
@@ -71,8 +86,24 @@ A `PartitionAssignor` is a class that, given consumers and the topics they subsc
 
 #### `auto.offset.reset`
 - **Default**: latest
-- **Description**: Controls the action when no initial offset is found for a consumer's group. Options are "earliest", "latest", or "none" (throws an exception); Kafka 4.0 also adds `by_duration:<duration>`.
-- **Trade-offs**: "earliest" may result in more data being processed, "latest" might miss messages if the consumer is down.
+- **Description**: Controls the action when no initial offset is found for a consumer's group. Options are `earliest`, `latest`, or `none` (throws an exception). Kafka 4.0 also adds `by_duration:<duration>`.
+- **Trade-offs**: `earliest` may result in more data being processed, `latest` might miss messages if the consumer is down.
+```
+
+1. Consumer has no committed offset (or offset is out of range)
+
+2. auto.offset.reset=by_duration:PT24H triggers
+
+3. Consumer calculates target timestamp:
+   target = System.currentTimeMillis() - duration
+
+4. Consumer calls:
+   consumer.offsetsForTimes({partition → target_timestamp})
+   → broker looks up offset by timestamp index (.timeindex file)
+
+5. Consumer seeks to that offset
+   → starts consuming from ~24 hours ago
+```
 
 #### `fetch.min.bytes`
 - **Default**: 1
@@ -90,7 +121,7 @@ A `PartitionAssignor` is a class that, given consumers and the topics they subsc
 - **Trade-offs**: Higher values allow more data to be fetched in a single request, affecting memory usage.
 
 #### `session.timeout.ms`
-- **Default**: 45000 (45 seconds; was 10 seconds before Kafka 3.0)
+- **Default**: 45000 (45 seconds. Was 10 seconds before Kafka 3.0)
 - **Description**: Time used to detect consumer failures. If no heartbeat is received within this time, the consumer is considered dead.
 - **Trade-offs**: Lower values make detection faster but may cause unnecessary rebalances.
 
@@ -101,11 +132,11 @@ A `PartitionAssignor` is a class that, given consumers and the topics they subsc
 
 #### `isolation.level`
 - **Default**: read_uncommitted
-- **Description**: Controls visibility of transactional messages. "read_committed" filters out transactions not yet committed.
-- **Trade-offs**: "read_committed" ensures cleaner data at the cost of potential latency.
+- **Description**: Controls visibility of transactional messages. `read_committed` filters out transactions not yet committed.
+- **Trade-offs**: `read_committed` ensures cleaner data at the cost of potential latency.
 
 #### `partition.assignment.strategy`
-- **Default**: [org.apache.kafka.clients.consumer.RangeAssignor, org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+- **Default**: ``[org.apache.kafka.clients.consumer.RangeAssignor, org.apache.kafka.clients.consumer.CooperativeStickyAssignor]``
 - **Description**: Determines the strategy for partition assignment among consumers.
 - **Trade-offs**: Different strategies can optimize for fairness or throughput.
 
@@ -118,7 +149,7 @@ A `PartitionAssignor` is a class that, given consumers and the topics they subsc
 
 #### Understanding Consumer Behavior
 
-- **Subscription Types**: Kafka consumers can subscribe to topics in different ways, such as by specific topic names, pattern matching on topic names, or direct partition assignment. (e.g. `consumer.subscribe(Pattern.compile(".*topic"));` and `consumer.subscribe(Arrays.asList("orders-topic", "customers-topic", "sales-topic", "stocks-topic"));`)
+- **Subscription Types**: Kafka consumers can subscribe to topics in different ways, such as by specific topic names, pattern matching on topic names, or direct partition assignment. (e.g. `consumer.subscribe(Pattern.compile(".*topic"));` and `consumer.subscribe(List.of("orders-topic", "customers-topic", "sales-topic", "stocks-topic"));`)
 - **Polling Process**: Inside the consumer's `poll()` call, several checks and operations occur, including heartbeat checks, subscription updates, and potentially triggering rebalance if necessary.
 
 #### Consumer Rebalancing Triggers
@@ -173,6 +204,8 @@ The **group coordinator** is a designated **broker** that receives heartbeats fr
 
 When a consumer wishes to join a `consumer group`, it sends a `JoinGroup` request to the group coordinator. The first consumer to join the group is appointed as the group leader.
 
+<img src="./../img/kafka-group-leader.svg" alt="Kafka request lifecycle" width="1200" height="1600">
+
 #### Key Points:
 
 1. **Definition**:
@@ -213,7 +246,7 @@ When a consumer has the wrong partition leader, it sends a metadata request to a
 
 ### Security Considerations
 
-- **Encryption and Authentication**: Secure consumer connections to Kafka brokers using SSL/TLS for encryption and SASL for authentication to protect data in transit and ensure that only authorized consumers can access topic data.
+- **Encryption and Authentication**: Secure consumer connections to Kafka brokers using `SSL/TLS` for encryption and `SASL` for authentication to protect data in transit and ensure that only authorized consumers can access topic data.
 
 
 ## `subscribe()` vs `assign()` (CCDAK)
@@ -234,22 +267,22 @@ When a consumer has the wrong partition leader, it sends a metadata request to a
 
 | Guarantee | How it happens |
 |---|---|
-| **At-most-once** | Offset committed **before** processing; a crash loses messages |
-| **At-least-once** (default pattern) | Offset committed **after** processing; a crash causes reprocessing → duplicates. Make processing idempotent |
-| **Exactly-once** | Idempotent producer + transactions (`transactional.id`) with consumers on `isolation.level=read_committed`; Kafka Streams `processing.guarantee=exactly_once_v2`; or idempotent sink writes (offset stored with the result) |
+| **At-most-once** | Offset committed **before** processing. A crash loses messages |
+| **At-least-once** (default pattern) | Offset committed **after** processing. A crash causes reprocessing → duplicates. Make processing idempotent |
+| **Exactly-once** | Idempotent producer + transactions (`transactional.id`) with consumers on `isolation.level=read_committed`. Kafka Streams `processing.guarantee=exactly_once_v2`, or idempotent sink writes (offset stored with the result) |
 
 - `enable.auto.commit=true` commits on `poll()` every `auto.commit.interval.ms` — effectively at-least-once, but can lose data if processing is async/threaded.
-- Manual: `commitSync()` (blocking, retries) vs `commitAsync()` (non-blocking, no retry; use callback). Common pattern: `commitAsync` in loop, `commitSync` in `finally`/on shutdown.
+- Manual: `commitSync()` (blocking, retries) vs `commitAsync()` (non-blocking, no retry, use callback). Common pattern: `commitAsync` in loop, `commitSync` in `finally`/on shutdown.
 
 ## Deserialization and Error Handling (CCDAK)
 
 - Consumer needs `key.deserializer` and `value.deserializer` (**required**) — must match the producer's serializer (e.g. `StringDeserializer`, `IntegerDeserializer`, `ByteArrayDeserializer`, `KafkaAvroDeserializer`).
-- Custom deserializer: implement `org.apache.kafka.common.serialization.Deserializer<T>` (`deserialize(String topic, byte[] data)`); `Serde<T>` bundles serializer + deserializer (used in Streams).
+- Custom deserializer: implement `org.apache.kafka.common.serialization.Deserializer<T>` (`deserialize(String topic, byte[] data)`). `Serde<T>` bundles serializer + deserializer (used in Streams).
 - **Poison pill**: a record that cannot be deserialized throws `RecordDeserializationException` (older: `SerializationException`) from `poll()` and the consumer gets stuck on that offset. Handle by: catching it and `seek()`-ing past the offset, using `ByteArrayDeserializer` and deserializing manually (send failures to a **dead letter topic**), or `ErrorHandlingDeserializer` (Spring).
 - Typical consumer exceptions:
-  - `CommitFailedException` — group rebalanced (e.g. `max.poll.interval.ms` exceeded) before commit; the partition now belongs to another consumer.
-  - `OffsetOutOfRangeException` — requested offset not in log (deleted by retention); behaviour governed by `auto.offset.reset`.
-  - `WakeupException` — thrown by `poll()` after `consumer.wakeup()` (only thread-safe method); used for clean shutdown.
+  - `CommitFailedException` — group rebalanced (e.g. `max.poll.interval.ms` exceeded) before commit. The partition now belongs to another consumer.
+  - `OffsetOutOfRangeException` — requested offset not in log (deleted by retention). behaviour governed by `auto.offset.reset`.
+  - `WakeupException` — thrown by `poll()` after `consumer.wakeup()` (only thread-safe method). Used for clean shutdown.
   - `RebalanceInProgressException`, `TimeoutException` (`default.api.timeout.ms`), `AuthorizationException`.
 - Use a **retry topic + dead-letter topic (DLT)** pattern for records that fail processing, instead of blocking the partition.
 
