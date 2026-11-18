@@ -1069,7 +1069,7 @@
         store.set('ccdak_theme', t)
     }
 
-    setTheme(store.get('ccdak_theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    setTheme(store.get('ccdak_theme', 'light'));
     $('#theme').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
     $('#menu').onclick = () => document.body.classList.toggle('menu');
 
