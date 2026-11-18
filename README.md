@@ -3,6 +3,7 @@
 <img src="./img/img.png" alt="Kafka SSL FLOW">
 
 Study material for the **Confluent Certified Developer for Apache Kafka** exam: topic summaries, practice questions and full mock exams, also available as an interactive website.
+Every question validated and checked by human :)
 
 🌐 **Website:** https://albi23.github.io/ccdak-certification/
 
