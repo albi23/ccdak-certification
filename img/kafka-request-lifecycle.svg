@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="2200" viewBox="0 0 1400 2200">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8b949e"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3fb950"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+    <style>
+      text { font-family: 'Courier New', Courier, monospace; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="2200" fill="#0d1117"/>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION TITLE 1 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <text x="30" y="38" font-size="17" font-weight="bold" fill="#f0883e">① PRODUCER → BROKER  (PRODUCE REQUEST)</text>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- PRODUCER CLIENT BOX -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <rect x="30" y="48" width="1340" height="130" rx="6" fill="#0d1b2e" stroke="#1f3a5f" stroke-width="2"/>
+  <text x="50" y="68" font-size="13" font-weight="bold" fill="#58a6ff">PRODUCER CLIENT</text>
+  <text x="50" y="90"  font-size="12" fill="#8b949e">1.  Serialize key+value  →  Partitioner (murmur2 hash / sticky for null keys)  →  RecordAccumulator (batch per partition)</text>
+  <text x="50" y="108" font-size="12" fill="#8b949e">2.  Sender thread drains batch when  batch.size  OR  linger.ms  threshold is reached</text>
+  <text x="50" y="126" font-size="12" fill="#8b949e">3.  Metadata cache: leader for partition N = broker B2  →  open TCP connection to B2</text>
+  <text x="50" y="144" font-size="12" fill="#8b949e">4.  NOT_LEADER_OR_FOLLOWER error  →  refresh metadata  →  retry to new leader</text>
+
+  <!-- Arrow: Producer → Broker -->
+  <line x1="700" y1="178" x2="700" y2="208" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="715" y="197" font-size="12" fill="#8b949e">ProduceRequest (TCP)</text>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- BROKER OUTER BOX (PRODUCER SIDE) -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <rect x="30" y="212" width="1340" height="790" rx="6" fill="#100820" stroke="#2d1b4e" stroke-width="2"/>
+  <text x="50" y="232" font-size="13" font-weight="bold" fill="#bc8cff">BROKER B2 — LEADER for partition N</text>
+
+  <!-- NETWORK LAYER box -->
+  <rect x="50" y="242" width="620" height="80" rx="4" fill="#1e1a00" stroke="#3d2e00" stroke-width="1.5"/>
+  <text x="68" y="260" font-size="12" font-weight="bold" fill="#e3b341">NETWORK LAYER  (num.network.threads = 3)</text>
+  <text x="68" y="278" font-size="12" fill="#8b949e">Acceptor thread  →  Processor threads (NIO, non-blocking)</text>
+  <text x="68" y="296" font-size="12" fill="#8b949e">reads bytes from socket, deserializes request header  →  puts Request on requestQueue</text>
+
+  <!-- requestQueue box -->
+  <rect x="720" y="258" width="160" height="40" rx="4" fill="#0d2200" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="740" y="273" font-size="12" font-weight="bold" fill="#3fb950">requestQueue</text>
+  <text x="740" y="289" font-size="11" fill="#8b949e">(bounded)</text>
+
+  <!-- Arrow network → requestQueue -->
+  <line x1="670" y1="278" x2="718" y2="278" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow requestQueue → IO threads -->
+  <line x1="800" y1="298" x2="800" y2="338" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- I/O HANDLER THREADS box -->
+  <rect x="50" y="340" width="1300" height="250" rx="4" fill="#1e1a00" stroke="#3d2e00" stroke-width="1.5"/>
+  <text x="68" y="360" font-size="12" font-weight="bold" fill="#e3b341">I/O REQUEST HANDLER THREADS  (num.io.threads = 8)</text>
+
+  <!-- Step A -->
+  <text x="68" y="382" font-size="12" fill="#8b949e">Step A:</text>
+  <text x="120" y="382" font-size="12" fill="#c9d1d9">Validate request format &amp; API version</text>
+
+  <!-- Step B ACL -->
+  <rect x="62" y="390" width="560" height="22" rx="3" fill="#200000" stroke="#3d0000" stroke-width="1"/>
+  <text x="68" y="405" font-size="12" fill="#8b949e">Step B:</text>
+  <text x="120" y="405" font-size="12" fill="#f85149">ACL check — principal allowed to WRITE?   →  TOPIC_AUTHORIZATION_FAILED if denied</text>
+
+  <!-- Step C Quota -->
+  <rect x="62" y="416" width="560" height="22" rx="3" fill="#200000" stroke="#3d0000" stroke-width="1"/>
+  <text x="68" y="431" font-size="12" fill="#8b949e">Step C:</text>
+  <text x="120" y="431" font-size="12" fill="#f85149">Quota check — producer byte-rate quota   →  throttle delay injected if exceeded</text>
+
+  <!-- Step D -->
+  <text x="68" y="453" font-size="12" fill="#8b949e">Step D:</text>
+  <text x="120" y="453" font-size="12" fill="#c9d1d9">Idempotence / transaction state check  (producer epoch, sequence numbers dedup)</text>
+
+  <!-- Step E Log -->
+  <rect x="62" y="461" width="680" height="22" rx="3" fill="#031a03" stroke="#0d2d0d" stroke-width="1"/>
+  <text x="68" y="476" font-size="12" fill="#8b949e">Step E:</text>
+  <text x="120" y="476" font-size="12" fill="#3fb950">Append records to leader log  (OS page cache write  →  .log segment file on disk)</text>
+
+  <!-- acks branching -->
+  <text x="68" y="502" font-size="12" fill="#e3b341">acks=0</text>
+  <text x="120" y="502" font-size="12" fill="#8b949e">→  respond immediately (fire &amp; forget, no durability)</text>
+  <text x="68" y="520" font-size="12" fill="#e3b341">acks=1</text>
+  <text x="120" y="520" font-size="12" fill="#8b949e">→  respond after leader write confirmed (leader-only durability)</text>
+  <text x="68" y="538" font-size="12" fill="#e3b341">acks=all</text>
+  <text x="128" y="538" font-size="12" fill="#8b949e">→  enter PURGATORY  ↓  (wait for all ISR replicas)</text>
+  <text x="68" y="556" font-size="12" fill="#c9d1d9">Response placed on responseQueue  →  network processor thread  →  TCP socket  →  Producer</text>
+  <text x="68" y="572" font-size="12" fill="#8b949e">ProduceResponse: { baseOffset, errorCode, logAppendTime }</text>
+
+  <!-- Arrow IO → Purgatory -->
+  <line x1="700" y1="592" x2="700" y2="618" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PURGATORY box -->
+  <rect x="50" y="620" width="1300" height="68" rx="4" fill="#031a1a" stroke="#0d2d2d" stroke-width="1.5"/>
+  <text x="68" y="640" font-size="12" font-weight="bold" fill="#39d353">PURGATORY  (delayed produce — acks=all only)</text>
+  <text x="68" y="658" font-size="12" fill="#8b949e">Wait until ALL ISR replicas have replicated the records  OR  request.timeout.ms expires</text>
+  <text x="68" y="676" font-size="12" fill="#f85149">min.insync.replicas enforced:  if  |ISR| &lt; threshold  →  NotEnoughReplicasException</text>
+
+  <!-- Arrow Purgatory → Followers -->
+  <line x1="700" y1="688" x2="700" y2="716" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="715" y="708" font-size="11" fill="#8b949e">ISR replicas pull via FETCH (like consumers)</text>
+
+  <!-- Follower boxes side by side -->
+  <rect x="50"  y="720" width="610" height="58" rx="4" fill="#0a1a0a" stroke="#1a2d1a" stroke-width="1.5"/>
+  <text x="68"  y="740" font-size="12" font-weight="bold" fill="#56d364">Broker B1  (ISR follower)</text>
+  <text x="68"  y="758" font-size="12" fill="#8b949e">pulls records from leader log  →  appends to replica  →  sends implicit FETCH ACK</text>
+  <text x="68"  y="772" font-size="11" fill="#56d364">LEO advances  →  leader updates ISR watermark</text>
+
+  <rect x="720" y="720" width="610" height="58" rx="4" fill="#0a1a0a" stroke="#1a2d1a" stroke-width="1.5"/>
+  <text x="738" y="740" font-size="12" font-weight="bold" fill="#56d364">Broker B3  (ISR follower)</text>
+  <text x="738" y="758" font-size="12" fill="#8b949e">pulls records from leader log  →  appends to replica  →  sends implicit FETCH ACK</text>
+  <text x="738" y="772" font-size="11" fill="#56d364">LEO advances  →  leader updates ISR watermark</text>
+
+  <!-- Arrow followers → HW -->
+  <line x1="700" y1="778" x2="700" y2="808" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <text x="715" y="797" font-size="11" fill="#3fb950">all ISR replicas ACKed  →  High Watermark (HW) advances</text>
+
+  <!-- Response line -->
+  <text x="50" y="830" font-size="12" fill="#c9d1d9">Purgatory releases request  →  responseQueue  →  network thread  →  TCP  →  Producer client</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION TITLE 2 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <text x="30" y="1070" font-size="17" font-weight="bold" fill="#f0883e">② CONSUMER → BROKER  (FETCH REQUEST)</text>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- CONSUMER CLIENT BOX -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <rect x="30" y="1080" width="1340" height="130" rx="6" fill="#0d1b2e" stroke="#1f3a5f" stroke-width="2"/>
+  <text x="50" y="1100" font-size="13" font-weight="bold" fill="#58a6ff">CONSUMER CLIENT</text>
+  <text x="50" y="1122" font-size="12" fill="#8b949e">1.  poll() called  →  check partitions assigned by group coordinator (or static assignment via assign())</text>
+  <text x="50" y="1140" font-size="12" fill="#8b949e">2.  Fetch from  committed offset + 1   (or auto.offset.reset = earliest/latest  if no committed offset exists)</text>
+  <text x="50" y="1158" font-size="12" fill="#8b949e">3.  Metadata cache: leader for partition N = broker B2  →  FetchRequest sent over TCP</text>
+  <text x="50" y="1176" font-size="12" fill="#8b949e">4.  client.rack + replica.selector.class configured  →  fetch from nearest follower  (KIP-392, Kafka 2.4+)</text>
+
+  <!-- Arrow Consumer → Broker -->
+  <line x1="700" y1="1210" x2="700" y2="1240" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="715" y="1229" font-size="12" fill="#8b949e">FetchRequest (TCP)</text>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- BROKER OUTER BOX (CONSUMER SIDE) -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <rect x="30" y="1244" width="1340" height="830" rx="6" fill="#100820" stroke="#2d1b4e" stroke-width="2"/>
+  <text x="50" y="1264" font-size="13" font-weight="bold" fill="#bc8cff">BROKER B2 — LEADER for partition N  (or elected follower via KIP-392)</text>
+
+  <!-- NETWORK LAYER box consumer -->
+  <rect x="50" y="1274" width="620" height="66" rx="4" fill="#1e1a00" stroke="#3d2e00" stroke-width="1.5"/>
+  <text x="68" y="1292" font-size="12" font-weight="bold" fill="#e3b341">NETWORK LAYER  (num.network.threads = 3)</text>
+  <text x="68" y="1310" font-size="12" fill="#8b949e">Acceptor thread  →  Processor threads (NIO)</text>
+  <text x="68" y="1328" font-size="12" fill="#8b949e">reads socket  →  deserializes header  →  places on requestQueue</text>
+
+  <!-- requestQueue box consumer -->
+  <rect x="720" y="1284" width="160" height="40" rx="4" fill="#0d2200" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="740" y="1299" font-size="12" font-weight="bold" fill="#3fb950">requestQueue</text>
+  <text x="740" y="1315" font-size="11" fill="#8b949e">(bounded)</text>
+
+  <!-- Arrow net → queue consumer -->
+  <line x1="670" y1="1308" x2="718" y2="1308" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow queue → IO consumer -->
+  <line x1="800" y1="1324" x2="800" y2="1358" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- I/O HANDLER THREADS box consumer -->
+  <rect x="50" y="1360" width="1300" height="286" rx="4" fill="#1e1a00" stroke="#3d2e00" stroke-width="1.5"/>
+  <text x="68" y="1380" font-size="12" font-weight="bold" fill="#e3b341">I/O REQUEST HANDLER THREADS  (num.io.threads = 8)</text>
+
+  <!-- Step A consumer -->
+  <text x="68" y="1402" font-size="12" fill="#8b949e">Step A:</text>
+  <text x="120" y="1402" font-size="12" fill="#c9d1d9">Validate request format &amp; API version</text>
+
+  <!-- Step B ACL consumer -->
+  <rect x="62" y="1410" width="560" height="22" rx="3" fill="#200000" stroke="#3d0000" stroke-width="1"/>
+  <text x="68" y="1425" font-size="12" fill="#8b949e">Step B:</text>
+  <text x="120" y="1425" font-size="12" fill="#f85149">ACL check — principal allowed to READ?   →  TOPIC_AUTHORIZATION_FAILED if denied</text>
+
+  <!-- Step C Quota consumer -->
+  <rect x="62" y="1436" width="480" height="22" rx="3" fill="#200000" stroke="#3d0000" stroke-width="1"/>
+  <text x="68" y="1451" font-size="12" fill="#8b949e">Step C:</text>
+  <text x="120" y="1451" font-size="12" fill="#f85149">Quota check — consumer byte-rate quota   →  throttle if exceeded</text>
+
+  <!-- Step D HW check -->
+  <rect x="62" y="1462" width="860" height="38" rx="3" fill="#031a03" stroke="#0d2d0d" stroke-width="1"/>
+  <text x="68" y="1477" font-size="12" fill="#8b949e">Step D:</text>
+  <text x="120" y="1477" font-size="12" fill="#3fb950">Check requested offset ≤ High Watermark (HW)  —  consumer cannot see un-replicated records</text>
+  <text x="120" y="1493" font-size="12" fill="#39d353">    isolation.level=read_committed  →  further limit to  Last Stable Offset (LSO)  — hides open txn records</text>
+
+  <!-- Step E Read log -->
+  <rect x="62" y="1504" width="680" height="22" rx="3" fill="#031a03" stroke="#0d2d0d" stroke-width="1"/>
+  <text x="68" y="1519" font-size="12" fill="#8b949e">Step E:</text>
+  <text x="120" y="1519" font-size="12" fill="#3fb950">Read records from log segment  (index lookup: offset  →  physical file position)</text>
+
+  <!-- bytes branching -->
+  <text x="68" y="1545" font-size="12" fill="#c9d1d9">bytes available ≥ fetch.min.bytes</text>
+  <text x="286" y="1545" font-size="12" fill="#8b949e">→  respond immediately with available records</text>
+  <text x="68" y="1563" font-size="12" fill="#c9d1d9">bytes available &lt; fetch.min.bytes</text>
+  <text x="284" y="1563" font-size="12" fill="#8b949e">→  enter PURGATORY  ↓</text>
+
+  <text x="68" y="1588" font-size="12" fill="#c9d1d9">Response placed on responseQueue  →  network processor thread  →  TCP socket  →  Consumer</text>
+  <text x="68" y="1606" font-size="12" fill="#8b949e">FetchResponse: { records[], highWatermark, lastStableOffset, errorCode }</text>
+  <text x="68" y="1624" font-size="12" fill="#39d353">zero-copy path:  sendfile()  —  OS page cache  →  socket buffer  (no userspace copy)</text>
+  <text x="68" y="1642" font-size="12" fill="#8b949e">If data already evicted from page cache  →  read from disk .log segment, OS re-caches it</text>
+
+  <!-- Arrow IO → Purgatory consumer -->
+  <line x1="700" y1="1648" x2="700" y2="1676" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PURGATORY box consumer -->
+  <rect x="50" y="1678" width="1300" height="68" rx="4" fill="#031a1a" stroke="#0d2d2d" stroke-width="1.5"/>
+  <text x="68" y="1698" font-size="12" font-weight="bold" fill="#39d353">PURGATORY  (delayed fetch)</text>
+  <text x="68" y="1716" font-size="12" fill="#8b949e">Wait until  fetch.min.bytes  worth of data is available   OR   fetch.max.wait.ms  expires  (default 500 ms)</text>
+  <text x="68" y="1734" font-size="12" fill="#8b949e">New produce / HW advance event wakes up all waiting fetch requests matching that partition</text>
+
+  <!-- Arrow Purgatory → response -->
+  <line x1="700" y1="1746" x2="700" y2="1776" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- BACK ON CONSUMER CLIENT box -->
+  <rect x="50" y="1778" width="1300" height="258" rx="4" fill="#0d1b2e" stroke="#1f3a5f" stroke-width="1.5"/>
+  <text x="68" y="1798" font-size="12" font-weight="bold" fill="#58a6ff">BACK ON CONSUMER CLIENT  —  FetchResponse received</text>
+  <text x="68" y="1820" font-size="12" fill="#8b949e">1.  Decompress batch  (if compression.type = snappy / lz4 / gzip / zstd was set by producer)</text>
+  <text x="68" y="1838" font-size="12" fill="#8b949e">2.  Deserialize key + value  (using configured key.deserializer / value.deserializer)</text>
+  <text x="68" y="1856" font-size="12" fill="#8b949e">3.  Run ConsumerInterceptors  (onConsume hook)</text>
+  <text x="68" y="1874" font-size="12" fill="#c9d1d9">4.  Return ConsumerRecords to application code  (from poll())</text>
+  <text x="68" y="1892" font-size="12" fill="#c9d1d9">5.  Application processes each record</text>
+  <text x="68" y="1910" font-size="12" fill="#c9d1d9">6.  Commit offsets:</text>
+  <text x="90" y="1928" font-size="12" fill="#8b949e">enable.auto.commit=true  →  auto-commit on next poll() after auto.commit.interval.ms</text>
+  <text x="90" y="1946" font-size="12" fill="#8b949e">commitSync()             →  blocks until broker confirms, retries on retriable errors</text>
+  <text x="90" y="1964" font-size="12" fill="#8b949e">commitAsync()           →  non-blocking, no automatic retry (use callback for errors)</text>
+  <text x="68" y="1982" font-size="12" fill="#39d353">OffsetCommitRequest  →  group coordinator broker  →  written to __consumer_offsets  (compacted topic)</text>
+  <text x="68" y="2000" font-size="11" fill="#8b949e">   committed offset = last-processed-offset + 1  (points to NEXT record to read on restart)</text>
+  <text x="68" y="2020" font-size="12" fill="#f85149">⚠  commit AFTER processing  →  at-least-once    |    commit BEFORE processing  →  at-most-once</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LEGEND -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <rect x="30" y="2060" width="1340" height="118" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="50" y="2080" font-size="13" font-weight="bold" fill="#c9d1d9">LEGEND</text>
+
+  <!-- row 1 -->
+  <rect x="50"  y="2090" width="14" height="14" fill="#0d1b2e" stroke="#1f3a5f" stroke-width="1.5"/>
+  <text x="70"  y="2102" font-size="12" fill="#58a6ff">Client (Producer / Consumer)</text>
+
+  <rect x="280" y="2090" width="14" height="14" fill="#100820" stroke="#2d1b4e" stroke-width="1.5"/>
+  <text x="300" y="2102" font-size="12" fill="#bc8cff">Broker internals</text>
+
+  <rect x="480" y="2090" width="14" height="14" fill="#1e1a00" stroke="#3d2e00" stroke-width="1.5"/>
+  <text x="500" y="2102" font-size="12" fill="#e3b341">Thread pools / queues</text>
+
+  <rect x="700" y="2090" width="14" height="14" fill="#200000" stroke="#3d0000" stroke-width="1.5"/>
+  <text x="720" y="2102" font-size="12" fill="#f85149">ACL / Quota check</text>
+
+  <!-- row 2 -->
+  <rect x="50"  y="2116" width="14" height="14" fill="#031a03" stroke="#0d2d0d" stroke-width="1.5"/>
+  <text x="70"  y="2128" font-size="12" fill="#3fb950">Log / storage / HW</text>
+
+  <rect x="280" y="2116" width="14" height="14" fill="#031a1a" stroke="#0d2d2d" stroke-width="1.5"/>
+  <text x="300" y="2128" font-size="12" fill="#39d353">Purgatory (wait zone)</text>
+
+  <rect x="480" y="2116" width="14" height="14" fill="#0a1a0a" stroke="#1a2d1a" stroke-width="1.5"/>
+  <text x="500" y="2128" font-size="12" fill="#56d364">Follower replicas</text>
+
+  <rect x="700" y="2116" width="14" height="14" fill="#0d1117" stroke="#8b949e" stroke-width="1.5"/>
+  <line x1="715" y1="2130" x2="740" y2="2130" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="745" y="2133" font-size="12" fill="#8b949e">Flow / data direction</text>
+
+  <text x="1000" y="2128" font-size="11" fill="#8b949e">Kafka 4.x / KRaft mode  |  CCDAK exam reference</text>
+
+</svg>
