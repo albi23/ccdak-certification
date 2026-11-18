@@ -94,7 +94,12 @@ Access Control Lists (ACLs) provide essential authorization controls for your en
 To set the required ACLs to allow a specific user "Andoni" to read and write to the topic "test-topic" from host "test-host," use the following command:
 
 ```sh
-bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config admin.properties --add --allow-principal User:Andoni --allow-host test-host --operation read --operation write --topic test-topic
+bin/kafka-acls.sh --bootstrap-server localhost:9092 
+                  --command-config admin.properties  --add 
+                  --allow-principal User:Andoni 
+                  --allow-host test-host 
+                  --operation read 
+                  --operation write --topic test-topic
 ```
 
 #### Comprehensive Security Model
@@ -152,7 +157,8 @@ security.inter.broker.protocol=SASL_SSL
 
 ### Kafka Security Diagram
 
-<img src="./../img/kafka_ssl_sasl_flow.svg" alt="Kafka SSL FLOW">
+<img src="../img/kafka_ssl_sasl_flow.svg" alt="Kafka SSL FLOW" width="1400" height="1338">
+
 In legacy ZooKeeper clusters, ZooKeeper supported configurations like:
 
 ```
