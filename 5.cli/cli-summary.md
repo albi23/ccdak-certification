@@ -1,6 +1,8 @@
 # Kafka CLI Tools Overview
 > **Updated for Apache Kafka 4.2 (KRaft mode only)**
+> 
 > Source: kafka.apache.org/42 | Kafka: The Definitive Guide 2nd Edition
+> 
 > ⚠️ ZooKeeper has been completely removed in Kafka 4.0+. Only KRaft mode is supported.
 
 ---
@@ -19,25 +21,40 @@ kafka-topics.sh --bootstrap-server localhost:9092 \
 
 # List all topics
 kafka-topics.sh --bootstrap-server localhost:9092 --list
+```
 
-# Describe a topic
+### Describe a topic
+```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
   --describe --topic my-topic
 
-# Alter (increase) partitions — can only be increased, never decreased!
+# Result:
+Topic: topic-name     TopicId: 4n-O8CRiSYqsQ5qvbeiCgQ PartitionCount: 2       ReplicationFactor: 1    Configs: max.message.bytes=104857600
+        Topic: topic-name     Partition: 0    Leader: 1       Replicas: 1     Isr: 1
+        Topic: topic-name     Partition: 1    Leader: 1       Replicas: 1     Isr: 1
+
+```
+### Alter (increase) partitions — can only be increased, never decreased!
+```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
   --alter --topic my-topic \
   --partitions 12
+```
 
-# Delete a topic
+### Delete a topic
+```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
   --delete --topic my-topic
+```
 
-# Find under-replicated partitions
+### Find under-replicated partitions
+```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
   --describe --under-replicated-partitions
+```
 
-# Find unavailable partitions
+### Find unavailable partitions
+```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
   --describe --unavailable-partitions
 ```
@@ -100,41 +117,56 @@ kafka-console-producer.sh \
 ### 3. `kafka-console-consumer.sh`
 Consumes messages from a Kafka topic and displays them to standard output.
 
+
+### Consume from beginning
 ```bash
-# Consume from beginning
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic my-topic \
   --from-beginning
+```
 
-# Consume with consumer group
+### Consume with consumer group
+```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic my-topic \
   --group my-group
+```
 
-# Print key, value and timestamp
+### Print key, value and timestamp
+```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic my-topic \
   --property print.key=true \
   --property print.timestamp=true \
   --property print.offset=true
+```
 
-# Consume from specific partition and offset
+### Consume from specific partition and offset
+```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic my-topic \
   --partition 0 \
   --offset 100
-
-# Consume internal __consumer_offsets topic
+```
+### Consume internal __consumer_offsets topic
+```
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic __consumer_offsets \
   --formatter "kafka.coordinator.group.GroupMetadataManager\$OffsetsMessageFormatter" \
   --consumer-property exclude.internal.topics=false \
   --from-beginning
+
+#Result:
+[console-group-name,test-topic,1]::OffsetAndMetadata(offset=2, leaderEpoch=Optional[0], metadata=, commitTimestamp=1795122258015, expireTimestamp=None)
+[console-group-name,test-topic,0]::OffsetAndMetadata(offset=1, leaderEpoch=Optional[0], metadata=, commitTimestamp=1795122258015, expireTimestamp=None)
+[console-group-name,test-topic,1]::OffsetAndMetadata(offset=2, leaderEpoch=Optional[0], metadata=, commitTimestamp=1795122263014, expireTimestamp=None)
+[console-group-name,test-topic,0]::OffsetAndMetadata(offset=1, leaderEpoch=Optional[0], metadata=, commitTimestamp=1795122263014, expireTimestamp=None)
+
 ```
 
 | Flag | Description |
@@ -161,26 +193,37 @@ Manages Kafka consumer groups: listing, describing, deleting, and resetting offs
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --list
-
-# Describe a consumer group (shows LAG!)
+```
+### Describe a consumer group (shows LAG!)
+```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --describe --group my-group
 
-# Delete a consumer group (must be inactive!)
+#Result:
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                           HOST            CLIENT-ID
+console-group   topic-name      0          1               1               0               console-consumer-4d473722-3c52-44ce-b661-e2b022485c75 /127.0.0.1      console-consumer
+console-group   topic-name      1          2               2               0               console-consumer-4d473722-3c52-44ce-b661-e2b022485c75 /127.0.0.1      console-consumer
+  
+```
+### Delete a consumer group (must be inactive!)
+```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --delete --group my-group
+```
 
-# Reset offsets — dry-run (preview only)
+### Reset offsets — dry-run (preview only)
+```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --group my-group \
   --reset-offsets \
   --to-earliest \
   --topic my-topic
-
-# Reset offsets — execute (actual reset)
+```
+### Reset offsets — execute (actual reset)
+```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --group my-group \
@@ -188,8 +231,9 @@ kafka-consumer-groups.sh \
   --to-earliest \
   --all-topics \
   --execute
-
-# Reset to specific datetime
+```
+### Reset to specific datetime
+```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --group my-group \
@@ -237,47 +281,58 @@ kafka-consumer-groups.sh \
 ### 5. `kafka-configs.sh`
 Manages dynamic configuration for brokers, topics, users, and clients.
 
+
+### Describe topic configuration overrides
 ```bash
-# Describe topic configuration overrides
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --describe \
   --entity-type topics \
   --entity-name my-topic
+```
 
-# Set topic retention to 2 weeks
+### Set topic retention to 2 weeks
+```bash
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --alter \
   --entity-type topics \
   --entity-name my-topic \
   --add-config retention.ms=1209600000
+```
 
-# Delete topic configuration override (reverts to broker default)
+### Delete topic configuration override (reverts to broker default)
+```bash
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --alter \
   --entity-type topics \
   --entity-name my-topic \
   --delete-config retention.ms
+```
 
-# Modify specific broker configuration
+### Modify specific broker configuration
+```bash
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --alter \
   --entity-type brokers \
   --entity-name 0 \
   --add-config log.retention.ms=86400000
+```
 
-# Modify default configuration for ALL brokers
+### Modify default configuration for ALL brokers
+```bash
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --alter \
   --entity-type brokers \
   --entity-default \
   --add-config log.retention.ms=86400000
+```
 
-# Set producer quota for a client
+### Set producer quota for a client
+```bash
 kafka-configs.sh \
   --bootstrap-server localhost:9092 \
   --alter \
@@ -345,6 +400,47 @@ kafka-reassign-partitions.sh \
 | `--broker-list` | Target broker IDs for the reassignment. |
 | `--disable-rack-aware` | Disable rack-aware assignment. |
 
+### Full flow — moving leader replica from Broker A → Broker B:
+```
+kafka-reassign-partitions.sh --execute
+        │
+        ▼
+Step 1: ADD Broker B as a new replica (RF temporarily increases)
+        
+        Before:  Leader=A  Replicas=[A, C]  ISR=[A, C]
+        After:   Leader=A  Replicas=[A, C, B]  ISR=[A, C]
+                                          ^^^
+                           B starts replicating from leader A
+        
+        ── Producers/consumers still talk to A (leader) ──
+        ── ZERO interruption ──
+        
+        │
+        ▼
+Step 2: B catches up → joins ISR
+        
+        Leader=A  Replicas=[A, C, B]  ISR=[A, C, B]
+                                               ^^^
+        B is now fully caught up (in ISR)
+        
+        │
+        ▼
+Step 3: Controller triggers preferred leader election
+        
+        Leader switches A → B
+        
+        Leader=B  Replicas=[B, C]  ISR=[B, C]
+        
+        ── Brief leader election: milliseconds ──
+        ── Producers get NOT_LEADER_FOR_PARTITION ──
+        ── Client retries automatically ──
+        
+        │
+        ▼
+Step 4: A is removed from replica list
+        
+        Final:  Leader=B  Replicas=[B, C]  ISR=[B, C]
+```
 ---
 
 ### 7. `kafka-leader-election.sh`

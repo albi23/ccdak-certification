@@ -13,7 +13,7 @@ Kafka topics are categorized into partitions for scalability and replicated acro
   - Repartitioning can disrupt the order of messages in Kafka, primarily because it changes the way records are assigned to partitions.
 - **Variable Message Count:** Partitions do not need to have the same number of messages.
 - **Partition-Specific Offsets:** Offsets only have meaning within a specific partition.
-- **Data Retention:** Messages are kept only for a limited time in Kafka, with the default being one week (`retention.ms` = 604800000, i.e. `log.retention.hours=168`).
+- **Data Retention:** Messages are kept only for a limited time in Kafka, with the default being one week (`retention.ms` = 604.800.000, i.e. `log.retention.hours=168`).
 - **Immutability:** Once data is written to a partition, it cannot be changed.
 - **Partition Assignment:** If a key is provided, the partition is `toPositive(murmur2(key)) % numPartitions`. Records without a key are spread across partitions by the sticky partitioner (batch by batch, since Kafka 2.4), not strictly round-robin per record.
 
@@ -57,7 +57,7 @@ After adding partitions later, it cannot be guaranteed that old messages will be
 #### Log Compaction and Retention
 
 - **`cleanup.policy`**: Supports log compaction (`"compact"`) to retain at least the last known value for each key within a topic, crucial for stateful applications. 
-  - The default `cleanup.policy` for Kafka topics is "delete". (Kafka will delete records that are older than the retention period specified by `retention.ms`.)
+  - The default `cleanup.policy` for Kafka topics is `delete`. (Kafka will delete records that are older than the retention period specified by `retention.ms`.)
   - Use `kafka-configs.sh --alter` or the Admin API to change the policy for existing topics (altering configs via `kafka-topics.sh` is no longer supported).
   - The `delete` policy might also be used in tandem to prevent the state store from growing indefinitely, especially when windowed operations are involved. (Use `"compact,delete"` )
   - Kafka Streams often requires that the latest state be recoverable even after restarts or rebalancing, making compaction a necessity.
@@ -69,8 +69,19 @@ After adding partitions later, it cannot be guaranteed that old messages will be
 
 #### Timestamps and Ordering
 
-- **`message.timestamp.type`**: Defines whether Kafka should use the message creation time (`CreateTime`) or the time of log append (`LogAppendTime`). This setting can impact message ordering and log retention policies.
+- **`message.timestamp.type`**: Defines whether Kafka should use the message creation time (`CreateTime` - default) or the time of log append (`LogAppendTime`). This setting can impact message ordering and log retention policies.
+```
+CreateTime (default):
+  Producer sets ts=10:00:00.000
+  Network delay: 500ms
+  Broker appends at 10:00:00.500
+  Stored timestamp: 10:00:00.000  ← producer's time
 
+LogAppendTime:
+  Producer sets ts=10:00:00.000  (ignored)
+  Broker appends at 10:00:00.500
+  Stored timestamp: 10:00:00.500  ← broker's time
+```
 ### Key Considerations for Message Key and Size
 
 #### Message Key Usage
@@ -90,6 +101,6 @@ After adding partitions later, it cannot be guaranteed that old messages will be
 - **Config changes** are dynamic and need no restart: `kafka-configs.sh --alter --entity-type topics --entity-name T --add-config retention.ms=...` (use `--delete-config` to fall back to the broker default). Topic-level overrides take priority over broker defaults.
 - Changing `cleanup.policy` or retention can immediately delete data older than the new retention — check before lowering `retention.ms`.
 - Deleting a topic requires `delete.topic.enable=true` (default true) and is irreversible. Consumers/producers with auto-create enabled might recreate it.
-- Partition count sizing: target throughput / per-partition throughput, ≥ max number of consumers in a group, but too many partitions increase open files, leader election time and end-to-end latency. Over-provision a bit (e.g. 2–3x) to avoid later increases.
+- Partition count sizing: target throughput / per-partition throughput ≥ max number of consumers in a group, but too many partitions increase open files, leader election time and end-to-end latency. Over-provision a bit (e.g. 2–3x) to avoid later increases.
 - Don't rely on `auto.create.topics.enable` in production — create topics explicitly with deliberate partitions and RF.
 - Message size changes must be consistent end to end: `message.max.bytes` (broker/topic `max.message.bytes`), `replica.fetch.max.bytes`, producer `max.request.size`, consumer `max.partition.fetch.bytes`.

@@ -28,19 +28,156 @@
         }
 
         [data-theme=dark] {
-            --bg: #0b1020;
-            --panel: #121933;
-            --panel2: #18213f;
-            --text: #e6e9f5;
-            --muted: #97a0ba;
-            --border: #252f52;
-            --brand: #8b8bff;
-            --brand2: #a78bfa;
-            --brand-soft: #1c2347;
-            --code-bg: #080c1a;
-            --inline-code: #1f2750;
-            --inline-code-fg: #b4b8ff;
-            --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .35);
+            color-scheme: dark;
+            --bg: #0d1117;
+            --panel: #161b22;
+            --panel2: #21262d;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --border: #30363d;
+            --brand: #58a6ff;
+            --brand2: #1f6feb;
+            --brand-soft: rgba(56, 139, 253, .14);
+            --ok: #3fb950;
+            --warn: #d29922;
+            --bad: #f85149;
+            --code-bg: #0d1117;
+            --code-fg: #e6edf3;
+            --inline-code: rgba(110, 118, 129, .28);
+            --inline-code-fg: #e6edf3;
+            --shadow: 0 1px 0 rgba(1, 4, 9, .4), 0 4px 14px rgba(1, 4, 9, .45);
+        }
+
+        [data-theme=dark] header {
+            background: #010409;
+        }
+
+        [data-theme=dark] aside,
+        [data-theme=dark] .collapse-btn {
+            background: #0d1117;
+        }
+
+        [data-theme=dark] .logo i {
+            background: #21262d;
+            border: 1px solid var(--border);
+            color: #f0f6fc;
+        }
+
+        [data-theme=dark] .tabs {
+            background: #0d1117;
+            border: 1px solid var(--border);
+        }
+
+        [data-theme=dark] .tab.active {
+            background: #21262d;
+            color: #f0f6fc;
+            box-shadow: none;
+        }
+
+        [data-theme=dark] .search input {
+            background: #0d1117;
+        }
+
+        [data-theme=dark] .search input:focus {
+            background: #0d1117;
+            border-color: var(--brand);
+        }
+
+        [data-theme=dark] .nav.active {
+            background: rgba(177, 186, 196, .12);
+            color: #f0f6fc;
+        }
+
+        [data-theme=dark] .nav.active .n {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        [data-theme=dark] .bar > div {
+            background: #238636;
+        }
+
+        [data-theme=dark] .mhead,
+        [data-theme=dark] .hero {
+            background: linear-gradient(135deg, #161b22 0%, #1c2430 100%);
+            color: #e6edf3;
+            border: 1px solid var(--border);
+        }
+
+        [data-theme=dark] .hero:after {
+            background: rgba(88, 166, 255, .06);
+        }
+
+        [data-theme=dark] .mhead .crumb {
+            color: var(--muted);
+            opacity: 1;
+        }
+
+        [data-theme=dark] .mhead p,
+        [data-theme=dark] .hero p {
+            color: #c9d1d9;
+            opacity: 1;
+        }
+
+        [data-theme=dark] .pill {
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            color: #c9d1d9;
+        }
+
+        [data-theme=dark] .mbtn,
+        [data-theme=dark] .btn.primary {
+            background: #238636;
+            color: #fff;
+            border: 1px solid rgba(240, 246, 252, .12);
+        }
+
+        [data-theme=dark] .mbtn:hover,
+        [data-theme=dark] .btn.primary:hover {
+            background: #2ea043;
+        }
+
+        [data-theme=dark] .mbtn.done {
+            background: rgba(46, 160, 67, .18);
+            color: #3fb950;
+            border: 1px solid rgba(63, 185, 80, .4);
+        }
+
+        [data-theme=dark] .btn.ghost {
+            background: #21262d;
+            color: #e6edf3;
+            border: 1px solid var(--border);
+        }
+
+        [data-theme=dark] .btn.ghost:hover {
+            background: #30363d;
+        }
+
+        [data-theme=dark] .md pre {
+            border: 1px solid var(--border);
+        }
+
+        [data-theme=dark] .md blockquote {
+            border-left-color: #1f6feb;
+            background: rgba(56, 139, 253, .08);
+        }
+
+        [data-theme=dark] .domain h3 em,
+        [data-theme=dark] .examtop a.btn {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        [data-theme=dark] .chip:hover {
+            background: #1f6feb;
+            border-color: #1f6feb;
+            color: #fff;
+        }
+
+        [data-theme=dark] #results mark,
+        [data-theme=dark] .md .hl {
+            background: rgba(187, 128, 9, .45);
+            color: #f0f6fc;
         }
 
         * {
