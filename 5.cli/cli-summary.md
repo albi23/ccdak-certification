@@ -580,6 +580,163 @@ kafka-dump-log.sh \
 
 ---
 
+## Kafka Quotas
+
+Quotas are managed via `kafka-configs.sh` to prevent misbehaving or high-volume clients from saturating broker network or CPU resources.
+
+### How Quotas Work Internally
+
+Quotas are enforced **per broker**, but applied **cluster-wide** by dividing the quota by the number of brokers:
+
+```
+Configured quota:  10 MB/s
+Cluster has:       5 brokers
+Per-broker limit:  10 MB/s ÷ 5 = 2 MB/s per broker
+```
+
+Each broker independently tracks and enforces its share. The client doesn't need to know — it just gets throttled at the connection level.
+
+**Enforcement mechanism:**
+```
+Client sends request → Broker measures rate
+                              │
+                      rate > quota?
+                         │        │
+                        NO       YES
+                         │        │
+                    process    calculate delay (throttle time)
+                                   │
+                              send response with
+                              throttle_time_ms field
+                                   │
+                              client MUST wait
+                              before next request
+```
+
+The broker does **NOT** drop requests — it **delays the response** and signals the client how long to wait. The client is responsible for honoring it (`quota.window.num`, `quota.window.size.seconds` control the measurement window).
+
+### Types of Quotas
+
+1. **Producer Byte Rate (`producer_byte_rate`)** — limits how fast a client can produce data:
+```bash
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type clients --entity-name my-client \
+  --add-config producer_byte_rate=1048576   # 1 MB/s
+```
+
+2. **Consumer Byte Rate (`consumer_byte_rate`)** — limits how fast a client can fetch/consume data:
+```bash
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type clients --entity-name my-client \
+  --add-config consumer_byte_rate=2097152   # 2 MB/s
+```
+
+3. **Request Rate / CPU Quota (`request_percentage`)** — limits the percentage of I/O and network thread time a client can use (CPU/thread time, not bytes). Protects broker CPU from misbehaving clients regardless of data volume:
+```bash
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type clients --entity-name my-client \
+  --add-config request_percentage=25        # 25% of thread time
+```
+
+4. **Controller Mutation Rate (`controller_mutation_rate`, Kafka 2.7+)** — limits how fast a client can perform admin/control-plane operations (create topic, delete topic, partition reassignment):
+```bash
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type clients --entity-name my-client \
+  --add-config controller_mutation_rate=10  # 10 operations/sec
+```
+
+### Entity Types & Override Hierarchy
+
+```
+--entity-type clients   --entity-name <client.id>
+--entity-type users     --entity-name <principal>
+--entity-type brokers   --entity-name <broker-id>   # replication throttle
+```
+
+You can combine **user + client** for fine-grained control, or use `--entity-default` for cluster-wide defaults:
+
+```bash
+# Quota for a specific user AND client combination
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter \
+  --entity-type users   --entity-name alice \
+  --entity-type clients --entity-name my-app \
+  --add-config producer_byte_rate=1048576
+
+# Cluster-wide default for all clients
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter \
+  --entity-type clients --entity-default \
+  --add-config producer_byte_rate=5242880   # 5 MB/s for everyone
+```
+
+**Quota priority (most specific wins):**
+```
+1. user=alice, client=my-app     ← most specific
+2. user=alice, client=<default>
+3. user=<default>, client=my-app
+4. user=alice
+5. user=<default>
+6. client=my-app
+7. client=<default>              ← least specific (cluster default)
+```
+
+### Replication Throttle (Broker-to-Broker)
+
+Used during partition reassignment to prevent replication from saturating the network:
+
+```bash
+# Leader broker (sending data)
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type brokers --entity-name 1 \
+  --add-config leader.replication.throttled.rate=52428800   # 50 MB/s
+
+# Follower broker (receiving data)
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type brokers --entity-name 2 \
+  --add-config follower.replication.throttled.rate=52428800
+```
+
+Or pass `--throttle` to `kafka-reassign-partitions.sh`, which sets it automatically.
+
+### Viewing & Removing Quotas
+
+```bash
+# Describe quotas for a specific client
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --describe --entity-type clients --entity-name my-client
+
+# Describe all client quotas
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --describe --entity-type clients
+
+# Remove a specific quota
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --alter --entity-type clients --entity-name my-client \
+  --delete-config producer_byte_rate
+```
+
+### Quotas Quick Reference
+
+| Quota | Config Key | Unit | Entity |
+|---|---|---|---|
+| Producer throughput | `producer_byte_rate` | bytes/sec | user, client, both |
+| Consumer throughput | `consumer_byte_rate` | bytes/sec | user, client, both |
+| CPU / thread time | `request_percentage` | % of thread time | user, client, both |
+| Admin operations | `controller_mutation_rate` | ops/sec | user, client, both |
+| Replication throttle | `leader.replication.throttled.rate` | bytes/sec | broker |
+| Replication throttle | `follower.replication.throttled.rate` | bytes/sec | broker |
+
+**Exam Traps:**
+- Quota is **divided by broker count** — the configured value is cluster-wide, not per-broker.
+- Enforcement is **delay-based**, not drop-based — client receives `throttle_time_ms` in the response.
+- `request_percentage` throttles **CPU**, not bytes — a client sending tiny metadata requests can still be throttled.
+- `client.id` maps to `--entity-type clients`; Kafka principal (from SASL) maps to `--entity-type users`.
+- If both user and client quotas exist, the **most specific combination wins**.
+- Replication throttle is configured on `--entity-type brokers`, not clients.
+
+---
+
 ## Important Notes for CCDAK Exam
 
 ### ⚠️ Critical Facts
@@ -636,6 +793,7 @@ BROKER level (default for all topics):
 | Check consumer lag | `kafka-consumer-groups.sh --describe` |
 | Reset consumer offsets | `kafka-consumer-groups.sh --reset-offsets` |
 | Modify topic/broker config | `kafka-configs.sh` |
+| Configure client/user/broker quotas | `kafka-configs.sh` |
 | Reassign partitions | `kafka-reassign-partitions.sh` |
 | Trigger leader election | `kafka-leader-election.sh` |
 | Manage ACLs | `kafka-acls.sh` |

@@ -22,7 +22,7 @@ MODULES = [
     ("2", "2.consumer", "Consumer", "Consumer groups, assignors, offsets, rebalancing, delivery semantics", "core"),
     ("3", "3.producer", "Producer", "acks, idempotence, transactions, partitioner, serialization, headers", "core"),
     ("4", "4.topic", "Topic", "Topic configs, compaction, partitions, modifying topics", "core"),
-    ("5", "5.cli", "CLI & Testing", "CLI tools, testing tools, scaling, deployment frameworks", "core"),
+    ("5", "5.cli", "CLI & Testing", "CLI tools, quotas, testing tools, scaling, deployment frameworks", "core"),
     ("6", "6.kafka-streams", "Kafka Streams", "KStream/KTable, state, EOS, DSL vs Processor API", "core"),
     ("7", "7.kafka-connect", "Kafka Connect", "Workers, connectors, SMT, REST API, offsets, scalability", "core"),
     ("8", "8.security", "Security", "SSL, SASL, ACLs, JAAS", "core"),
