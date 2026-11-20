@@ -34,6 +34,7 @@ Topic: topic-name     TopicId: 4n-O8CRiSYqsQ5qvbeiCgQ PartitionCount: 2       Re
         Topic: topic-name     Partition: 1    Leader: 1       Replicas: 1     Isr: 1
 
 ```
+
 ### Alter (increase) partitions — can only be increased, never decreased!
 ```bash
 kafka-topics.sh --bootstrap-server localhost:9092 \
@@ -142,6 +143,11 @@ kafka-console-consumer.sh \
   --property print.key=true \
   --property print.timestamp=true \
   --property print.offset=true
+
+#Result:
+CreateTime:1795121930848        Offset:0        key-1   message-1 
+CreateTime:1795121941827        Offset:1        key-2   message-2 
+CreateTime:1795122168692        Offset:0        key-3   message-3 
 ```
 
 ### Consume from specific partition and offset
@@ -152,6 +158,7 @@ kafka-console-consumer.sh \
   --partition 0 \
   --offset 100
 ```
+
 ### Consume internal __consumer_offsets topic
 ```
 kafka-console-consumer.sh \
@@ -194,6 +201,7 @@ kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --list
 ```
+
 ### Describe a consumer group (shows LAG!)
 ```bash
 kafka-consumer-groups.sh \
@@ -206,6 +214,7 @@ console-group   topic-name      0          1               1               0    
 console-group   topic-name      1          2               2               0               console-consumer-4d473722-3c52-44ce-b661-e2b022485c75 /127.0.0.1      console-consumer
   
 ```
+
 ### Delete a consumer group (must be inactive!)
 ```bash
 kafka-consumer-groups.sh \
@@ -213,7 +222,7 @@ kafka-consumer-groups.sh \
   --delete --group my-group
 ```
 
-### Reset offsets — dry-run (preview only)
+### Reset offsets - dry-run (preview only)
 ```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
@@ -222,7 +231,8 @@ kafka-consumer-groups.sh \
   --to-earliest \
   --topic my-topic
 ```
-### Reset offsets — execute (actual reset)
+
+### Reset offsets - execute (actual reset)
 ```bash
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
@@ -232,6 +242,7 @@ kafka-consumer-groups.sh \
   --all-topics \
   --execute
 ```
+
 ### Reset to specific datetime
 ```bash
 kafka-consumer-groups.sh \
