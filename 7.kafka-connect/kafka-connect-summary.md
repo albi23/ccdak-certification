@@ -76,20 +76,27 @@ In **distributed mode**, Kafka Connect maintains its state, configuration, and p
 | Worker config | Stores | Conventional name | Recommended settings |
 |---|---|---|---|
 | `config.storage.topic` | Connector **and** task configurations | `connect-configs` | 1 partition, `cleanup.policy=compact`, RF ≥ 3 |
-| `offset.storage.topic` | Source-connector offsets (progress tracking) | `connect-offsets` | ~25 partitions, `cleanup.policy=compact`, RF ≥ 3 |
-| `status.storage.topic` | Connector and task state/status | `connect-status` | ~5 partitions, `cleanup.policy=compact`, RF ≥ 3 |
+| `offset.storage.topic` | Source-connector offsets **only** (progress tracking) | `connect-offsets` | ~25 partitions, `cleanup.policy=compact`, RF ≥ 3 |
+| `status.storage.topic` | Connector and task state/status (`RUNNING`, `FAILED`, `PAUSED`, etc.) **and assigned worker node ID** | `connect-status` | ~5 partitions, `cleanup.policy=compact`, RF ≥ 3 |
 
 Notes:
 
 - There is **no separate task-config topic**: connector config *and* task config both live in the single `config.storage.topic`.
 - All three topics are **log-compacted** so only the latest value per key is retained.
 - Set replication factors with `config.storage.replication.factor`, `offset.storage.replication.factor`, and `status.storage.replication.factor` (use ≥ 3 in production).
-- It is recommended to **create these topics manually** so you control the partition count, replication factor, and compaction policy before the workers start.
+- Workers auto-create these topics on startup if they do not exist, but it is recommended to **create them manually** so you control the partition count, replication factor, and compaction policy before the workers start.
+- These are internal topics managed by Kafka Connect and should **not** be modified or consumed by external applications.
 - The Confluent Platform Docker images default these names to `connect-configs`, `connect-offsets`, `connect-status` (sometimes prefixed, e.g. `docker-connect-...`).
+- Kafka Connect does **not** use ZooKeeper at all (it coordinates via Kafka's group protocol and internal topics; ZooKeeper is removed entirely in Kafka 4.x). In distributed mode, connector configs are never stored in local worker files or in the broker's config directory.
 
 In **standalone mode** there are no such Kafka topics — offsets are kept in a **local file** given by `offset.storage.file.filename` (e.g. `/tmp/connect.offsets`), and configuration comes directly from the `.properties` files.
 
-> Separately, **sink** connectors consume via a normal consumer group, so their consumer offsets live in Kafka's `__consumer_offsets` topic — that is a general Kafka internal topic, not a Connect-specific one.
+> Separately, **sink** connectors consume via a normal consumer group (`connect-<connector-name>`), so their consumer offsets live in Kafka's `__consumer_offsets` topic — that is a general Kafka internal topic, not a Connect-specific one.
+
+> ⚠️ **Exam traps (Internal Topics):**
+> - `connect-offsets` stores **source** connector offsets only — **never** sink connector offsets.
+> - `connect-status` stores connector/task state **and** the worker node ID each task is assigned to — it does **not** store configurations (`connect-configs`) or offsets (`connect-offsets` / `__consumer_offsets`).
+> - Connector configs in distributed mode are stored in `connect-configs`, **not** in ZooKeeper, worker files, or broker config directories.
 
 These internal topics enable Kafka Connect to recover from failures, ensuring robust and reliable data streaming.
 
@@ -117,6 +124,30 @@ These internal topics enable Kafka Connect to recover from failures, ensuring ro
 - **`config.storage.topic`** and **`offset.storage.topic`**: Kafka topics for storing connector and task configurations and offsets.
 
 In distributed mode for Kafka Connect, key features include automatic work balancing, dynamic scaling, and fault tolerance. While configuration parameters are similar to standalone mode, the storage locations and classes differ. In distributed mode, Kafka Connect stores offsets, configurations, and task statuses in Kafka topics. It is recommended to manually create these topics to achieve the desired number of partitions and replication factors.
+```properties
+# Worker identity
+bootstrap.servers=broker1:9092,broker2:9092
+group.id=connect-cluster                    # all workers with same group.id form one cluster
+
+# Internal topics
+config.storage.topic=connect-configs
+offset.storage.topic=connect-offsets
+status.storage.topic=connect-status
+config.storage.replication.factor=3
+offset.storage.replication.factor=3
+status.storage.replication.factor=3
+
+# Converters (worker-level defaults)
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
+
+# REST API
+rest.port=8083
+rest.advertised.host.name=worker1.internal
+rest.advertised.port=8083
+```
 
 Execution is similar to standalone mode:
 
@@ -132,8 +163,32 @@ bin/connect-distributed.sh config/connect-distributed.properties
 
 ### Connector Types
 
-- **Source Connectors**: Import data from external systems into Kafka.
-- **Sink Connectors**: Export data from Kafka to external systems.
+- **Source Connectors**: Import data from external systems (databases, IoT/MQTT, HTTP APIs, mainframes, files, etc.) into Kafka topics.
+- **Sink Connectors**: Export data from Kafka topics to external systems (relational databases, Elasticsearch, S3, HDFS, NoSQL, files, etc.).
+
+> ⚠️ **Exam trap:** Only **Source** and **Sink** connector types exist in Kafka Connect. "Transformation Connector", "Import Connector", and "Export Connector" are not real connector types — transformations are applied via SMTs in a connector's configuration.
+
+### Choosing the Right Component & Architecture Patterns
+
+| Use Case | Recommended Tool |
+|---|---|
+| External system → Kafka (with optional lightweight per-record SMTs) | **Kafka Connect Source Connector** |
+| Kafka → Kafka (real-time aggregations, running totals, joins, anonymization, anomaly detection) | **Kafka Streams** (or 🚫 **ksqlDB** for SQL-proficient teams) |
+| Kafka → External system (DB, search index, S3, HDFS) | **Kafka Connect Sink Connector** |
+| End-to-end real-time pipeline (External → process → External) | **Source Connector → Kafka → Kafka Streams → Kafka → Sink Connector** |
+
+Common architecture patterns and anti-patterns:
+
+- **Heterogeneous multi-source ingestion**: Use a mix of Kafka Connect Source Connectors suited to each source technology (SQL DBs, cloud storage, IoT/MQTT, mainframes) rather than building custom embedded producers.
+- **Data privacy & filtering**: Use Source Connectors (with SMTs to filter proprietary/unwanted fields at ingestion) combined with Kafka Streams to anonymize sensitive fields before downstream analytics or fraud detection.
+- **Real-time enrichment from external APIs**: Ingest each data source into its own Kafka topic using appropriate Source Connectors (e.g., MQTT Source for sensor telemetry + HTTP Source for weather forecasts), then join/enrich them in **Kafka Streams**.
+  - **Avoid** making per-record REST API calls directly inside Kafka Streams (introduces high latency, rate-limit issues, and tight coupling).
+  - **Avoid** writing data to an intermediate database + cron job + re-ingesting into Kafka (unnecessary complexity and latency).
+  - **Avoid** batch ETL / nightly DB dumps / periodic CSV exports when real-time or low-latency processing is required.
+- **Scaling processing vs. ingestion**: When data is **already in Kafka** and processing is the bottleneck under fluctuating load, scale **Kafka Streams application instances** up or down (up to the number of partitions/tasks).
+  - Do **not** scale Source Connector tasks to fix a downstream processing bottleneck.
+  - Do **not** dynamically change topic partition counts for fluctuating loads (partitions can only be increased, never decreased, and changing them breaks key-to-partition mapping and triggers rebalances).
+  - Do **not** change replication factor for throughput (replication factor affects durability/availability, not processing capacity).
 
 ### 🚫 Source Connectors (system-specific connectors)
 These connectors ingest data from external systems into Kafka topics.
@@ -142,28 +197,16 @@ These connectors ingest data from external systems into Kafka topics.
 - **MQTT Source Connector**: Integrates IoT device data communicated over MQTT protocol into Kafka.
 - **Twitter Source Connector**: Streams live tweets directly into Kafka topics (legacy community connector).
 
-### 🚫 Sink Connectors (system-specific connectors)
-These connectors export data from Kafka topics to external systems.
-- **JDBC Sink Connector**: Exports data from Kafka topics to relational databases.
-- **HDFS Sink Connector**: Moves data from Kafka topics into HDFS (Hadoop Distributed File System), commonly used in big data environments.
-- **Elasticsearch Sink Connector**: Exports data from Kafka topics into Elasticsearch for search and analytics.
-- **S3 Sink Connector**: Stores data from Kafka topics into Amazon S3 for durable, long-term storage.
-
-### 🚫 MQTT Proxy and Connector
-- **MQTT (Message Queuing Telemetry Transport)** is a lightweight messaging protocol for small sensors and mobile devices optimized for high-latency or unreliable networks.
-- An **MQTT proxy** allows Kafka to directly ingest data from IoT devices using the MQTT protocol.
-- An **MQTT connector** (typically a Kafka Connect connector) serves a similar purpose, facilitating data flow from MQTT-enabled devices into Kafka topics.
-
-### 🚫 JDBC Connectors
-- **JDBC (Java Database Connectivity)** connectors are used within Kafka Connect for integrating Kafka with relational databases.
-  - A **JDBC source connector** pulls data from a database into Kafka topics.
-  - A **JDBC sink connector** moves data from Kafka topics into a database.
 
 ### Single Message Transforms (SMT)
 - **SMTs** are Kafka Connect transformations that are applied to data as it passes through a connector, allowing for modification of the data (such as enrichment, filtering, or transformation) before it lands in the destination.
 
 ### Change Data Capture (CDC)
-- **CDC** captures row-level changes (inserts, updates, deletes) from a database, typically by reading its transaction log (e.g. Debezium), and streams only the changes into Kafka. Compared with query-based ingestion (e.g. JDBC source polling), it has lower latency and load on the database and captures deletes.
+- **CDC** captures row-level changes (inserts, updates, deletes) from a database, typically by reading its transaction log (e.g. Debezium), and streams only incremental changes into Kafka.
+- Compared with query-based ingestion (e.g. JDBC source polling) or batch ETL:
+  - **Lower latency** (captures changes as they happen — ideal for real-time fraud detection, inventory, and live user interactions).
+  - **Minimizes network bandwidth** by streaming only new or modified records (critical in bandwidth-limited environments such as distributed retail POS stores).
+  - **Lower load on the source database** and **captures deletes**.
 
 ### Data Enrichment
 - **Data enrichment** in the context of Kafka involves augmenting messages in a stream with additional information. This can be achieved by joining streams with other data sources (e.g., tables or databases) to add context or additional details to the original data.
@@ -180,6 +223,36 @@ To report errors within a connector's converter, transforms, or within the sink 
 - Kafka Connect provides a REST API for managing connectors
 - Key endpoints include viewing connector configurations, status, and restarting connectors and tasks
 - Secured clusters require additional configurations for the REST API
+```properties
+# List connectors
+GET  /connectors
+
+# Create connector
+POST /connectors
+     {"name": "my-connector", "config": {...}}
+
+# Get connector status
+GET  /connectors/{name}/status
+
+# Pause / Resume
+PUT  /connectors/{name}/pause
+PUT  /connectors/{name}/resume
+
+# Restart connector
+POST /connectors/{name}/restart
+
+# Restart individual task
+POST /connectors/{name}/tasks/{taskId}/restart
+
+# Delete connector
+DELETE /connectors/{name}
+
+# List plugins
+GET  /connector-plugins
+
+# Validate config
+PUT  /connector-plugins/{className}/config/validate
+```
 
 ## 🚫 Connector Development
 - Connectors are responsible for breaking down a data copying job into tasks and monitoring for changes
@@ -241,6 +314,37 @@ Connectors in Kafka Connect are responsible for breaking down the data copying j
 - The `transforms` property specifies a comma-separated list of transform aliases.
 - Each transform alias is configured with additional properties, such as `transforms.<alias>.type` to specify the transform class.
 - Common SMTs include `MaskField`, `ReplaceField`, `ExtractField`, and `InsertField`.
+```properties
+transforms=addTimestamp,maskField
+transforms.addTimestamp.type=org.apache.kafka.connect.transforms.InsertField$Value
+transforms.addTimestamp.timestamp.field=ingest_time
+transforms.maskField.type=org.apache.kafka.connect.transforms.MaskField$Value
+transforms.maskField.fields=credit_card,ssn
+```
+
+**Key built-in SMTs:**
+
+| SMT | Purpose |
+|---|---|
+| `InsertField` | Add field with static value or timestamp |
+| `ReplaceField` | Rename, include, or exclude fields |
+| `MaskField` | Replace field value with null/zero/empty |
+| `ExtractField` | Pull one field out as the entire value |
+| `ValueToKey` | Copy field(s) from value into the record key |
+| `TimestampConverter` | Convert timestamp format/type |
+| `Filter` | Drop records matching a condition |
+| `Flatten` | Flatten nested structs |
+| `HoistField` | Wrap entire value in a named field |
+| `Cast` | Type cast fields |
+| `RegexRouter` | Reroute to different topic via regex |
+| `TimestampRouter` | Route to topic based on timestamp |
+
+- `$Key` vs `$Value` suffix: applies transform to key or value
+- SMT applied **after** converter on source, **before** converter on sink
+
+> ⚠️ **Exam trap:** SMTs are **stateless** — no aggregation, no joins, no lookups from external systems
+>
+> ⚠️ **Exam trap:** For complex logic use Kafka Streams, not SMTs
 
 ### 5. Error Handling and Dead Letter Queues
 - Connectors can define error handling behavior using the `errors.tolerance` property.
@@ -289,12 +393,63 @@ Connectors in Kafka Connect are responsible for breaking down the data copying j
  - `sink-record-send-total`: The total number of records sent by a sink connector.
 - Monitoring metrics helps identify performance bottlenecks, connectivity issues, and resource utilization of Kafka Connect.
 
-## Connector Scalability (CCDAK)
+<img src="./../img/kafka-connect-arch.svg" alt="kafka Connect Architecture">
 
+## Connector Scalability & Fault Tolerance (CCDAK)
+
+### Core Scalability Model
 - **Connector** = job definition (config). **Task** = unit of parallelism that actually copies data. **Worker** = JVM process that runs connectors/tasks.
-- `tasks.max` is the **upper bound**. The connector decides the real number via `taskConfigs(maxTasks)` (e.g. JDBC source: max one task per table; sink connectors: bounded by the number of topic partitions — each partition goes to exactly one task).
-- **Scale out**: add workers (same `group.id` in distributed mode) → tasks are rebalanced automatically across workers. If a worker fails, its tasks move to the others (fault tolerance). Raising `tasks.max` beyond the data's natural parallelism has no effect.
+- Scalability is controlled by **manually configuring `tasks.max`** per connector and running multiple workers in distributed mode (same `group.id`) so tasks are distributed across workers.
+- Multiple connectors can run in the **same** Kafka Connect cluster — you do not need a separate cluster per connector.
+- Size `tasks.max` according to available worker resources (CPU, memory) as well as the natural parallelism of the data source/sink.
 - **Standalone mode**: single worker, no fault tolerance, offsets in a local file (`offset.storage.file.filename`) — for dev/testing. **Distributed mode** for production (config/offset/status stored in internal Kafka topics: `config.storage.topic`, `offset.storage.topic`, `status.storage.topic`).
-- Sink connector consumer group is named `connect-<connector-name>`. Scaling the tasks beyond partition count leaves tasks idle.
-- Connect rebalances use incremental cooperative rebalancing (`connect.protocol=sessioned`/`compatible`).
-- Offsets: source connectors store source offsets in the offsets topic (e.g. DB timestamp/ID, file position). Sink connectors use normal consumer offsets (`__consumer_offsets`).
+
+### Task Parallelism & `tasks.max` Rules
+- `tasks.max` is a **connector-level** setting (workers have **no** `tasks.max` setting) and acts as an **upper bound**. The connector decides the actual number of tasks via `taskConfigs(maxTasks)`.
+- Raising `tasks.max` beyond the data's natural parallelism has no effect (or leaves sink tasks idle).
+- **JDBC Source Connector parallelism**:
+  - Parallelizes **by table** (at most 1 task per table). A single table is always copied by **1 task**, regardless of column count, `tasks.max`, or target topic partition count.
+  - **When `tasks.max` < number of tables** (e.g. 10 tables, `tasks.max=5`): the connector respects `tasks.max` (creates 5 tasks) and **distributes tables evenly** across available tasks (2 tables per task, processed sequentially). All tables are still copied; none are left unassigned and the connector does not fail.
+  - **How to increase JDBC source parallelism**:
+    1. Increase `tasks.max` on the connector (effective up to 1 task per table).
+    2. Run **multiple instances of the JDBC connector**, each copying a different subset of tables.
+  - Increasing target topic partitions helps downstream consumers, **not** source connector ingestion parallelism. Adding more workers only spreads existing tasks across more machines.
+
+### Sink Tasks & Consumer Group Partition Assignment
+- Sink connector tasks form a normal Kafka consumer group named `connect-<connector-name>`, and follow standard consumer group partition assignment rules:
+  - Each partition is assigned to **at most one** task/consumer in the group.
+  - **Partitions > tasks/consumers**: partitions are distributed as evenly as possible (e.g., 10 partitions with 3 consumers → **4, 3, 3** partitions, so max 4 on a single consumer; 12 partitions with 4 consumers → **3 each**, all 4 active).
+  - **Tasks/consumers > partitions**: excess tasks/consumers sit **idle** (e.g., 3 partitions with 4 consumers → 3 active, 1 idle).
+
+### Worker Node Failure & Fault Tolerance (Distributed Mode)
+When a worker node fails in a distributed Kafka Connect cluster:
+1. **Failure detection**: Workers send periodic heartbeats; a worker that fails to send heartbeats within `session.timeout.ms` is considered dead.
+2. **Automatic rebalancing**: Connect triggers a rebalance and **automatically redistributes** the failed worker's connectors and tasks across the remaining active workers.
+   - Connect uses **incremental cooperative rebalancing** (`connect.protocol=sessioned`/`compatible`). Reassignment may be delayed up to `scheduled.rebalance.max.delay.ms` (default **5 minutes**) to let a restarting worker rejoin before moving its tasks.
+3. **Resuming from offsets**: Source tasks resume from the offsets stored in `connect-offsets` (`offset.storage.topic`); sink tasks resume from their committed consumer group offsets in `__consumer_offsets`.
+4. **Continuous operation**: The cluster stays up and continues processing on the remaining workers.
+
+> ⚠️ **Exam traps (Scalability & Failover):**
+> - Kafka Connect does **not** automatically create multiple connector instances based on load, and does **not** dynamically auto-scale `tasks.max` based on performance — `tasks.max` is configured manually.
+> - `tasks.max` is a **connector** property, not a worker property.
+> - On worker failure, connectors/tasks are **not** permanently lost, the cluster does **not** go down, and Connect does **not** automatically provision a replacement worker node — it redistributes the workload to the remaining active workers.
+
+### CCDAK Exam Quick-Reference Cheat Sheet
+
+| # | Trap |
+|---|---|
+| 1 | All 3 internal topics use **compact** cleanup policy |
+| 2 | Source connector offsets → `connect-offsets`; sink offsets → `__consumer_offsets` |
+| 3 | `errors.tolerance=none` (default) → one bad record fails the entire task |
+| 4 | SMTs are **stateless** — no aggregation or enrichment from external systems |
+| 5 | Task restart is **manual** — failed tasks do NOT auto-restart |
+| 6 | `tasks.max` is a maximum — connector may create fewer tasks |
+| 7 | Sink connector consumer group ID = `connect-{connector-name}` |
+| 8 | Standalone mode stores offsets in a **local file**, not Kafka |
+| 9 | Converter mismatch between producer and consumer → deserialization error |
+| 10 | `schemas.enable=false` on JsonConverter → no schema embedded in payload |
+| 11 | Source EOS requires Kafka 3.3+ AND `exactly.once.source.support=enabled` AND connector support |
+| 12 | REST API requests go to any worker — forwarded internally to cluster leader |
+| 13 | `UNASSIGNED` status = rebalance in progress, not a failure |
+| 14 | `group.id` on workers must NOT conflict with application consumer group IDs |
+| 15 | SMT applied **after** converter on source, **before** converter on sink |
