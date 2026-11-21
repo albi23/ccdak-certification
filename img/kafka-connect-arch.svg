@@ -85,6 +85,9 @@
   <text x="170" y="810" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#D29922" font-weight="400">cleanup: compact  |  RF=3</text>
   <text x="170" y="828" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Connector &amp; task configurations</text>
   <text x="170" y="842" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Stored on every config change</text>
+
+  <line x1="450" y1="696" x2="450" y2="1090" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
+
   <rect x="320" y="762" width="260" height="120" rx="8" fill="#21262D" stroke="#1F6FEB" stroke-width="1"></rect>
   <text x="450" y="780" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="12" fill="#58A6FF" font-weight="700">connect-offsets</text>
   <text x="450" y="796" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">offset.storage.topic</text>
@@ -92,6 +95,7 @@
   <text x="450" y="828" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Source connector positions</text>
   <text x="450" y="842" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">NOT consumer offsets (__consumer_offsets</text>
   <text x="450" y="856" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">stores sink offsets)</text>
+
   <rect x="600" y="762" width="260" height="120" rx="8" fill="#21262D" stroke="#534AB7" stroke-width="1"></rect>
   <text x="730" y="780" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="12" fill="#A5A0E8" font-weight="700">connect-status</text>
   <text x="730" y="796" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">status.storage.topic</text>
@@ -163,22 +167,25 @@
   <line x1="888" y1="710" x2="888" y2="1045" stroke="#DA3633" stroke-width="1.5"></line>
   <line x1="888" y1="1045" x2="730" y2="1045" stroke="#DA3633" stroke-width="1.5"></line>
   <line x1="730" y1="1045" x2="730" y2="1090" stroke="#DA3633" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <line x1="450" y1="1000" x2="450" y2="1090" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
 
 
 
-  <line x1="450" y1="696" x2="450" y2="1090" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
   <rect x="20" y="1308" width="860" height="56" rx="10" fill="#161B22" stroke="#30363D" stroke-width="1"></rect>
   <text x="450" y="1324" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="11" fill="#8B949E" font-weight="700">Legend</text>
+
   <rect x="50" y="1336" width="16" height="12" rx="3" fill="#238636" stroke="#238636"></rect>
   <text x="72" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Source flow</text>
-  <rect x="190" y="1336" width="16" height="12" rx="3" fill="#DA3633" stroke="#DA3633"></rect>
-  <text x="212" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Sink flow</text>
-  <rect x="330" y="1336" width="16" height="12" rx="3" fill="#534AB7" stroke="#534AB7"></rect>
-  <text x="352" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Config / Schema</text>
-  <rect x="470" y="1336" width="16" height="12" rx="3" fill="#1F6FEB" stroke="#1F6FEB"></rect>
-  <text x="492" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Worker / REST</text>
-  <rect x="610" y="1336" width="16" height="12" rx="3" fill="#9E6A03" stroke="#9E6A03"></rect>
-  <text x="632" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Offset tracking</text>
-  <rect x="750" y="1336" width="16" height="12" rx="3" fill="#30363D" stroke="#30363D"></rect>
-  <text x="772" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">dashed = internal / async</text>
+  <rect x="170" y="1336" width="16" height="12" rx="3" fill="#DA3633" stroke="#DA3633"></rect>
+  <text x="192" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Sink flow</text>
+
+  <rect x="280" y="1336" width="16" height="12" rx="3" fill="#534AB7" stroke="#534AB7"></rect>
+  <text x="302" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Config / Schema</text>
+  <rect x="430" y="1336" width="16" height="12" rx="3" fill="#1F6FEB" stroke="#1F6FEB"></rect>
+  <text x="452" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Worker / REST</text>
+
+  <rect x="570" y="1336" width="16" height="12" rx="3" fill="#9E6A03" stroke="#9E6A03"></rect>
+  <text x="592" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">Offset tracking</text>
+  <rect x="710" y="1336" width="16" height="12" rx="3" fill="#30363D" stroke="#30363D"></rect>
+  <text x="732" y="1347" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#8B949E" font-weight="400">dashed = internal / async</text>
 </svg>
