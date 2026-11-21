@@ -33,13 +33,29 @@ jobs:
       - name: Build exams and site
         run: bash build-all.sh
 
+      - id: pages
+        uses: actions/configure-pages@v6
+
       - name: Stage site
         run: |
           mkdir _site
           cp site/index.html site/exam.html _site/
           touch _site/.nojekyll
-
-      - uses: actions/configure-pages@v6
+          cat <<'EOF' > _site/404.html
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="robots" content="noindex, nofollow">
+            <meta http-equiv="refresh" content="0; url=${{ steps.pages.outputs.base_path }}/">
+            <title>Redirecting…</title>
+            <script>location.replace('${{ steps.pages.outputs.base_path }}/');</script>
+          </head>
+          <body>
+            <p>Redirecting to <a href="${{ steps.pages.outputs.base_path }}/">home page</a>…</p>
+          </body>
+          </html>
+          EOF
 
       - uses: actions/upload-pages-artifact@v5
         with:

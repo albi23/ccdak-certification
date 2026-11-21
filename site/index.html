@@ -531,6 +531,10 @@
             padding-left: 14px
         }
 
+        .toc:empty {
+            display: none
+        }
+
         .toc b {
             display: block;
             font-size: 11px;
@@ -1107,6 +1111,15 @@
             margin-top: 8px
         }
 
+        .copyright {
+            margin-top: 28px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center
+        }
+
         /* ===== exam view ===== */
         #exam {
             display: none;
@@ -1441,7 +1454,8 @@
   <h2 class="sec">Modules</h2><div class="grid">${M.map(m => `<div class="card ${m.kind}" onclick="go('m/${m.id}')">${done[m.id] ? '<span class="tag">✔ studied</span>' : ''}<div class="n">${m.id}</div><h3>${m.title}</h3><p>${m.desc}</p><p style="margin-top:8px;font-size:12px">⏱ ~${m.minutes} min read</p></div>`).join('')}</div>
   <h2 class="sec">Exam scope coverage</h2><p class="sub">Each topic from the official exam outline, with the modules that cover it.</p>
   ${DATA.domains.map(d => `<div class="domain"><h3><em>${d.n}</em>${d.title}</h3>${d.items.map(i => `<div class="item"><span>${i.text}</span><span class="chips">${chips(i.modules)}</span></div>`).join('')}</div>`).join('')}
-  <p class="legend">🚫 in a heading marks material outside the exam scope. Modules 10 and 12 are supplementary.</p>`;
+  <p class="legend">🚫 in a heading marks material outside the exam scope. Modules 10 and 12 are supplementary.</p>
+  <footer class="copyright">© Created by Albi - happy learning</footer>`;
         $('#toc').innerHTML = '';
         renderSide();
         scrollTo(0, 0);

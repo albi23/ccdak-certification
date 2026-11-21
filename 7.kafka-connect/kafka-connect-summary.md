@@ -87,7 +87,7 @@ Notes:
 - Workers auto-create these topics on startup if they do not exist, but it is recommended to **create them manually** so you control the partition count, replication factor, and compaction policy before the workers start.
 - These are internal topics managed by Kafka Connect and should **not** be modified or consumed by external applications.
 - The Confluent Platform Docker images default these names to `connect-configs`, `connect-offsets`, `connect-status` (sometimes prefixed, e.g. `docker-connect-...`).
-- Kafka Connect does **not** use ZooKeeper at all (it coordinates via Kafka's group protocol and internal topics; ZooKeeper is removed entirely in Kafka 4.x). In distributed mode, connector configs are never stored in local worker files or in the broker's config directory.
+- Kafka Connect does **not** use ZooKeeper at all (it coordinates via Kafka's group protocol and internal topics. ZooKeeper is removed entirely in Kafka 4.x). In distributed mode, connector configs are never stored in local worker files or in the broker's config directory.
 
 In **standalone mode** there are no such Kafka topics — offsets are kept in a **local file** given by `offset.storage.file.filename` (e.g. `/tmp/connect.offsets`), and configuration comes directly from the `.properties` files.
 
