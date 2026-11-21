@@ -2,7 +2,7 @@
 
 ## Kafka Security Configurations
 
-Securing Kafka involves configuring encryption, authentication, and authorization mechanisms to protect data in transit and at rest. Properly configuring security settings is crucial for safeguarding sensitive information and ensuring compliance with security standards.
+Securing Kafka involves configuring **encryption**, **authentication**, and **authorization** mechanisms to protect data in transit and at rest. Properly configuring security settings is crucial for safeguarding sensitive information and ensuring compliance with security standards.
 
 ### Key Points for CCDAK on Security
 
@@ -44,7 +44,7 @@ Securing Kafka involves configuring encryption, authentication, and authorizatio
 ```
 
 #### `ssl.truststore.location`
-- **Description**: Location of the truststore file containing certificates of trusted CAs (clients use it to verify the broker; brokers use it to verify client certificates with mTLS).
+- **Description**: Location of the truststore file containing certificates of trusted CAs (clients use it to verify the broker. Brokers use it to verify client certificates with mTLS).
 - **Security Impact**: Essential for establishing trust relationships and validating certificate chains during SSL/TLS handshakes.
 
 #### `ssl.truststore.password`
@@ -62,6 +62,14 @@ Securing Kafka involves configuring encryption, authentication, and authorizatio
 #### `security.protocol`
 - **Description**: Transport layer — how the connection is established . Options include PLAINTEXT (default), SSL, SASL_PLAINTEXT, and SASL_SSL.
 - **Security Impact**: Determines the level of security for data in transit between clients and brokers.
+
+| Mechanism | Description | Use case |
+|---|---|---|
+| `GSSAPI` | Kerberos | default when SASL enabled, Enterprise/on-prem with KDC |
+| `PLAIN` | username + password plaintext | simple, credentials in `sasl.jaas.config`. Use only with TLS |
+| `SCRAM-SHA-256` | challenge-response, salted | username/password without sending plaintext credential |
+| `SCRAM-SHA-512` | same as above, stronger hash | recommended over SCRAM-SHA-256 |
+| `OAUTHBEARER` | OAuth 2.0 JWT token | cloud-native, token-based auth |
 
 #### `ssl.endpoint.identification.algorithm`
 - **Description**: The algorithm to use for host name verification of server certificates. Defaults to `https` (hostname verification enabled) since Kafka 2.0. An empty string disables it.
