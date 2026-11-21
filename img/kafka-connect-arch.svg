@@ -146,11 +146,26 @@
   <text x="370" y="1279" text-anchor="start" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="9" fill="#3FB950" font-weight="400">Production</text>
   <line x1="231" y1="682" x2="300" y2="720" stroke="#238636" stroke-width="1.5" marker-end="url(#arr)"></line>
   <line x1="639" y1="682" x2="500" y2="720" stroke="#238636" stroke-width="1.5" marker-end="url(#arr)"></line>
-  <line x1="600" y1="720" x2="639" y2="682" stroke="#DA3633" stroke-width=".5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
+  <line x1="600" y1="720" x2="639" y2="682" stroke="#DA3633" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
   <line x1="231" y1="682" x2="170" y2="762" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
   <line x1="639" y1="682" x2="450" y2="762" stroke="#1F6FEB" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
-  <line x1="170" y1="1090" x2="231" y2="692" stroke="#238636" stroke-width="1.5" marker-end="url(#arr)"></line>
-  <line x1="639" y1="692" x2="730" y2="1090" stroke="#DA3633" stroke-width="1.5" marker-end="url(#arr)"></line>
+
+  <!-- Source system arrow path -->
+  <line x1="170" y1="1090" x2="170" y2="1040" stroke="#238636" stroke-width="1.5" ></line>
+  <line x1="170" y1="1040" x2="13" y2="1040" stroke="#238636" stroke-width="1.5" ></line>
+  <line x1="13" y1="1040" x2="13" y2="710" stroke="#238636" stroke-width="1.5" ></line>
+  <line x1="13" y1="710" x2="231" y2="710" stroke="#238636" stroke-width="1.5" ></line>
+  <line x1="231" y1="710" x2="231" y2="692" stroke="#238636" stroke-width="1.5" marker-end="url(#arr)"></line>
+
+  <!-- Sink system arrow path -->
+  <line x1="639" y1="692" x2="639" y2="710" stroke="#DA3633" stroke-width="1.5"></line>
+  <line x1="639" y1="710" x2="888" y2="710" stroke="#DA3633" stroke-width="1.5"></line>
+  <line x1="888" y1="710" x2="888" y2="1045" stroke="#DA3633" stroke-width="1.5"></line>
+  <line x1="888" y1="1045" x2="730" y2="1045" stroke="#DA3633" stroke-width="1.5"></line>
+  <line x1="730" y1="1045" x2="730" y2="1090" stroke="#DA3633" stroke-width="1.5" marker-end="url(#arr)"></line>
+
+
+
   <line x1="450" y1="696" x2="450" y2="1090" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="5,3"></line>
   <rect x="20" y="1308" width="860" height="56" rx="10" fill="#161B22" stroke="#30363D" stroke-width="1"></rect>
   <text x="450" y="1324" text-anchor="middle" font-family="'JetBrains Mono', 'JetBrains Mono NL', monospace" font-size="11" fill="#8B949E" font-weight="700">Legend</text>
