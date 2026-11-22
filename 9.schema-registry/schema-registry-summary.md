@@ -23,14 +23,14 @@ The following schema formats are supported out-of-the-box with Confluent Platfor
 
 The set of primitive types:
 
-- null: no value
-- boolean: a binary value
-- int: 32-bit signed integer
-- long: 64-bit signed integer
-- float: single precision (32-bit) IEEE 754 floating-point number
-- double: double precision (64-bit) IEEE 754 floating-point number
-- bytes: sequence of 8-bit unsigned bytes
-- string: unicode character sequence
+- **null**: no value
+- **boolean**: a binary value
+- **int**: 32-bit signed integer
+- **long**: 64-bit signed integer
+- **float**: single precision (32-bit) IEEE 754 floating-point number
+- **double**: double precision (64-bit) IEEE 754 floating-point number
+- **bytes**: sequence of 8-bit unsigned bytes
+- **string**: unicode character sequence
 
 Avro supports six types of complex data structures: records, enums, arrays, maps, unions, and fixed.
 
@@ -57,7 +57,7 @@ Forward compatibility: Concentrate on what the **old system can handle from the 
 1. Removing a field (any field)
 2. Adding a field with a default value
 3. Widening a type via Avro promotion (e.g. int to long)
-- **Forward**: Old schema can read data written in new schema. This allows applications using an older schema to read data that was produced with a newer schema. Allowed changes:
+- **Forward**: Old schema **can read data written in new schema**. This allows applications using an older schema to read data that was produced with a newer schema. Allowed changes:
 1. Adding a field (with or without a default)
 2. Removing a field that has a default value
 - **Full**: both. Only add or remove fields that have default values.
@@ -84,7 +84,7 @@ To remember the general rule for updating consumers and producers, use the mnemo
 * **P (Producer)**: Update the Producer second
 * **S (Special)**: In Special cases, like **backward compatible** changes or urgent fixes, update the producer first
 
-**Enums: ** Adding enum symbols is backward-compatible. Removing enum symbols is a breaking change. Reordering enum symbols is a breaking change. "Add, Remove (break), Reorder (break)" (ARR)
+**Enums:** Adding enum symbols is backward-compatible. Removing enum symbols is a breaking change. Reordering enum symbols is a breaking change. "Add, Remove (break), Reorder (break)" (ARR)
 Since Avro 1.9.1 (>= 1.9.1): Default value for enums. Writer's symbol not in reader's enum => Use default value if specified, else error.
 
 | Compatibility   | Change                            |
@@ -97,9 +97,6 @@ Since Avro 1.9.1 (>= 1.9.1): Default value for enums. Writer's symbol not in rea
 | Full            | Delete fields with defaults       |
 | Transitive      | Backward/Forward/Full compatibility | 
 
-Backward: Deleting fields, Adding optional fields  - Upgrade first: Consumers.   (Default for topics, for Streams only Backward is allowed)
-Forward: Adding fields, Deleting fields with defaults - Upgrade first: Producers.
-Full: Upgrade order does not matter.  
 
 #### Efficient Data Serialization
 - Avro provides a compact, fast, binary data format, significantly reducing the payload size and improving data serialization and deserialization efficiency. 

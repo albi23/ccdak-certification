@@ -918,7 +918,7 @@
 
         .hero p {
             margin: 0;
-            max-width: 620px;
+            max-width: 100%;
             opacity: .9;
             font-size: 16px
         }
@@ -1560,7 +1560,7 @@
         $('#tab-study').classList.toggle('active', !isExam);
         if (isExam) return showExam();
         if (r.startsWith('m/')) module(r.slice(2)); else home();
-        document.title = (currentId ? byId[currentId].title + ' · ' : '') + 'CCDAK Study Hub';
+        document.title = (currentId ? byId[currentId].title + ' · ' : '') + 'CCDAK Study Hub by Albi';
     }
 
     addEventListener('hashchange', route);

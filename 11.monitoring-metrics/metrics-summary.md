@@ -191,3 +191,24 @@ Alert on symptoms in these metrics (JMX / Prometheus / Burrow / Confluent Contro
 
 - Alert on **rate of change / duration** (e.g. "URP > 0 for 5 min") instead of single spikes to avoid noise.
 - Tools: Prometheus + JMX exporter + Alertmanager, Grafana, Datadog, Burrow (lag evaluation, status OK/WARN/ERR), Confluent Control Center.
+
+
+## Exam Quick-Reference Cheat Sheet
+
+| # | Trap |
+|---|---|
+| 1 | `UnderReplicatedPartitions > 0` = replicas lagging, NOT necessarily offline |
+| 2 | `OfflinePartitionsCount > 0` = partitions with NO leader — writes/reads impossible |
+| 3 | `ActiveControllerCount` must be exactly **1** — 0 means no controller, >1 is impossible in practice |
+| 4 | Consumer lag is NOT a broker metric — check via `kafka-consumer-groups.sh` or consumer JMX |
+| 5 | `records-lag-max` = max lag across all partitions for that consumer client |
+| 6 | `UncleanLeaderElectionsPerSec > 0` means **data was lost** (out-of-sync replica became leader) |
+| 7 | `NetworkProcessorAvgIdlePercent < 30%` → add network threads (`num.network.threads`) |
+| 8 | `RequestHandlerAvgIdlePercent < 30%` → add I/O threads (`num.io.threads`) — dynamic config |
+| 9 | `IsrShrinksPerSec` sustained high = brokers can't keep up with replication — investigate GC, disk, network |
+| 10 | Per-topic metrics require `,topic=my-topic` appended to MBean name |
+| 11 | Streams lag = internal consumer `records-lag-max` on repartition/source topics |
+| 12 | Connect task status via REST (`/connectors/{name}/status`), not JMX alone |
+| 13 | `record-error-rate > 0` on producer = failed sends (check `acks`, `retries`, broker health) |
+| 14 | `buffer-available-bytes` dropping to 0 → producer blocked (`max.block.ms` will throw if exceeded) |
+| 15 | `LeaderElectionRateAndTimeMs` elevated = broker instability — check GC pauses, disk I/O |
