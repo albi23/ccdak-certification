@@ -1444,7 +1444,7 @@
         const items = DATA.domains.reduce((a, d) => a + d.items.length, 0);
         const chips = ids => ids.map(i => `<a class="chip" href="#/m/${i}" title="${byId[i].title}">${i} · ${byId[i].title}</a>`).join('');
         $('#content').innerHTML = `
-  <div class="hero"><h1>CCDAK Study Hub</h1>
+  <div class="hero"><h1>CCDAK Study Hub by Albi</h1>
     <p>Condensed, interactive summaries for the Confluent Certified Developer for Apache Kafka exam — mapped to every item of the official exam scope, with a full practice exam in its own view.</p>
     <div class="cta"><button class="btn primary" onclick="go('m/${(core.find(m => !done[m.id]) || core[0]).id}')">Continue studying →</button><button class="btn ghost" onclick="go('exam')">Take practice exam</button></div></div>
   <div class="stats">
