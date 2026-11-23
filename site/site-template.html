@@ -510,7 +510,7 @@
             margin-left: var(--side);
             flex: 1;
             min-width: 0;
-            padding: 28px 36px 80px;
+            padding: 28px 36px 36px;
             display: flex;
             gap: 36px;
             justify-content: center
@@ -1161,7 +1161,7 @@
             flex: 1;
             width: 100%;
             border: 0;
-            background: #fff
+            background: var(--bg)
         }
 
         body.view-exam #study {
@@ -1406,10 +1406,21 @@
     let currentId = null;
 
     /* ---------- theme ---------- */
+    function syncExamTheme(t) {
+        const f = $('#examframe');
+        if (f && f.contentWindow) {
+            try {
+                f.contentWindow.postMessage({type: 'ccdak_theme', theme: t}, '*');
+            } catch (e) {
+            }
+        }
+    }
+
     function setTheme(t) {
         document.documentElement.dataset.theme = t;
         $('#theme').textContent = t === 'dark' ? '☀️' : '🌙';
-        store.set('ccdak_theme', t)
+        store.set('ccdak_theme', t);
+        syncExamTheme(t);
     }
 
     setTheme(store.get('ccdak_theme', 'light'));
@@ -1543,7 +1554,12 @@
     function showExam() {
         document.body.classList.add('view-exam');
         const f = $('#examframe');
-        if (!f.getAttribute('src')) f.setAttribute('src', 'exam.html');
+        if (!f.getAttribute('src')) {
+            f.onload = () => syncExamTheme(document.documentElement.dataset.theme);
+            f.setAttribute('src', 'exam.html');
+        } else {
+            syncExamTheme(document.documentElement.dataset.theme);
+        }
     }
 
     /* ---------- routing ---------- */

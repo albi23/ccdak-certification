@@ -101,8 +101,6 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Correction: E is false. A state store is NOT replicated to all instances; each task's store lives on one instance and is backed by a changelog topic. Optional standby replicas (`num.standby.replicas`, default 0) keep warm copies on other instances only if configured, and never on "all" instances. Only A and F are defensible, so this is "select 2", not 3. Original text follows.
-
 Kafka Streams provides robust state management through local state stores that are mirrored to standby replicas for fault tolerance. Offsets are committed automatically, guaranteeing at‑least‑once semantics. Aggregations produce changelog topics that serve as durable, queryable stores. However, operators like filter() only remove records; key/value changes require mapping functions. Producing to the same source topic can create loops unless mitigated, and task restarts recover state from changelogs rather than rebuilding it from scratch. Understanding these mechanics is essential for building reliable, scalable stream processing applications. For more details, see the official Kafka Streams documentation: https://kafka.apache.org/documentation/streams/, https://docs.confluent.io/platform/current/streams/developer-guide.html.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams: Architecture Overview" (pp. 410-416)
@@ -176,7 +174,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "compression.type" (p. 59)
 
 ## Question 5 (Programming & Serialization):
 Schema Registry is configured with BACKWARD
-compatibility (default). A producer a new field named **age**
+compatibility (default). A producer added a new field named **age**
 WITHOUT a default value. What happens?
 
 - A. Consumer will ignore the new field and process the record normally.
@@ -193,8 +191,6 @@ Choose the correct answer.
 **Answer:** B
 
 **Explanation:**
-
-CORRECTION: adding a field WITHOUT a default is NOT backward compatible (a new-schema reader cannot fill the field when reading old records), so under the registry's default BACKWARD compatibility the registration is rejected (HTTP 409 / incompatible schema) and no records with the new schema are ever produced. Only if the subject were set to FORWARD/FULL_TRANSITIVE-style forward compatibility (or NONE) would old consumers simply ignore the new field (the former option C). Original text follows (its compatibility claim is wrong).
 
 When a producer adds a new field without a default value, the change is considered backward compatible in Avro: older consumers can still read records written with the new schema because they simply ignore unknown fields. Schema Registry, configured with the default backward compatibility setting, will accept the new schema. Consumers that use the original schema will continue to function without errors, processing all known fields and disregarding the new one. This behavior exemplifies Avro’s forward/backward compatibility model and is documented in Confluent’s Schema Registry compatibility guide (https://docs.confluent.io/platform/current/schema-registry/compatibility.html).
 
@@ -480,7 +476,7 @@ Source: https://kafka.apache.org/documentation/#consumer_monitoring and #basic_o
 </details>
 
 ## Question 12 (Kafka Core Concepts):
-Which of the following statements about Kafka topics are correct in the context of Confluent Certified Developer for Apache Kafka?
+Which of the following statements about Kafka **topics** are correct in the context of Confluent Certified Developer for Apache Kafka?
 
 - A. A Kafka topic is a logical channel to which producers publish data and consumers subscribe to consume data.
 - B. Each partition within a Kafka topic guarantees message ordering only within that partition.
@@ -588,8 +584,6 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-CORRECTION: only B and C are true (this is a "select 2" question). F is false: Connect's automatic topic creation (KIP-158, `topic.creation.enable` plus `topic.creation.*` settings) applies to SOURCE connectors that write new topics; sink connectors only read existing topics, and `auto.create.topics.enabled` is not a Connect property (it is not the broker's `auto.create.topics.enable` either). Original text follows (its mention of sink topic creation is wrong).
-
 Kafka Connect is designed as a scalable, fault‑tolerant framework for integrating Kafka with external systems. Key runtime features include automatic topic creation for sinks (when enabled), dynamic task distribution across workers for load balancing and high availability, and a comprehensive REST API that manages connector life‑cycle and configuration. Additionally, Connect supports Single Message Transforms (SMTs) that allow lightweight, per‑message processing without external code. Misconceptions often arise around automatic schema registration and configuration rollback; these are optional or manual actions, not built‑in Connect capabilities. Understanding these distinctions is critical for configuring robust, production‑grade pipelines.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
@@ -622,7 +616,7 @@ In Apache Kafka Streams, which of the following statements about time windows ar
 - A. Session windows are a type of time window that have a fixed size and do not depend on event gaps.
 - B. Grace periods define how long Kafka Streams waits after a window end before emitting results to accommodate late-arriving events.
 - C. Tumbling windows are fixed-size, non-overlapping windows that group events strictly based on event-time.
-- D. Event-time windows in Kafka Streams rely on record timestamps by default; ingestion time is used only when records have invalid or no timestamps.
+- D. Event-time windows in Kafka Streams rely on record timestamps by default. Ingestion time is used only when records have invalid or no timestamps.
 - E. Hopping windows can overlap, allowing an event to belong to multiple windows if the hop interval is smaller than the window size.
 - F. Kafka Streams automatically adjusts window size dynamically based on event skew and late arrivals.
 
@@ -699,7 +693,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Stream Processing Design Pat
 </details>
 
 ## Question 17 (Kafka Consumers):
-Which of the following statements about Kafka consumers and their behavior are true in the context of the Confluent Certified Developer for Apache Kafka exam?
+Which of the following statements about Kafka consumers and their behavior are **true** in the context of the Confluent Certified Developer for Apache Kafka exam?
 
 - A. If a consumer fails, Kafka automatically reassigns the partitions of that consumer to other active consumers in the same group.
 - B. Kafka consumers can only consume messages from the latest offset and cannot start from the earliest offset of a partition.
@@ -1917,7 +1911,8 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka consumers in a consumer group coordinate to ensure each partition is consumed by only one consumer instance, maintaining message order and avoiding duplicates. Offsets track consumption progress and can be committed automatically or manually based on application needs, which impacts fault tolerance and exactly-once semantics. When consumers join or leave a group, Kafka triggers a rebalance to redistribute partitions fairly. Frequent calls to poll() are essential to send heartbeats and avoid session timeouts that cause unnecessary rebalances. Misunderstandings often arise regarding partition sharing within groups and offset reset behaviors; knowing these details is critical for designing robust Kafka consumer applications. Correction: heartbeats are sent by a separate background thread (since KIP-62), so poll() does not send them; poll() must be called within max.poll.interval.ms, otherwise the consumer is removed from the group and a rebalance is triggered. (Option E's "session timeouts" wording is therefore loose, but it is still the best third answer; F describes multiple consumer *groups*, not one group.)
+Kafka consumers in a consumer group coordinate to ensure each partition is consumed by only one consumer instance, maintaining message order and avoiding duplicates. Offsets track consumption progress and can be committed automatically or manually based on application needs, which impacts fault tolerance and exactly-once semantics. When consumers join or leave a group, Kafka triggers a rebalance to redistribute partitions fairly. Frequent calls to poll() are essential to send heartbeats and avoid session timeouts that cause unnecessary rebalances. Misunderstandings often arise regarding partition sharing within groups and offset reset behaviors; knowing these details is critical for designing robust Kafka consumer applications.
+Heartbeats are sent by a separate background thread (since KIP-62), so poll() does not send them; poll() must be called within max.poll.interval.ms, otherwise the consumer is removed from the group and a rebalance is triggered. (Option E's "session timeouts" wording is therefore loose, but it is still the best third answer; F describes multiple consumer *groups*, not one group.)
 
 Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (pp. 83-90: heartbeat thread, max.poll.interval.ms, rebalance); https://kafka.apache.org/43/configuration/consumer-configs/
 
@@ -2087,7 +2082,7 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Correction: E is false. The `topics` / `topics.regex` properties exist only for sink connectors (they select which topics to consume). Source connectors do not have a `topics` property; the destination topic is chosen by connector-specific settings (e.g. `topic`, `topic.prefix`) or by SMTs such as RegexRouter. So only A and B are correct (select 2). Original text follows.
+E is false. The `topics` / `topics.regex` properties exist only for sink connectors (they select which topics to consume). Source connectors do not have a `topics` property; the destination topic is chosen by connector-specific settings (e.g. `topic`, `topic.prefix`) or by SMTs such as RegexRouter. So only A and B are correct (select 2). Original text follows.
 
 In Kafka Connect, source connectors ingest data from external systems and publish to Kafka topics, controlled by the `topics` or `topics.regex` configuration. Sink connectors consume from those topics and push data to external destinations, again using the same `topics` setting to define the source streams. CDC connectors are a subclass of source connectors that capture database change events via mechanisms such as binlogs; they publish both data and schema changes, typically storing schema evolution in a separate history topic (e.g., `database.history.kafka.topic`). Misconceptions arise when one assumes sink connectors can write to Kafka or source connectors can read from Kafka; both statements are false. Understanding these distinctions is essential for designing correct data pipelines and for the Confluent Certified Developer exam. For reference, see the Kafka Connect documentation (https://docs.confluent.io/platform/current/connect/index.html) and Debezium CDC guide (https://debezium.io/documentation/reference/).
 
@@ -2594,7 +2589,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-Correction: F is false. `exactly_once_batched` is not a real Kafka Streams config or `processing.guarantee` value (the real values are `at_least_once`, `exactly_once_v2`, and the deprecated `exactly_once` / `exactly_once_beta`). Only C is correct (Streams derives and manages `transactional.id` itself; the key setting is `processing.guarantee`). Original text follows.
+`exactly_once_batched` is not a real Kafka Streams config or `processing.guarantee` value (the real values are `at_least_once`, `exactly_once_v2`, and the deprecated `exactly_once` / `exactly_once_beta`). Only C is correct (Streams derives and manages `transactional.id` itself; the key setting is `processing.guarantee`). Original text follows.
 
 Exactly‑once semantics in Kafka Streams rely on the Streams client’s ability to use Kafka transactions to atomically commit both state changes and output records. The core requirement is setting `processing.guarantee` to either "exactly_once" or "exactly_once_batched". The Streams runtime automatically generates a transactional.id and performs the necessary commit logic. Optional optimizations include `exactly_once_batched=true`, which batches records per transaction for higher throughput. Features like caching, retention policies, idempotence, or offset reset do not affect the exactly‑once contract. Misconceptions often arise from conflating idempotent producer writes with full transactional guarantees. Correctly configuring the guarantee property and transactional id ensures that each record is processed and stored exactly once, even in the presence of failures.
 
