@@ -27,14 +27,45 @@
 
         body {
             margin: 0;
+            min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
+            background: linear-gradient(135deg, #dfe4f2 0%, #eaedf7 50%, #e5dff4 100%);
+            background-attachment: fixed;
             color: var(--text);
             font-size: 15px;
             line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            right: -110px;
+            top: -110px;
+            width: 480px;
+            height: 480px;
+            background: rgba(79, 70, 229, .09);
+        }
+
+        body::before {
+            left: -140px;
+            bottom: -140px;
+            width: 420px;
+            height: 420px;
+            background: rgba(124, 58, 237, .07);
         }
 
         .wrap {
+            position: relative;
+            z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
             padding: 16px;
@@ -78,7 +109,8 @@
         .card {
             background: var(--card);
             border-radius: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+            border: 1px solid rgba(15, 23, 42, .06);
+            box-shadow: 0 2px 10px rgba(30, 41, 59, .08);
             padding: 20px;
             margin-bottom: 16px;
         }
@@ -815,6 +847,19 @@
             --blue: #58a6ff;
             --red: #f85149;
             --q-accent: #58a6ff;
+        }
+
+        [data-theme=dark] body {
+            background: linear-gradient(135deg, #0b0f16 0%, #0d1117 50%, #131b29 100%);
+            background-attachment: fixed;
+        }
+
+        [data-theme=dark] body::after {
+            background: rgba(88, 166, 255, .055);
+        }
+
+        [data-theme=dark] body::before {
+            background: rgba(56, 139, 253, .04);
         }
 
         [data-theme=dark] .card {

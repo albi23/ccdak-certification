@@ -56,7 +56,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-In distributed mode, Kafka Connect provides scalability and fault tolerance by distributing connectors and tasks across multiple worker nodes. Connector configurations are stored in internal Kafka topics, enabling workers to share state and coordinate task assignments without direct TCP communication. Operational flexibility is enhanced by the REST API, allowing connectors to be paused and resumed independently. Common misconceptions include believing connectors are tied to single workers or that workers communicate directly via TCP; in reality, Kafka topics mediate coordination. Also, while consistent plugin versions are recommended, they are not strictly enforced by Connect. Understanding these details is critical for deploying and managing Kafka Connect clusters effectively.
+In distributed mode, Kafka Connect provides scalability and fault tolerance by distributing connectors and tasks across multiple worker nodes. Connector configurations are stored in internal Kafka topics, enabling workers to share state and coordinate task assignments without direct TCP communication. Operational flexibility is enhanced by the REST API, allowing connectors to be paused and resumed independently. Common misconceptions include believing connectors are tied to single workers or that workers communicate directly via TCP, in reality, Kafka topics mediate coordination. Also, while consistent plugin versions are recommended, they are not strictly enforced by Connect. Understanding these details is critical for deploying and managing Kafka Connect clusters effectively.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
 
@@ -72,7 +72,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
    **Incorrect**. While plugin versions should generally be consistent to avoid issues, Kafka Connect does not enforce uniform plugin versions across workers at runtime.
 
 4. ❌ **D. Each connector instance runs exclusively on a single worker node and cannot be redistributed without manual intervention.**  
-   **Incorrect**. Connectors in distributed mode are not bound to a single worker; they can be rebalanced and moved automatically by the Connect framework.
+   **Incorrect**. Connectors in distributed mode are not bound to a single worker, they can be rebalanced and moved automatically by the Connect framework.
 
 5. ✅ **E. Connectors and their tasks are distributed across all available worker nodes to provide scalability and fault tolerance.**  
    **Correct**. In distributed mode, Kafka Connect automatically balances connectors and tasks across worker nodes, enabling scalability and resilience.
@@ -101,7 +101,7 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Kafka Streams provides robust state management through local state stores that are mirrored to standby replicas for fault tolerance. Offsets are committed automatically, guaranteeing at‑least‑once semantics. Aggregations produce changelog topics that serve as durable, queryable stores. However, operators like filter() only remove records; key/value changes require mapping functions. Producing to the same source topic can create loops unless mitigated, and task restarts recover state from changelogs rather than rebuilding it from scratch. Understanding these mechanics is essential for building reliable, scalable stream processing applications. For more details, see the official Kafka Streams documentation: https://kafka.apache.org/documentation/streams/, https://docs.confluent.io/platform/current/streams/developer-guide.html.
+Kafka Streams provides robust state management through local state stores that are mirrored to standby replicas for fault tolerance. Offsets are committed automatically, guaranteeing at‑least‑once semantics. Aggregations produce changelog topics that serve as durable, queryable stores. However, operators like filter() only remove records, key/value changes require mapping functions. Producing to the same source topic can create loops unless mitigated, and task restarts recover state from changelogs rather than rebuilding it from scratch. Understanding these mechanics is essential for building reliable, scalable stream processing applications. For more details, see the official Kafka Streams documentation: https://kafka.apache.org/documentation/streams/, https://docs.confluent.io/platform/current/streams/developer-guide.html.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams: Architecture Overview" (pp. 410-416)
 
@@ -111,7 +111,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams: Architecture 
    **Incorrect**. Each task's store lives on a single instance and is backed by a changelog topic. Standby replicas exist only when `num.standby.replicas` > 0 (default 0) and are placed on a limited number of other instances, not on all of them. Only a `GlobalKTable` is fully materialized on every instance.
 
 2. ❌ **B. Using the KStream.filter() operator can modify the downstream key of a record without changing the original key.**  
-   **Incorrect**. filter() only removes records that do not satisfy the predicate; it does not alter the key or value. Key/value transformations are performed by map, mapValues, or selectKey.
+   **Incorrect**. filter() only removes records that do not satisfy the predicate, it does not alter the key or value. Key/value transformations are performed by map, mapValues, or selectKey.
 
 3. ✅ **C. The materialized view created with aggregate() is stored in a changelog topic that can be queried by other consumers.**  
    **Correct**. aggregate() creates a persistent state store backed by a changelog topic, which other consumers can read for point‑in‑time queries or for stream replay.
@@ -146,7 +146,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Throughput in Kafka producers is primarily governed by how efficiently records are batched and transmitted. Enabling idempotence (`idempotence=true`) provides safe retries and reduces the risk of duplicate processing, indirectly lowering CPU load by avoiding complex duplicate handling. Compression reduces payload size, decreasing network I/O and broker load; gzip offers strong compression at the cost of some CPU, while alternatives like LZ4 or Snappy trade speed for lower compression ratios. Adjusting `batch.size` and `linger.ms` allows the producer to aggregate more records into a single request, reducing the number of round‑trips and associated CPU cycles. The other options either increase memory usage without benefit (max.request.size), force immediate sends (linger.ms=0), or remove retry safeguards (disabling request.timeout.ms), all of which degrade performance or reliability.
+Throughput in Kafka producers is primarily governed by how efficiently records are batched and transmitted. Enabling idempotence (`idempotence=true`) provides safe retries and reduces the risk of duplicate processing, indirectly lowering CPU load by avoiding complex duplicate handling. Compression reduces payload size, decreasing network I/O and broker load, gzip offers strong compression at the cost of some CPU, while alternatives like LZ4 or Snappy trade speed for lower compression ratios. Adjusting `batch.size` and `linger.ms` allows the producer to aggregate more records into a single request, reducing the number of round‑trips and associated CPU cycles. The other options either increase memory usage without benefit (max.request.size), force immediate sends (linger.ms=0), or remove retry safeguards (disabling request.timeout.ms), all of which degrade performance or reliability.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "compression.type" (p. 59)
 
@@ -199,7 +199,7 @@ Source: Confluent Schema Registry docs - "Schema Evolution and Compatibility" (B
 **Detailed explanation of each option:**
 
 1. ❌ **A. Consumer will ignore the new field and process the record normally.**  
-   **Incorrect**. This would only hold if the schema had been registered under a forward-compatible (or NONE) setting; with the default BACKWARD setting the schema is rejected before any record is written.
+   **Incorrect**. This would only hold if the schema had been registered under a forward-compatible (or NONE) setting, with the default BACKWARD setting the schema is rejected before any record is written.
 
 2. ✅ **B. Schema Registry will reject the registration of the new schema due to a compatibility violation.**  
    **Correct**. The default compatibility is BACKWARD, which only allows adding fields that have a default (or deleting fields). Adding `age` without a default violates it, so registration fails.
@@ -208,10 +208,10 @@ Source: Confluent Schema Registry docs - "Schema Evolution and Compatibility" (B
    **Incorrect**. The new field is not present in the consumer’s reader schema, so it is simply ignored. The consumer never sees a null value for it.
 
 4. ❌ **D. Producer will only add the new field for messages after a topic reconfiguration.**  
-   **Incorrect**. The schema change is applied at the producer level; all new messages after the schema update contain the field immediately, no topic reconfiguration needed.
+   **Incorrect**. The schema change is applied at the producer level, all new messages after the schema update contain the field immediately, no topic reconfiguration needed.
 
 5. ❌ **E. Consumer will fail with an Avro serialization error because the missing field cannot be found.**  
-   **Incorrect**. Avro readers are designed to ignore unknown fields; the absence of a default does not cause a deserialization failure for older readers.
+   **Incorrect**. Avro readers are designed to ignore unknown fields, the absence of a default does not cause a deserialization failure for older readers.
 
 </details>
 
@@ -234,7 +234,7 @@ Choose the correct answer.
 
 The Confluent Schema Registry supports multiple compatibility modes to manage schema evolution. BACKWARD compatibility ensures consumers using the new schema can read data produced with the previous schema, so consumers are upgraded before producers. FORWARD compatibility is the inverse, ensuring data produced with the new schema can still be read by consumers using the previous schema (producers are upgraded first). FULL compatibility enforces both backward and forward compatibility, providing the strictest guarantees but limiting schema changes. NONE disables compatibility checks, risking runtime serialization errors. Understanding these settings is critical for Confluent Certified Developers to design schemas that evolve safely in production environments and maintain data integrity across distributed Kafka applications.
 
-NOTE (fix): the original question text described the direction backwards ("consumers using the previous schema read data produced with the new schema" is FORWARD, not BACKWARD). Per Confluent docs: BACKWARD = consumers using the NEW schema can read data produced with the last schema (default mode; upgrade consumers first); FORWARD = data produced with the new schema can be read by consumers using the last schema. The question wording was corrected so that B stays the answer (with the original wording the literal answer would be C). The explanation of B/C below was also corrected; the first paragraph's sentence about FORWARD being "new consumers read old data" is wrong - that is BACKWARD.
+NOTE (fix): the original question text described the direction backwards ("consumers using the previous schema read data produced with the new schema" is FORWARD, not BACKWARD). Per Confluent docs: BACKWARD = consumers using the NEW schema can read data produced with the last schema (default mode, upgrade consumers first), FORWARD = data produced with the new schema can be read by consumers using the last schema. The question wording was corrected so that B stays the answer (with the original wording the literal answer would be C). The explanation of B/C below was also corrected, the first paragraph's sentence about FORWARD being "new consumers read old data" is wrong - that is BACKWARD.
 
 Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html
 
@@ -247,7 +247,7 @@ Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/
    **Incorrect**. FORWARD compatibility ensures that data produced with the new schema can be read by consumers using the previous schema version, which is the opposite direction.
 
 3. ✅ **C. BACKWARD compatibility**  
-   **Correct**. BACKWARD compatibility ensures that consumers using the new schema can read data produced with the previous schema version (so consumers are upgraded first; it also allows rewinding consumers to the start of the topic).
+   **Correct**. BACKWARD compatibility ensures that consumers using the new schema can read data produced with the previous schema version (so consumers are upgraded first, it also allows rewinding consumers to the start of the topic).
 
 4. ❌ **D. FULL compatibility**  
    **Incorrect**. FULL compatibility requires both backward and forward compatibility, which is stricter than just backward compatibility.
@@ -303,7 +303,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 5 "Testing" (pp. 131-133) and Ch
 You are configuring a Kafka Connect worker to connect to a Confluent Platform cluster that requires SASL/PLAIN authentication over TLS. Which of the following worker properties must be set (directly or via the worker properties file) to establish a secure connection?
 
 - A. Configure `ssl.truststore.location` and `ssl.truststore.password` in the worker properties.
-- B. Set `sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user" password="pass";` in the worker properties.
+- B. Set `sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user" password="pass",` in the worker properties.
 - C. Add `security.protocol=SASL_SSL` to the worker properties.
 - D. Provide `sasl.mechanism=PLAIN` in the worker properties.
 - E. Add `producer.security.protocol=PLAINTEXT` to the connector configuration.
@@ -318,29 +318,29 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-A Kafka Connect worker connects to a Kafka cluster via the bootstrap servers and applies a single security protocol for both consumer and producer clients. For a SASL/PLAIN over TLS cluster, the worker must specify `security.protocol=SASL_SSL`, the `sasl.mechanism=PLAIN`, and provide the JAAS login configuration. These three properties enable the TLS handshake and SASL authentication. Optional truststore settings are only needed when the broker’s certificate isn’t in the default truststore. Note: the worker-level settings secure only the worker’s own clients (internal topics/admin); the producers/consumers of connectors need the same settings with the `producer.`/`consumer.`/`admin.` prefixes (or connector-level `producer.override.*`/`consumer.override.*`). Specifying `ssl://` in `bootstrap.servers` is unnecessary, and setting a plaintext protocol would expose traffic. Understanding which properties belong to the worker versus connector configuration prevents misconfigurations that cause connection failures.
+A Kafka Connect worker connects to a Kafka cluster via the bootstrap servers and applies a single security protocol for both consumer and producer clients. For a SASL/PLAIN over TLS cluster, the worker must specify `security.protocol=SASL_SSL`, the `sasl.mechanism=PLAIN`, and provide the JAAS login configuration. These three properties enable the TLS handshake and SASL authentication. Optional truststore settings are only needed when the broker’s certificate isn’t in the default truststore. Note: the worker-level settings secure only the worker’s own clients (internal topics/admin), the producers/consumers of connectors need the same settings with the `producer.`/`consumer.`/`admin.` prefixes (or connector-level `producer.override.*`/`consumer.override.*`). Specifying `ssl://` in `bootstrap.servers` is unnecessary, and setting a plaintext protocol would expose traffic. Understanding which properties belong to the worker versus connector configuration prevents misconfigurations that cause connection failures.
 
-Source: https://docs.confluent.io/platform/current/connect/security.html; https://kafka.apache.org/documentation/#security_sasl_plain; book ch. 11 (PDF p. 304)
+Source: https://docs.confluent.io/platform/current/connect/security.html, https://kafka.apache.org/documentation/#security_sasl_plain, book ch. 11 (PDF p. 304)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Configure `ssl.truststore.location` and `ssl.truststore.password` in the worker properties.**  
    **Incorrect**. While useful when the broker uses a self‑signed or private CA certificate, these properties are optional if the broker's certificate is already trusted by the Java default truststore.
 
-2. ✅ **B. Set `sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user" password="pass";` in the worker properties.**  
+2. ✅ **B. Set `sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="user" password="pass",` in the worker properties.**  
    **Correct**. This JAAS configuration supplies the credentials for SASL/PLAIN authentication and is mandatory for the worker to authenticate.
 
 3. ✅ **C. Add `security.protocol=SASL_SSL` to the worker properties.**  
    **Correct**. This property tells the worker to use TLS for transport and SASL for authentication, which is mandatory for a SASL/PLAIN over TLS cluster.
 
 4. ✅ **D. Provide `sasl.mechanism=PLAIN` in the worker properties.**  
-   **Correct**. The SASL mechanism must match the broker's configuration; for SASL/PLAIN authentication this property is required.
+   **Correct**. The SASL mechanism must match the broker's configuration, for SASL/PLAIN authentication this property is required.
 
 5. ❌ **E. Add `producer.security.protocol=PLAINTEXT` to the connector configuration.**  
-   **Incorrect**. Connector configurations are separate from the worker and must mirror the worker's security settings; using PLAINTEXT would break the secure connection.
+   **Incorrect**. Connector configurations are separate from the worker and must mirror the worker's security settings, using PLAINTEXT would break the secure connection.
 
 6. ❌ **F. Set `bootstrap.servers` to `ssl://kafka-broker:9093`.**  
-   **Incorrect**. bootstrap.servers takes plain host:port pairs (a URL scheme like `ssl://` is not valid there); the security protocol dictates TLS usage.
+   **Incorrect**. bootstrap.servers takes plain host:port pairs (a URL scheme like `ssl://` is not valid there), the security protocol dictates TLS usage.
 
 </details>
 
@@ -364,8 +364,8 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Deploying Kafka Streams on Docker/Kubernetes requires more than just container images; it demands reliable state persistence, correct initialization, and built‑in scalability. A StatefulSet with Persistent Volume Claims guarantees that local state survives pod rescheduling. An init container that pre‑creates topics ensures the application starts only when its dependencies are ready, preventing runtime failures. Relying on Kafka’s changelog topics for state store restoration allows the Streams app to rebuild state efficiently after a crash or scaling event. These practices are aligned with Confluent’s deployment guidance and are critical for production reliability. References: - Confluent Docs – Deploying Streams in Kubernetes: https://docs.confluent.io/platform/current/streams/deployment.html - Kubernetes StatefulSets: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/ - Kafka Streams – State Store and Changelog Topics: https://docs.confluent.io/platform/current/streams/developer-guide/streams-state.html  
-Source: https://kafka.apache.org/43/documentation/streams/developer-guide/running-app/ (state restoration from changelog, standby replicas, scaling) ; https://kafka.apache.org/43/documentation/streams/architecture/ (state, changelog topics). Note: K8s-specific items (StatefulSet, init container) are deployment practices, not Kafka docs.
+Deploying Kafka Streams on Docker/Kubernetes requires more than just container images, it demands reliable state persistence, correct initialization, and built‑in scalability. A StatefulSet with Persistent Volume Claims guarantees that local state survives pod rescheduling. An init container that pre‑creates topics ensures the application starts only when its dependencies are ready, preventing runtime failures. Relying on Kafka’s changelog topics for state store restoration allows the Streams app to rebuild state efficiently after a crash or scaling event. These practices are aligned with Confluent’s deployment guidance and are critical for production reliability. References: - Confluent Docs – Deploying Streams in Kubernetes: https://docs.confluent.io/platform/current/streams/deployment.html - Kubernetes StatefulSets: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/ - Kafka Streams – State Store and Changelog Topics: https://docs.confluent.io/platform/current/streams/developer-guide/streams-state.html  
+Source: https://kafka.apache.org/43/documentation/streams/developer-guide/running-app/ (state restoration from changelog, standby replicas, scaling) , https://kafka.apache.org/43/documentation/streams/architecture/ (state, changelog topics). Note: K8s-specific items (StatefulSet, init container) are deployment practices, not Kafka docs.
 
 **Detailed explanation of each option:**
 
@@ -373,7 +373,7 @@ Source: https://kafka.apache.org/43/documentation/streams/developer-guide/runnin
    **Correct**. Streams automatically writes state to changelog topics. Configuring this ensures that on restart, the state store can be rebuilt efficiently from Kafka, reducing recovery time.
 
 2. ❌ **B. Expose Kafka bootstrap servers through a NodePort service for external access.**  
-   **Incorrect**. Exposing internal Kafka brokers via NodePort is insecure and unnecessary; clients should use a dedicated Kafka service within the cluster or a managed Kafka service.
+   **Incorrect**. Exposing internal Kafka brokers via NodePort is insecure and unnecessary, clients should use a dedicated Kafka service within the cluster or a managed Kafka service.
 
 3. ✅ **C. Use a Kubernetes StatefulSet with Persistent Volume Claims to preserve local state across pod restarts.**  
    **Correct**. A StatefulSet provides stable network identity and persistent storage for the Streams state store. Without it, local state would be lost on pod rescheduling, leading to unnecessary state restoration overhead.
@@ -385,7 +385,7 @@ Source: https://kafka.apache.org/43/documentation/streams/developer-guide/runnin
    **Incorrect**. While reducing resources is desirable, a single replica limits fault tolerance and scalability. Deploying multiple replicas improves availability and throughput.
 
 6. ❌ **F. Configure the Streams application to use exactly‑once semantics by setting application.id and enable.idempotence.**  
-   **Incorrect**. Exactly‑once in Kafka Streams is enabled with `processing.guarantee=exactly_once_v2`; `application.id` is unrelated to it and `enable.idempotence` is configured by Streams itself. It is an application setting, not a deployment practice.
+   **Incorrect**. Exactly‑once in Kafka Streams is enabled with `processing.guarantee=exactly_once_v2`, `application.id` is unrelated to it and `enable.idempotence` is configured by Streams itself. It is an application setting, not a deployment practice.
 
 </details>
 
@@ -407,20 +407,20 @@ Choose the correct answer.
 
 **Explanation:**
 
-In Kafka Streams, stream‑stream joins require that both streams share the same key; otherwise, Kafka Streams performs an implicit repartition that incurs network shuffling and latency. By re‑keying the payments stream to use the `order_id` key before it reaches the Streams application, you enable a direct partition‑aligned join with zero repartitioning. This design choice reduces resource consumption and simplifies the topology. While repartition topics or adding fields are technically feasible, they add complexity and performance costs. Understanding key design is essential for efficient stream processing and is a core concept in Confluent’s Kafka Streams data‑modeling best practices.
+In Kafka Streams, stream‑stream joins require that both streams share the same key, otherwise, Kafka Streams performs an implicit repartition that incurs network shuffling and latency. By re‑keying the payments stream to use the `order_id` key before it reaches the Streams application, you enable a direct partition‑aligned join with zero repartitioning. This design choice reduces resource consumption and simplifies the topology. While repartition topics or adding fields are technically feasible, they add complexity and performance costs. Understanding key design is essential for efficient stream processing and is a core concept in Confluent’s Kafka Streams data‑modeling best practices.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Stream-Table Join"/"Streaming Join" (pp. 396-399)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Use a time‑windowed join and let Kafka Streams automatically handle key differences.**  
-   **Incorrect**. Kafka Streams cannot automatically reconcile different keys; the streams still need the same key to join efficiently.
+   **Incorrect**. Kafka Streams cannot automatically reconcile different keys, the streams still need the same key to join efficiently.
 
 2. ❌ **B. Use a global table keyed by `order_id` and join the payments stream to it.**  
    **Incorrect**. A global table is used for a stream‑table join, not a stream‑stream join, and would still require repartitioning of the payments stream if its key is not `order_id`.
 
 3. ❌ **C. Add an `order_id` field to the payment value and perform a stream‑stream join with a tumbling window.**  
-   **Incorrect**. The join key is still `payment_id`; adding a field does not change the key and Kafka Streams will automatically trigger a repartition, causing unnecessary shuffling.
+   **Incorrect**. The join key is still `payment_id`, adding a field does not change the key and Kafka Streams will automatically trigger a repartition, causing unnecessary shuffling.
 
 4. ✅ **D. Publish payments with the key set to `order_id` (i.e., re‑key the payment records before producing).**  
    **Correct**. For a stream‑stream join, the join key must be the topic key. By setting the payment key to `order_id`, both streams share the same key and no repartitioning is required, resulting in a single partitioned join.
@@ -449,9 +449,9 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Effective lag troubleshooting starts with quantifying the problem using `kafka-consumer-groups.sh --describe`, which shows the exact number of messages behind each partition. Once lag is confirmed, inspect consumer configuration for timing issues: a too‑small `max.poll.interval.ms` causes frequent rebalances that reset offsets, while an undersized thread pool can delay poll calls. Adjusting these settings restores a steady consumer pace. JMX fetch metrics and `fetch.min.bytes` can provide context on throughput, but they are secondary to lag measurement and configuration tuning. These practices align with Confluent’s guidance on monitoring consumer lag and tuning consumer performance. Note: `consumer-fetch-manager-metrics` does expose lag (`records-lag-max`, per-partition `records-lag`), but the metric names in option D (`fetcher.max.poll.records`, `fetcher.avg.bytes.per.sec`) do not exist, which makes D wrong. Option A is only loosely worded (the consumer has no thread pool; the point is that slow processing between `poll()` calls exceeding `max.poll.interval.ms` triggers rebalances).
+Effective lag troubleshooting starts with quantifying the problem using `kafka-consumer-groups.sh --describe`, which shows the exact number of messages behind each partition. Once lag is confirmed, inspect consumer configuration for timing issues: a too‑small `max.poll.interval.ms` causes frequent rebalances that reset offsets, while an undersized thread pool can delay poll calls. Adjusting these settings restores a steady consumer pace. JMX fetch metrics and `fetch.min.bytes` can provide context on throughput, but they are secondary to lag measurement and configuration tuning. These practices align with Confluent’s guidance on monitoring consumer lag and tuning consumer performance. Note: `consumer-fetch-manager-metrics` does expose lag (`records-lag-max`, per-partition `records-lag`), but the metric names in option D (`fetcher.max.poll.records`, `fetcher.avg.bytes.per.sec`) do not exist, which makes D wrong. Option A is only loosely worded (the consumer has no thread pool, the point is that slow processing between `poll()` calls exceeding `max.poll.interval.ms` triggers rebalances).
 
-Source: https://kafka.apache.org/documentation/#consumer_monitoring and #basic_ops_consumer_group; Kafka: The Definitive Guide 2nd ed., ch. 13 (Consumer lag monitoring, Burrow) and ch. 4.
+Source: https://kafka.apache.org/documentation/#consumer_monitoring and #basic_ops_consumer_group, Kafka: The Definitive Guide 2nd ed., ch. 13 (Consumer lag monitoring, Burrow) and ch. 4.
 
 **Detailed explanation of each option:**
 
@@ -459,10 +459,10 @@ Source: https://kafka.apache.org/documentation/#consumer_monitoring and #basic_o
    **Correct**. A too‑low `max.poll.interval.ms` can trigger rebalances, causing offsets to be re‑consumed and increasing lag. Adjusting thread pool and interval settings can mitigate this.
 
 2. ❌ **B. Check the size of the `__consumer_offsets` topic to determine if offset commits are being throttled.**  
-   **Incorrect**. Offset commits are typically lightweight; the size of `__consumer_offsets` rarely causes significant lag. This check is rarely useful for lag diagnosis.
+   **Incorrect**. Offset commits are typically lightweight, the size of `__consumer_offsets` rarely causes significant lag. This check is rarely useful for lag diagnosis.
 
 3. ❌ **C. Increase the consumer’s `fetch.min.bytes` setting to reduce the number of fetch requests.**  
-   **Incorrect**. Raising `fetch.min.bytes` can reduce request frequency but may increase latency; it does not directly address lag and can actually worsen it if the consumer blocks waiting for more data.
+   **Incorrect**. Raising `fetch.min.bytes` can reduce request frequency but may increase latency, it does not directly address lag and can actually worsen it if the consumer blocks waiting for more data.
 
 4. ❌ **D. Verify that the consumer group’s `auto.offset.reset` is set to `earliest` to ensure it reads from the beginning of the partition.**  
    **Incorrect**. `auto.offset.reset` only matters when a group has no committed offset. Changing it does not affect an already‑running consumer’s lag.
@@ -482,7 +482,7 @@ Which of the following statements about Kafka **topics** are correct in the cont
 - B. Each partition within a Kafka topic guarantees message ordering only within that partition.
 - C. Partitions in a Kafka topic help parallelize data processing and enable scalability of both producers and consumers.
 - D. Kafka topics automatically replicate data across all brokers in the cluster for fault tolerance.
-- E. Kafka topics cannot be deleted once created; they persist indefinitely unless the entire cluster is reset.
+- E. Kafka topics cannot be deleted once created, they persist indefinitely unless the entire cluster is reset.
 - F. A topic’s retention period determines how long Kafka retains the messages regardless of whether they have been consumed.
 
 Choose the correct answers (select 4).
@@ -496,7 +496,7 @@ Choose the correct answers (select 4).
 
 Kafka topics are logical streams of data divided into partitions, where ordering is guaranteed only within individual partitions. Producers write data to topics, and consumers read from them, enabling decoupled data pipelines. Replication provides fault tolerance but only to configured replica sets, not necessarily all brokers. Retention policies determine how long messages persist regardless of consumption, facilitating replay and temporal decoupling. Topics can be deleted if broker settings allow, which is important for cluster hygiene. Partitions also facilitate parallelism and scalability by distributing load across multiple brokers and consumers. Understanding these nuances is critical for developing robust Kafka applications and passing the Confluent Certified Developer exam.
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 (Topics and Partitions), Ch. 2 (delete.topic.enable defaults to true), Ch. 6 (Replication, Retention); https://kafka.apache.org/documentation/#intro_topics
+Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 (Topics and Partitions), Ch. 2 (delete.topic.enable defaults to true), Ch. 6 (Replication, Retention), https://kafka.apache.org/documentation/#intro_topics
 
 **Detailed explanation of each option:**
 
@@ -510,10 +510,10 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 (Topics and Partitions), Ch. 2
    **Correct**. Partitions enable horizontal scaling by allowing multiple consumers and producers to operate concurrently on different partitions.
 
 4. ❌ **D. Kafka topics automatically replicate data across all brokers in the cluster for fault tolerance.**  
-   **Incorrect**. Replication factor is configurable per topic and may not include all brokers; data is replicated to a subset of brokers designated as replicas.
+   **Incorrect**. Replication factor is configurable per topic and may not include all brokers, data is replicated to a subset of brokers designated as replicas.
 
-5. ❌ **E. Kafka topics cannot be deleted once created; they persist indefinitely unless the entire cluster is reset.**  
-   **Incorrect**. Kafka supports topic deletion if enabled in the broker configuration; topics can be deleted via administrative tools.
+5. ❌ **E. Kafka topics cannot be deleted once created, they persist indefinitely unless the entire cluster is reset.**  
+   **Incorrect**. Kafka supports topic deletion if enabled in the broker configuration, topics can be deleted via administrative tools.
 
 6. ✅ **F. A topic’s retention period determines how long Kafka retains the messages regardless of whether they have been consumed.**  
    **Correct**. Retention is based on time or size and applies independently of message consumption status.
@@ -541,7 +541,7 @@ Choose the correct answers (select 3).
 
 The core Kafka client library includes the Producer API, Consumer API, and Streams API, which are essential for producing, consuming, and processing streaming data within Kafka. The Producer API enables applications to send records to Kafka topics, while the Consumer API allows reading from topics. The Streams API facilitates building stateful stream processing applications directly on Kafka data streams. Other APIs such as Connect API, Admin API, and REST Proxy serve different purposes: Connect API is for integration with external systems, Admin API for Kafka resource management, and REST Proxy for HTTP access to Kafka. Understanding these distinctions is crucial for developers to select appropriate APIs for application development in Kafka ecosystems.
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (pp. 402-410) — NOTE: Producer, Consumer, Streams are core client APIs; Connect/Admin are separate per book Ch. 1/9/5.
+Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (pp. 402-410) — NOTE: Producer, Consumer, Streams are core client APIs, Connect/Admin are separate per book Ch. 1/9/5.
 
 **Detailed explanation of each option:**
 
@@ -584,7 +584,7 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Kafka Connect is designed as a scalable, fault‑tolerant framework for integrating Kafka with external systems. Key runtime features include automatic topic creation for sinks (when enabled), dynamic task distribution across workers for load balancing and high availability, and a comprehensive REST API that manages connector life‑cycle and configuration. Additionally, Connect supports Single Message Transforms (SMTs) that allow lightweight, per‑message processing without external code. Misconceptions often arise around automatic schema registration and configuration rollback; these are optional or manual actions, not built‑in Connect capabilities. Understanding these distinctions is critical for configuring robust, production‑grade pipelines.
+Kafka Connect is designed as a scalable, fault‑tolerant framework for integrating Kafka with external systems. Key runtime features include automatic topic creation for sinks (when enabled), dynamic task distribution across workers for load balancing and high availability, and a comprehensive REST API that manages connector life‑cycle and configuration. Additionally, Connect supports Single Message Transforms (SMTs) that allow lightweight, per‑message processing without external code. Misconceptions often arise around automatic schema registration and configuration rollback, these are optional or manual actions, not built‑in Connect capabilities. Understanding these distinctions is critical for configuring robust, production‑grade pipelines.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
 
@@ -606,7 +606,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
    **Correct**. Each connector is split into tasks that can run on any worker in the cluster. The Connect worker group automatically balances tasks and reassigns them if a worker fails, providing scalability and high availability.
 
 6. ❌ **F. Kafka Connect automatically rolls back connector configuration changes if the connector fails to start.**  
-   **Incorrect**. If a connector fails to start, it enters the FAILED state; Connect does not automatically revert the configuration change. The user must manually adjust or delete the connector.
+   **Incorrect**. If a connector fails to start, it enters the FAILED state, Connect does not automatically revert the configuration change. The user must manually adjust or delete the connector.
 
 </details>
 
@@ -631,7 +631,7 @@ Choose the correct answers (select 3).
 
 In Kafka Streams, time windows segment event streams to perform time-based aggregations. Tumbling windows are fixed, non-overlapping intervals strictly aligned to event-time, ensuring each event belongs to exactly one window. Hopping windows overlap by advancing with a hop interval smaller than the window size, allowing events to appear in multiple windows. Grace periods enable the handling of late-arriving events by extending the window retention before finalizing results. By default, Kafka Streams uses the timestamps embedded in records (set by producers), not ingestion time. The default timestamp extractor is `FailOnInvalidTimestamp`, which uses the record's embedded timestamp and fails on invalid ones. If a timestamp extractor is not configured or the record has an invalid timestamp, behavior depends on the configured extractor. Session windows differ by dynamically grouping events separated by inactivity gaps, not by fixed size.
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Time Windows" (pp. 390-392); kafka.apache.org/43/streams/developer-guide/dsl-api/
+Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Time Windows" (pp. 390-392), kafka.apache.org/43/streams/developer-guide/dsl-api/
 
 **Detailed explanation of each option:**
 
@@ -644,14 +644,14 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Time Windows" (pp. 390-392);
 3. ✅ **C. Tumbling windows are fixed-size, non-overlapping windows that group events strictly based on event-time.**  
    **Correct**. Tumbling windows segment the event-time timeline into contiguous, non-overlapping intervals, making them ideal for discrete aggregation periods.
 
-4. ❌ **D. Event-time windows in Kafka Streams rely on record timestamps by default; ingestion time is used only when records have invalid or no timestamps.**  
+4. ❌ **D. Event-time windows in Kafka Streams rely on record timestamps by default, ingestion time is used only when records have invalid or no timestamps.**  
    **Incorrect as originally stated**. Kafka Streams uses the record's embedded timestamp by default (via the `FailOnInvalidTimestamp` extractor), which is typically the producer's create time — not "ingestion time." The original statement that "ingestion time is used by default unless a timestamp extractor is configured" was misleading and has been corrected.
 
 5. ✅ **E. Hopping windows can overlap, allowing an event to belong to multiple windows if the hop interval is smaller than the window size.**  
    **Correct**. Hopping windows advance by a fixed hop interval smaller than the window size, causing windows to overlap and events to be counted in multiple windows.
 
 6. ❌ **F. Kafka Streams automatically adjusts window size dynamically based on event skew and late arrivals.**  
-   **Incorrect**. Window sizes in Kafka Streams are statically defined by the developer and do not dynamically adjust; late arrivals are handled via grace periods.
+   **Incorrect**. Window sizes in Kafka Streams are statically defined by the developer and do not dynamically adjust, late arrivals are handled via grace periods.
 
 </details>
 
@@ -744,7 +744,7 @@ Which of the following statements accurately describe core concepts or features 
 - B. Sink connectors consume records from Kafka topics and write them into external target systems (e.g., HDFS, JDBC databases).
 - C. Debezium connectors are an example of CDC connectors that transform change events into a JSON format by default.
 - D. Source connectors read data from external systems (e.g., databases, message queues) and write the records into Kafka topics.
-- E. Sink connectors do not support idempotent writes; they rely entirely on the external system to handle duplicate records.
+- E. Sink connectors do not support idempotent writes. They rely entirely on the external system to handle duplicate records.
 - F. Kafka Connect's offset management for source connectors is stored in the connector configuration file by default.
 
 Choose the correct answers (select 3).
@@ -756,14 +756,14 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Connect distinguishes between source connectors (write to Kafka), sink connectors (read from Kafka), and CDC connectors (specialized sources that capture change events). Source connectors emit records into topics, while sink connectors pull from topics and persist to external sinks. Debezium exemplifies a CDC connector that emits change events in JSON. Offsets for source connectors are stored in a dedicated Kafka topic, not in configuration files. Sink connectors themselves do not enforce idempotence; idempotent behavior must be implemented by the connector or the target system. Understanding these distinctions is critical for designing reliable data pipelines.
+Kafka Connect distinguishes between source connectors (write to Kafka), sink connectors (read from Kafka), and CDC connectors (specialized sources that capture change events). Source connectors emit records into topics, while sink connectors pull from topics and persist to external sinks. Debezium exemplifies a CDC connector that emits change events in JSON. Offsets for source connectors are stored in a dedicated Kafka topic, not in configuration files. Sink connectors themselves do not enforce idempotence, idempotent behavior must be implemented by the connector or the target system. Understanding these distinctions is critical for designing reliable data pipelines.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kafka Connect" (pp. 211-214)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. CDC connectors require explicit schema registry configuration to capture change events from the source system.**  
-   **Incorrect**. While CDC connectors often produce Schema Registry-compatible schemas, they do not *require* schema registry configuration; they can operate with Avro or JSON schemas directly. Incorrect.
+   **Incorrect**. While CDC connectors often produce Schema Registry-compatible schemas, they do not *require* schema registry configuration, they can operate with Avro or JSON schemas directly. Incorrect.
 
 2. ✅ **B. Sink connectors consume records from Kafka topics and write them into external target systems (e.g., HDFS, JDBC databases).**  
    **Correct**. Sink connectors perform the opposite of source connectors by reading from Kafka and persisting to external stores. Correct.
@@ -774,8 +774,8 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kaf
 4. ✅ **D. Source connectors read data from external systems (e.g., databases, message queues) and write the records into Kafka topics.**  
    **Correct**. This is the fundamental role of a source connector. It extracts data and produces Kafka records. Correct.
 
-5. ❌ **E. Sink connectors do not support idempotent writes; they rely entirely on the external system to handle duplicate records.**  
-   **Incorrect**. Sink connectors themselves do not guarantee idempotence; however, idempotent writes can be achieved by implementing idempotent logic in the connector or by using external system features. The statement is misleading, so it is considered incorrect for the purpose of this question.
+5. ❌ **E. Sink connectors do not support idempotent writes, they rely entirely on the external system to handle duplicate records.**  
+   **Incorrect**. Sink connectors themselves do not guarantee idempotence, however, idempotent writes can be achieved by implementing idempotent logic in the connector or by using external system features. The statement is misleading, so it is considered incorrect for the purpose of this question.
 
 6. ❌ **F. Kafka Connect's offset management for source connectors is stored in the connector configuration file by default.**  
    **Incorrect**. Offsets are persisted in a dedicated Kafka topic (default: __connect-offsets), not in the connector config. Incorrect.
@@ -801,26 +801,26 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Exactly‑once processing in Kafka hinges on three key practices: the producer must be idempotent and transactional, which requires `enable.idempotence=true` and a unique `transactional.id`; the consumer must disable automatic offset commits so that offsets can be committed only after the transaction succeeds (`enable.auto.commit=false`). The other options are either redundant (acks=all is set automatically), optional, or incorrect (callbacks and per‑message commits). These settings together ensure that records are neither lost nor duplicated even across failures. For more detail, see the Kafka Producer configuration docs (https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence) and the Exactly‑Once semantics guide (https://docs.confluent.io/platform/current/kafka/producer.html#exactly-once).
+Exactly‑once processing in Kafka hinges on three key practices: the producer must be idempotent and transactional, which requires `enable.idempotence=true` and a unique `transactional.id`, the consumer must disable automatic offset commits so that offsets can be committed only after the transaction succeeds (`enable.auto.commit=false`). The other options are either redundant (acks=all is set automatically), optional, or incorrect (callbacks and per‑message commits). These settings together ensure that records are neither lost nor duplicated even across failures. For more detail, see the Kafka Producer configuration docs (https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence) and the Exactly‑Once semantics guide (https://docs.confluent.io/platform/current/kafka/producer.html#exactly-once).
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 8 "Exactly-Once Semantics" (pp. 181-201)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Calling `Consumer.commitSync()` after each message is processed.**  
-   **Incorrect**. Manual commits are required, but committing after every message is not necessary; committing after the transaction commit is sufficient. Thus this option is not a distinct requirement.
+   **Incorrect**. Manual commits are required, but committing after every message is not necessary, committing after the transaction commit is sufficient. Thus this option is not a distinct requirement.
 
 2. ❌ **B. Setting the producer property `acks=all`.**  
-   **Incorrect**. While `acks=all` contributes to idempotence, it is not a separate requirement when `enable.idempotence` is true; the producer automatically sets `acks=all`. Therefore this option alone is not a distinct requirement for exactly‑once semantics.
+   **Incorrect**. While `acks=all` contributes to idempotence, it is not a separate requirement when `enable.idempotence` is true, the producer automatically sets `acks=all`. Therefore this option alone is not a distinct requirement for exactly‑once semantics.
 
 3. ❌ **C. Using `Producer.send()` without a callback.**  
-   **Incorrect**. The callback is optional and does not influence exactly‑once semantics; it merely provides async error handling.
+   **Incorrect**. The callback is optional and does not influence exactly‑once semantics, it merely provides async error handling.
 
 4. ✅ **D. Setting the producer property `enable.idempotence=true`.**  
    **Correct**. This enables the producer to deduplicate retries, a core part of exactly‑once delivery. It must be set for transactional writes.
 
 5. ✅ **E. Setting a unique `transactional.id` on the producer.**  
-   **Correct**. A transactional producer requires a persistent transactional ID to identify the transaction across restarts; without it, `beginTransaction` fails.
+   **Correct**. A transactional producer requires a persistent transactional ID to identify the transaction across restarts, without it, `beginTransaction` fails.
 
 6. ✅ **F. Configuring the consumer with `enable.auto.commit=false`.**  
    **Correct**. Offsets must be committed manually after a successful transaction commit to preserve exactly‑once behavior.
@@ -830,12 +830,12 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 8 "Exactly-Once Semantics" (pp. 
 ## Question 20 (Kafka Consumers):
 When creating a Kafka consumer in a Confluent platform environment, which of the following configurations and practices are essential to ensure correct and efficient consumption of messages?
 
-- A. Setting the 'group.id' configuration to enable consumer group coordination and offset management
-- B. Using 'auto.offset.reset' set to 'latest' to start consuming from the earliest available message in the topic
-- C. Using 'auto.commit.interval.ms' to set the frequency of automatic offset commits when 'enable.auto.commit' is true
-- D. Disabling 'enable.auto.commit' and manually committing offsets to have precise control over message processing
-- E. Setting 'max.poll.records' to 1 to minimize memory usage and improve throughput
-- F. Specifying 'key.deserializer' and 'value.deserializer' to correctly deserialize records fetched from Kafka
+- A. Setting the `group.id` configuration to enable consumer group coordination and offset management
+- B. Using `auto.offset.reset` set to `latest` to start consuming from the earliest available message in the topic
+- C. Using `auto.commit.interval.ms` to set the frequency of automatic offset commits when `enable.auto.commit` is true
+- D. Disabling `enable.auto.commit` and manually committing offsets to have precise control over message processing
+- E. Setting `max.poll.records` to 1 to minimize memory usage and improve throughput
+- F. Specifying `key.deserializer` and `value.deserializer` to correctly deserialize records fetched from Kafka
 
 Choose the correct answers (select 4).
 
@@ -846,28 +846,28 @@ Choose the correct answers (select 4).
 
 **Explanation:**
 
-Creating an efficient Kafka consumer involves configuring key parameters that affect message processing, offset management, and deserialization. Setting 'group.id' is fundamental for consumer group coordination and offset tracking. Disabling 'enable.auto.commit' grants the developer control over when offsets are committed, improving reliability. Correct deserializers must be specified to interpret Kafka messages properly. The 'auto.commit.interval.ms' setting only applies if automatic commits are enabled and influences commit frequency. Misconfigurations such as setting 'auto.offset.reset' to 'latest' when trying to consume from the beginning, or setting 'max.poll.records' too low, can lead to inefficient or incorrect consumption patterns. Understanding these configurations is critical for passing the Confluent Certified Developer exam and for building robust consumer applications in production. (Precision: key.deserializer and value.deserializer are mandatory; group.id is required when using subscribe()/offset commits, but not when using assign() without commits. max.poll.records=1 would reduce, not improve, throughput.)
+Creating an efficient Kafka consumer involves configuring key parameters that affect message processing, offset management, and deserialization. Setting `group.id` is fundamental for consumer group coordination and offset tracking. Disabling `enable.auto.commit` grants the developer control over when offsets are committed, improving reliability. Correct deserializers must be specified to interpret Kafka messages properly. The `auto.commit.interval.ms` setting only applies if automatic commits are enabled and influences commit frequency. Misconfigurations such as setting `auto.offset.reset` to `latest` when trying to consume from the beginning, or setting `max.poll.records` too low, can lead to inefficient or incorrect consumption patterns. Understanding these configurations is critical for passing the Confluent Certified Developer exam and for building robust consumer applications in production. (Precision: key.deserializer and value.deserializer are mandatory, group.id is required when using subscribe()/offset commits, but not when using assign() without commits. max.poll.records=1 would reduce, not improve, throughput.)
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 4 "Configuring Consumers" (pp. 87-93); https://kafka.apache.org/documentation/#consumerconfigs
+Source: Kafka: The Definitive Guide 2nd ed., ch. 4 "Configuring Consumers" (pp. 87-93), https://kafka.apache.org/documentation/#consumerconfigs
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. Setting the 'group.id' configuration to enable consumer group coordination and offset management**  
-   **Correct**. The 'group.id' uniquely identifies the consumer group and is required for Kafka to manage offset commits and load balancing among consumers.
+1. ✅ **A. Setting the `group.id` configuration to enable consumer group coordination and offset management**  
+   **Correct**. The `group.id` uniquely identifies the consumer group and is required for Kafka to manage offset commits and load balancing among consumers.
 
-2. ❌ **B. Using 'auto.offset.reset' set to 'latest' to start consuming from the earliest available message in the topic**  
-   **Incorrect**. Setting 'auto.offset.reset' to 'latest' causes the consumer to start from the end of the topic, not the earliest message. To consume from the beginning, it should be set to 'earliest'.
+2. ❌ **B. Using `auto.offset.reset` set to `latest` to start consuming from the earliest available message in the topic**  
+   **Incorrect**. Setting `auto.offset.reset` to `latest` causes the consumer to start from the end of the topic, not the earliest message. To consume from the beginning, it should be set to `earliest`.
 
-3. ✅ **C. Using 'auto.commit.interval.ms' to set the frequency of automatic offset commits when 'enable.auto.commit' is true**  
+3. ✅ **C. Using `auto.commit.interval.ms` to set the frequency of automatic offset commits when `enable.auto.commit` is true**  
    **Correct**. This setting controls how often offsets are committed automatically, impacting the balance between throughput and potential message reprocessing.
 
-4. ✅ **D. Disabling 'enable.auto.commit' and manually committing offsets to have precise control over message processing**  
+4. ✅ **D. Disabling `enable.auto.commit` and manually committing offsets to have precise control over message processing**  
    **Correct**. Disabling automatic commits allows the application to commit offsets only after processing messages successfully, improving reliability.
 
-5. ❌ **E. Setting 'max.poll.records' to 1 to minimize memory usage and improve throughput**  
-   **Incorrect**. While setting 'max.poll.records' to 1 reduces memory usage, it negatively impacts throughput by fetching one record at a time, which is typically inefficient.
+5. ❌ **E. Setting `max.poll.records` to 1 to minimize memory usage and improve throughput**  
+   **Incorrect**. While setting `max.poll.records` to 1 reduces memory usage, it negatively impacts throughput by fetching one record at a time, which is typically inefficient.
 
-6. ✅ **F. Specifying 'key.deserializer' and 'value.deserializer' to correctly deserialize records fetched from Kafka**  
+6. ✅ **F. Specifying `key.deserializer` and `value.deserializer` to correctly deserialize records fetched from Kafka**  
    **Correct**. Proper deserializers must be configured to convert byte arrays into usable key and value objects in the application.
 
 </details>
@@ -891,9 +891,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka’s core design relies on immutable, append‑only logs that minimize write contention and enable sequential disk I/O. Topics are divided into partitions, each a separate log that can be distributed across brokers for parallelism. Replication of each partition across multiple brokers provides durability and high availability; the leader replica processes client requests while followers sync asynchronously. Memory is used for caching and index storage, not for holding all messages. Optional features such as log compaction and ZooKeeper’s role in metadata management are important but not fundamental to scalability or fault tolerance. Understanding these basics is critical for building robust, high‑throughput Kafka applications. Note: statement A is also factually true (compaction keeps the latest value per key) - it is just not a fundamental scalability/fault-tolerance property, so it is the "distractor" here; ZooKeeper/KRaft handle metadata, not data replication.
+Kafka’s core design relies on immutable, append‑only logs that minimize write contention and enable sequential disk I/O. Topics are divided into partitions, each a separate log that can be distributed across brokers for parallelism. Replication of each partition across multiple brokers provides durability and high availability, the leader replica processes client requests while followers sync asynchronously. Memory is used for caching and index storage, not for holding all messages. Optional features such as log compaction and ZooKeeper’s role in metadata management are important but not fundamental to scalability or fault tolerance. Understanding these basics is critical for building robust, high‑throughput Kafka applications. Note: statement A is also factually true (compaction keeps the latest value per key) - it is just not a fundamental scalability/fault-tolerance property, so it is the "distractor" here, ZooKeeper/KRaft handle metadata, not data replication.
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 1-2 (Publish/Subscribe, Partitions, Replication), ch. 6 (Kafka Internals - Replication, Physical Storage, Compaction); https://kafka.apache.org/documentation/#design
+Source: Kafka: The Definitive Guide 2nd ed., ch. 1-2 (Publish/Subscribe, Partitions, Replication), ch. 6 (Kafka Internals - Replication, Physical Storage, Compaction), https://kafka.apache.org/documentation/#design
 
 **Detailed explanation of each option:**
 
@@ -901,16 +901,16 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 1-2 (Publish/Subscribe, Partiti
    **Correct**. The immutable log design allows producers to append quickly and enables efficient sequential disk writes, which is a core scalability feature.
 
 2. ✅ **B. Kafka partitions a topic into multiple logs, allowing parallel processing across many brokers.**  
-   **Correct**. Partitioning is the primary mechanism for horizontal scaling; each partition can be handled by a different broker, enabling concurrent reads and writes.
+   **Correct**. Partitioning is the primary mechanism for horizontal scaling, each partition can be handled by a different broker, enabling concurrent reads and writes.
 
 3. ✅ **C. Replication of partitions across brokers guarantees durability and high availability.**  
-   **Correct**. Replicas are maintained on separate brokers; the leader replica handles traffic, while followers sync asynchronously, providing fault tolerance.
+   **Correct**. Replicas are maintained on separate brokers, the leader replica handles traffic, while followers sync asynchronously, providing fault tolerance.
 
 4. ❌ **D. Kafka’s log compaction feature keeps only the latest value for each key, ensuring compact storage.**  
    **Incorrect**. While log compaction is a valuable feature, it is an optional configuration and not a fundamental property required for scalability or fault tolerance.
 
 5. ❌ **E. All Kafka messages are stored entirely in memory for maximum throughput.**  
-   **Incorrect**. Kafka persists messages to disk (often with configurable log retention) to ensure durability; memory is used only for caching headers and indexes.
+   **Incorrect**. Kafka persists messages to disk (often with configurable log retention) to ensure durability, memory is used only for caching headers and indexes.
 
 6. ❌ **F. ZooKeeper is responsible for replicating partition data across brokers.**  
    **Incorrect**. ZooKeeper (or the newer KRaft mode) manages cluster metadata and leader election, but the actual data replication happens using Kafka’s own protocol between brokers.
@@ -936,7 +936,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-ZooKeeper plays a critical role in Kafka cluster management by storing metadata, coordinating leader elections, and maintaining consumer group state in older Kafka versions. It does not store message data or manage replication directly; brokers handle these functions. ZooKeeper operates as a quorum-based ensemble, requiring a majority of nodes to be available to maintain cluster stability. While newer Kafka versions are moving towards a ZooKeeper-less architecture (KRaft mode), this is not yet the standard in production environments or the focus of the Confluent Certified Developer exam, which emphasizes traditional ZooKeeper-based setups.
+ZooKeeper plays a critical role in Kafka cluster management by storing metadata, coordinating leader elections, and maintaining consumer group state in older Kafka versions. It does not store message data or manage replication directly, brokers handle these functions. ZooKeeper operates as a quorum-based ensemble, requiring a majority of nodes to be available to maintain cluster stability. While newer Kafka versions are moving towards a ZooKeeper-less architecture (KRaft mode), this is not yet the standard in production environments or the focus of the Confluent Certified Developer exam, which emphasizes traditional ZooKeeper-based setups.
 
 Source (out of CCDAK scope): Kafka: The Definitive Guide 2nd ed. Ch. 6 "Cluster Membership" (pp. 135-136) — NOTE: ZooKeeper/KRaft: book Ch. 2 & Ch. 6 (out of exam scope).
 
@@ -946,13 +946,13 @@ Source (out of CCDAK scope): Kafka: The Definitive Guide 2nd ed. Ch. 6 "Cluster 
    **Correct**. ZooKeeper stores metadata about brokers, topics, and partitions, and orchestrates leader election to ensure high availability.
 
 2. ❌ **B. ZooKeeper directly handles the replication of Kafka partitions across brokers.**  
-   **Incorrect**. Replication is managed by Kafka brokers themselves; ZooKeeper only helps coordinate the cluster state.
+   **Incorrect**. Replication is managed by Kafka brokers themselves, ZooKeeper only helps coordinate the cluster state.
 
 3. ❌ **C. ZooKeeper is responsible for storing Kafka topic data and message payloads persistently.**  
-   **Incorrect**. Kafka brokers store the actual topic data and message payloads on disk; ZooKeeper does not store message data.
+   **Incorrect**. Kafka brokers store the actual topic data and message payloads on disk, ZooKeeper does not store message data.
 
 4. ✅ **D. ZooKeeper maintains the configuration and status of Kafka consumer groups.**  
-   **Correct**. ZooKeeper tracks consumer group offsets and membership in Kafka versions prior to 0.9; however, newer versions use Kafka itself for offset storage.
+   **Correct**. ZooKeeper tracks consumer group offsets and membership in Kafka versions prior to 0.9, however, newer versions use Kafka itself for offset storage.
 
 5. ❌ **E. ZooKeeper can be completely removed from Kafka clusters starting from Apache Kafka 2.8.0 with KRaft mode.**  
    **Incorrect**. for the certification scope. While Kafka 2.8.0 introduced KRaft mode to remove ZooKeeper dependency, this is not yet the default or widely used in production and is outside the core certification scope.
@@ -982,12 +982,12 @@ Choose the correct answers (select 3).
 **Explanation:**
 
 In a distributed Kafka Streams application, stateful operators maintain local RocksDB stores whose changes are published to internal changelog topics. These topics are replicated across the cluster, providing fault tolerance. Each task handles one partition of each input topic, which naturally partitions the state store. Recovery is achieved by replaying the changelog, not by restoring local snapshots. The replication factor is set per topic, not per operator, and the Streams framework automatically commits offsets after state updates, guaranteeing consistency across restarts. Understanding these mechanisms is essential for designing reliable stream processing applications.  
-Source: https://kafka.apache.org/43/documentation/streams/architecture/ (tasks, local state stores, fault tolerance via changelog topics) ; https://kafka.apache.org/43/documentation/streams/developer-guide/config-streams/
+Source: https://kafka.apache.org/43/documentation/streams/architecture/ (tasks, local state stores, fault tolerance via changelog topics) , https://kafka.apache.org/43/documentation/streams/developer-guide/config-streams/
 
 **Detailed explanation of each option:**
 
 1. ✅ **A. State stores are automatically sharded across tasks based on the input topic partition assignment.**  
-   **Correct**. Each task is responsible for a single partition of every input topic; its local state store is partitioned accordingly. This design enables parallel processing and deterministic state partitioning.
+   **Correct**. Each task is responsible for a single partition of every input topic, its local state store is partitioned accordingly. This design enables parallel processing and deterministic state partitioning.
 
 2. ✅ **B. The offset commit for stateful operators is handled automatically by the Streams framework.**  
    **Correct**. The framework commits offsets after a batch of records has been processed and the state has been checkpointed, ensuring that processing resumes from a consistent point after a failure.
@@ -1002,14 +1002,14 @@ Source: https://kafka.apache.org/43/documentation/streams/architecture/ (tasks, 
    **Incorrect**. Changelog topics get the replication factor from the Streams `replication.factor` config (not from the source topic).
 
 6. ❌ **F. All stateful operators must be explicitly configured with a Replication Factor > 1 to survive node failures.**  
-   **Incorrect**. Replication factor is a topic-level setting; the framework automatically creates changelog topics with a configurable replication factor, but operators themselves are not individually configured for replication.
+   **Incorrect**. Replication factor is a topic-level setting, the framework automatically creates changelog topics with a configurable replication factor, but operators themselves are not individually configured for replication.
 
 </details>
 
 ## Question 24 (Kafka Fundamentals):
 Which of the following statements about Kafka data retention are true? (Select all that apply)
 
-- A. If both `retention.ms` and `retention.bytes` are configured on a topic, Kafka deletes a segment when either the age or size threshold is met; whichever condition is satisfied first triggers deletion.
+- A. If both `retention.ms` and `retention.bytes` are configured on a topic, Kafka deletes a segment when either the age or size threshold is met, whichever condition is satisfied first triggers deletion.
 - B. Configuring `retention.bytes` to 0 indicates unlimited data retention.
 - C. A broker‑wide default for `retention.ms` can be overridden by a per‑topic configuration, and the change takes effect only after a broker restart.
 - D. When `cleanup.policy` is set to `compact`, the log compaction process removes older duplicate records for the same key, and the topic will never delete older segments regardless of `retention.ms`.
@@ -1025,16 +1025,16 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka’s retention mechanisms combine time‑based and size‑based policies to control log growth. The `retention.ms` property sets the maximum age for segments, while `retention.bytes` limits the total log size; setting either to -1 disables that constraint. Log compaction (`cleanup.policy`=compact) removes duplicate key records but does not exempt segments from the configured retention thresholds. `segment.ms` governs segment rollover frequency; larger values mean fewer, bigger segments and can postpone deletions. Topic‑level configurations override broker defaults immediately, eliminating the need for broker restarts. Understanding these interactions is essential for ensuring data availability and efficient storage usage.  
-Source: book Ch. 2 (Configuring Retention by Size and Time, p. 60 of PDF: deletion when either criterion is met) ; https://kafka.apache.org/43/configuration/topic-configs/ (`retention.ms`, `retention.bytes`, `segment.ms`, `cleanup.policy`)
+Kafka’s retention mechanisms combine time‑based and size‑based policies to control log growth. The `retention.ms` property sets the maximum age for segments, while `retention.bytes` limits the total log size, setting either to -1 disables that constraint. Log compaction (`cleanup.policy`=compact) removes duplicate key records but does not exempt segments from the configured retention thresholds. `segment.ms` governs segment rollover frequency, larger values mean fewer, bigger segments and can postpone deletions. Topic‑level configurations override broker defaults immediately, eliminating the need for broker restarts. Understanding these interactions is essential for ensuring data availability and efficient storage usage.  
+Source: book Ch. 2 (Configuring Retention by Size and Time, p. 60 of PDF: deletion when either criterion is met) , https://kafka.apache.org/43/configuration/topic-configs/ (`retention.ms`, `retention.bytes`, `segment.ms`, `cleanup.policy`)
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. If both `retention.ms` and `retention.bytes` are configured on a topic, Kafka deletes a segment when either the age or size threshold is met; whichever condition is satisfied first triggers deletion.**  
-   **Correct**. Kafka evaluates both constraints; deletion occurs as soon as one of them is exceeded.
+1. ✅ **A. If both `retention.ms` and `retention.bytes` are configured on a topic, Kafka deletes a segment when either the age or size threshold is met, whichever condition is satisfied first triggers deletion.**  
+   **Correct**. Kafka evaluates both constraints, deletion occurs as soon as one of them is exceeded.
 
 2. ❌ **B. Configuring `retention.bytes` to 0 indicates unlimited data retention.**  
-   **Incorrect**. `retention.bytes` limits the total size of a log. A value of -1 disables size‑based retention; 0 would keep no data, as it limits the log to 0 bytes.
+   **Incorrect**. `retention.bytes` limits the total size of a log. A value of -1 disables size‑based retention, 0 would keep no data, as it limits the log to 0 bytes.
 
 3. ❌ **C. A broker‑wide default for `retention.ms` can be overridden by a per‑topic configuration, and the change takes effect only after a broker restart.**  
    **Incorrect**. Topic overrides take effect immediately without needing a broker restart.
@@ -1043,7 +1043,7 @@ Source: book Ch. 2 (Configuring Retention by Size and Time, p. 60 of PDF: deleti
    **Incorrect**. While compaction removes duplicate keys, `retention.ms` (or `retention.bytes`) can still delete whole segments. The statement overstates compaction’s effect.
 
 5. ✅ **E. Setting `segment.ms` to a very high value delays segment rollover, which can increase the time before old segments are eligible for deletion by retention policies.**  
-   **Correct**. `segment.ms` controls how often a new segment is rolled. Retention deletes only closed segments (the active segment is never deleted), and a segment is eligible only when its newest record is older than `retention.ms`; a very high `segment.ms` therefore delays deletion.
+   **Correct**. `segment.ms` controls how often a new segment is rolled. Retention deletes only closed segments (the active segment is never deleted), and a segment is eligible only when its newest record is older than `retention.ms`, a very high `segment.ms` therefore delays deletion.
 
 6. ✅ **F. Setting `retention.ms` to -1 on a topic disables all automatic data deletion, effectively retaining data indefinitely.**  
    **Correct**. In Kafka, `retention.ms` controls the maximum age of log segments. A value of -1 disables time‑based retention, meaning segments will not be deleted by age.
@@ -1051,7 +1051,7 @@ Source: book Ch. 2 (Configuring Retention by Size and Time, p. 60 of PDF: deleti
 </details>
 
 ## Question 25 (Kafka Consumers):
-When subscribing a Kafka consumer to topics using the Java Kafka Consumer API, which of the following statements about the subscribe() method and topic subscription behavior are correct?
+When subscribing a Kafka consumer to topics using the Java Kafka Consumer API, which of the following statements about the `subscribe()` method and topic subscription behavior are correct?
 
 - A. Calling subscribe() multiple times with different topic lists will add topics cumulatively to the subscription set.
 - B. After calling subscribe(), the consumer immediately starts fetching data from all assigned partitions without any rebalance process.
@@ -1069,7 +1069,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-The subscribe() method in Kafka's consumer API replaces the current topic subscription with the provided list or pattern. Using a pattern allows dynamic subscription to new topics matching the regex, which is useful in evolving environments. Each subscribe() call triggers a rebalance, assigning partitions accordingly; thus, consumers do not start fetching data immediately without rebalancing. While subscribe() can be called anytime, changes after poll() will cause rebalances, impacting consumption. Additionally, when using pattern subscriptions, if topics are deleted, the consumer automatically stops consuming from those topics, maintaining an accurate subscription without manual updates. Misunderstanding the replacement behavior of subscribe() or the rebalance mechanism can lead to incorrect consumer implementations.
+The subscribe() method in Kafka's consumer API replaces the current topic subscription with the provided list or pattern. Using a pattern allows dynamic subscription to new topics matching the regex, which is useful in evolving environments. Each subscribe() call triggers a rebalance, assigning partitions accordingly, thus, consumers do not start fetching data immediately without rebalancing. While subscribe() can be called anytime, changes after poll() will cause rebalances, impacting consumption. Additionally, when using pattern subscriptions, if topics are deleted, the consumer automatically stops consuming from those topics, maintaining an accurate subscription without manual updates. Misunderstanding the replacement behavior of subscribe() or the rebalance mechanism can lead to incorrect consumer implementations.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 4 "Subscribing to Topics" (p. 85) and "The Poll Loop" (pp. 86-87)
 
@@ -1101,7 +1101,7 @@ Which of the following broker configuration settings directly impact reliable da
 - A. `replica.lag.time.max.ms`
 - B. `log.cleaner.enable`
 - C. `unclean.leader.election.enable`
-- D. `log.flush.interval.messages`
+- D. `min.insync.replicas`
 - E. `num.network.threads`
 - F. `log.retention.hours`
 
@@ -1129,8 +1129,8 @@ Source (out of CCDAK scope): Kafka: The Definitive Guide 2nd ed. Ch. 6 "Replicat
 3. ✅ **C. unclean.leader.election.enable**  
    **Correct**. Disabling unclean leader election prevents brokers without fully caught-up replicas from becoming leaders, preserving data consistency and reliability.
 
-4. ✅ **D. log.flush.interval.messages**  
-   **Correct**. This setting controls how often the broker flushes data to disk based on the number of messages, impacting durability guarantees.
+4. ✅ **D. `min.insync.replicas`**  
+   **Correct**. `min.insync.replicas` — directly controls how many replicas must acknowledge a write before it's accepted (works with `acks=all`).
 
 5. ❌ **E. num.network.threads**  
    **Incorrect**. This controls the number of threads handling network requests and impacts throughput, but not data delivery reliability directly.
@@ -1159,14 +1159,14 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Log compaction in Kafka ensures that the latest value for each key is preserved, making it ideal for topics representing state or snapshots. It differs fundamentally from time- or size-based retention, which removes data solely based on age or log size. Compaction runs as an asynchronous background process and can coexist with other retention policies, allowing flexibility in managing topic data. However, compaction does not retain all historical updates for a key, so it is unsuitable for use cases requiring a complete changelog of all changes. Understanding these nuances is critical for developers designing Kafka topics to meet specific data retention and recovery requirements. (B holds for cleanup.policy=compact; tombstones are removed after delete.retention.ms, and with cleanup.policy=compact,delete records older than retention are deleted too. The active segment is not compacted.)
+Log compaction in Kafka ensures that the latest value for each key is preserved, making it ideal for topics representing state or snapshots. It differs fundamentally from time- or size-based retention, which removes data solely based on age or log size. Compaction runs as an asynchronous background process and can coexist with other retention policies, allowing flexibility in managing topic data. However, compaction does not retain all historical updates for a key, so it is unsuitable for use cases requiring a complete changelog of all changes. Understanding these nuances is critical for developers designing Kafka topics to meet specific data retention and recovery requirements. (B holds for cleanup.policy=compact, tombstones are removed after delete.retention.ms, and with cleanup.policy=compact,delete records older than retention are deleted too. The active segment is not compacted.)
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 6 "Compaction"/"How Compaction Works"/"Deleted Events"; https://kafka.apache.org/43/configuration/topic-configs/#topicconfigs_cleanup.policy
+Source: Kafka: The Definitive Guide 2nd ed., ch. 6 "Compaction"/"How Compaction Works"/"Deleted Events", https://kafka.apache.org/43/configuration/topic-configs/#topicconfigs_cleanup.policy
 
 **Detailed explanation of each option:**
 
 1. ✅ **A. Log compaction can run concurrently with standard time or size-based retention policies on the same topic.**  
-   **Correct**. Kafka allows both compaction and time/size retention to coexist; compaction preserves latest key updates, while retention deletes old data beyond configured thresholds.
+   **Correct**. Kafka allows both compaction and time/size retention to coexist, compaction preserves latest key updates, while retention deletes old data beyond configured thresholds.
 
 2. ✅ **B. The compaction process runs continuously in the background and does not block producers or consumers.**  
    **Correct**. Compaction is an asynchronous background process that does not interfere with producers or consumers, ensuring minimal impact on performance.
@@ -1203,14 +1203,14 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-The AdminClient is Kafka’s programmatic interface for cluster metadata and configuration tasks. It can create topics (createTopics), modify topic, broker, and consumer group configurations (alterConfigs), and delete consumer group offsets (deleteConsumerGroupOffsets). It does not provide a dedicated GetClusterInfo request; cluster information (including the cluster ID) is obtained via describeCluster(). Note: `alterConfigs` is deprecated since 2.3 and removed in Kafka 4.0 in favor of `incrementalAlterConfigs`. Additionally, producing records is outside the scope of the Admin API and is performed with the Producer API. Understanding these distinctions is essential for developers designing management or automation tools around Kafka clusters.
+The AdminClient is Kafka’s programmatic interface for cluster metadata and configuration tasks. It can create topics (createTopics), modify topic, broker, and consumer group configurations (alterConfigs), and delete consumer group offsets (deleteConsumerGroupOffsets). It does not provide a dedicated GetClusterInfo request, cluster information (including the cluster ID) is obtained via describeCluster(). Note: `alterConfigs` is deprecated since 2.3 and removed in Kafka 4.0 in favor of `incrementalAlterConfigs`. Additionally, producing records is outside the scope of the Admin API and is performed with the Producer API. Understanding these distinctions is essential for developers designing management or automation tools around Kafka clusters.
 
-Source: book ch. 5 "Kafka Administration" / AdminClient (PDF p. 103 ff.); https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/Admin.html
+Source: book ch. 5 "Kafka Administration" / AdminClient (PDF p. 103 ff.), https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/Admin.html
 
 **Detailed explanation of each option:**
 
 1. ✅ **A. The AdminClient supports altering topic configurations at runtime without requiring a broker restart using the alterConfigs method.**  
-   **Correct**. The alterConfigs API (deprecated; in 4.x use incrementalAlterConfigs) enables updating configuration properties for topics, consumer groups, and brokers on the fly. Refer to https://kafka.apache.org/documentation.html#admin_alterConfigs.
+   **Correct**. The alterConfigs API (deprecated, in 4.x use incrementalAlterConfigs) enables updating configuration properties for topics, consumer groups, and brokers on the fly. Refer to https://kafka.apache.org/documentation.html#admin_alterConfigs.
 
 2. ✅ **B. The Admin API can delete consumer group offsets via the deleteConsumerGroupOffsets method.**  
    **Correct**. AdminClient provides deleteConsumerGroupOffsets to remove specific offsets for a consumer group, allowing group re‑initialization. Documentation: https://kafka.apache.org/documentation.html#admin_deleteConsumerGroupOffsets.
@@ -1219,7 +1219,7 @@ Source: book ch. 5 "Kafka Administration" / AdminClient (PDF p. 103 ff.); https:
    **Incorrect**. Record production is handled by the Producer API, not by the AdminClient, which is dedicated to metadata and configuration management.
 
 4. ❌ **D. The AdminClient provides a GetClusterInfo request that retrieves the current broker cluster ID.**  
-   **Incorrect**. While AdminClient can describe the cluster with describeCluster, there is no GetClusterInfo request; cluster ID is exposed through DescribeClusterResult.clusterId().
+   **Incorrect**. While AdminClient can describe the cluster with describeCluster, there is no GetClusterInfo request, cluster ID is exposed through DescribeClusterResult.clusterId().
 
 5. ✅ **E. The AdminClient can create topics with arbitrary partition counts and replication factors using the createTopics method.**  
    **Correct**. The AdminClient’s createTopics API allows specifying the number of partitions and the replication factor per topic at creation time. See https://kafka.apache.org/documentation.html#admin_createTopics.
@@ -1245,17 +1245,17 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-In Confluent Kafka producer configuration, serializers convert data into byte arrays for transmission. The StringSerializer encodes strings as UTF-8 byte arrays, which is standard for keys or values of string type. The Avro serializer relies on Confluent Schema Registry to manage schemas and ensure compatibility, making it essential in schema-driven serialization. ByteArraySerializer is a pass-through and does not perform compression. Custom serializers must implement the Serializer interface, not Deserializer, which is for consumers. JsonSerializer does not require schema registry integration, unlike Avro or Protobuf. KafkaProducer mandates explicit serializers; it does not default to ByteArraySerializer. Understanding these distinctions is critical for correctly configuring producers in a Confluent Kafka environment.
+In Confluent Kafka producer configuration, serializers convert data into byte arrays for transmission. The StringSerializer encodes strings as UTF-8 byte arrays, which is standard for keys or values of string type. The Avro serializer relies on Confluent Schema Registry to manage schemas and ensure compatibility, making it essential in schema-driven serialization. ByteArraySerializer is a pass-through and does not perform compression. Custom serializers must implement the Serializer interface, not Deserializer, which is for consumers. JsonSerializer does not require schema registry integration, unlike Avro or Protobuf. KafkaProducer mandates explicit serializers, it does not default to ByteArraySerializer. Understanding these distinctions is critical for correctly configuring producers in a Confluent Kafka environment.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "Serializers" (pp. 61-64) — NOTE: Avro serializer requires Schema Registry: verified against Schema Registry docs.
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. If no serializer is configured for the key or value, KafkaProducer will default to the ByteArraySerializer.**  
-   **Incorrect**. KafkaProducer requires explicit serializers for keys and values; it does not provide a default serializer.
+   **Incorrect**. KafkaProducer requires explicit serializers for keys and values, it does not provide a default serializer.
 
 2. ❌ **B. Custom serializers must implement the Deserializer interface to be compatible with Kafka producers.**  
-   **Incorrect**. Custom serializers must implement the Serializer interface; Deserializer is used on the consumer side.
+   **Incorrect**. Custom serializers must implement the Serializer interface, Deserializer is used on the consumer side.
 
 3. ✅ **C. The Avro serializer requires a schema registry to serialize records properly in Confluent Kafka environments.**  
    **Correct**. The Avro serializer integrates with Confluent Schema Registry to enforce schema compatibility and serialize data efficiently.
@@ -1264,7 +1264,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "Serializers" (pp. 61-64) — 
    **Correct**. StringSerializer converts Java String keys into UTF-8 encoded byte arrays, which is the expected format for Kafka keys.
 
 5. ❌ **E. Using the JsonSerializer in Confluent Kafka requires configuring the schema registry to ensure schema validation.**  
-   **Incorrect**. JsonSerializer serializes JSON without requiring the schema registry; schema registry is typically needed for Avro or Protobuf.
+   **Incorrect**. JsonSerializer serializes JSON without requiring the schema registry, schema registry is used with KafkaJsonSchemaSerializer (Confluent).
 
 6. ❌ **F. The ByteArraySerializer automatically compresses the data before serialization to reduce message size.**  
    **Incorrect**. ByteArraySerializer simply passes the byte array as-is without any compression or transformation.
@@ -1277,8 +1277,8 @@ Which of the following statements correctly describe Kafka Connect core concepts
 - A. Connect automatically scales by adding more Kafka brokers to the cluster.
 - B. Kafka Connect distributes tasks across worker nodes in a cluster, with each task assigned to a single worker.
 - C. Connect connectors can be written in Java, Scala, or Python, with Python support provided via the PyKafka library.
-- D. Connect's worker configuration property "plugin.path" determines the location of connector JAR files.
-- E. The offset for each connector task is stored in the __consumer_offsets topic.
+- D. Connect's worker configuration property `plugin.path` determines the location of connector JAR files.
+- E. The offset for each connector task is stored in the `__consumer_offsets` topic.
 - F. If a worker node fails, its tasks are automatically reassigned to other workers after the group rebalance.
 
 Choose the correct answers (select 3).
@@ -1290,26 +1290,26 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Connect partitions work into connectors, tasks, and workers. A connector may spawn multiple tasks; each task runs on a single worker, enabling parallelism. Workers form a consumer group, so when a node fails its tasks are reassigned to surviving workers during rebalancing, ensuring fault tolerance. Task offsets are persisted in the dedicated __connect_offsets topic, not the generic __consumer_offsets. The plugin.path setting tells workers where to load connector JARs. Although Connect is built for Java/Scala, Python connectors are not supported via PyKafka and require separate implementation. Scaling Connect means adding workers, not Kafka brokers.
+Kafka Connect partitions work into connectors, tasks, and workers. A connector may spawn multiple tasks, each task runs on a single worker, enabling parallelism. Workers form a consumer group, so when a node fails its tasks are reassigned to surviving workers during rebalancing, ensuring fault tolerance. Task offsets are persisted in the dedicated __connect_offsets topic, not the generic __consumer_offsets. The plugin.path setting tells workers where to load connector JARs. Although Connect is built for Java/Scala, Python connectors are not supported via PyKafka and require separate implementation. Scaling Connect means adding workers, not Kafka brokers.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Connect automatically scales by adding more Kafka brokers to the cluster.**  
-   **Incorrect**. Scaling Connect requires adding more worker nodes; adding brokers affects the Kafka cluster, not the Connect cluster.
+   **Incorrect**. Scaling Connect requires adding more worker nodes, adding brokers affects the Kafka cluster, not the Connect cluster.
 
 2. ✅ **B. Kafka Connect distributes tasks across worker nodes in a cluster, with each task assigned to a single worker.**  
-   **Correct**. A connector may be configured with multiple tasks; Connect assigns each task to a single worker in the worker group. This enables parallel processing of data streams.
+   **Correct**. A connector may be configured with multiple tasks, Connect assigns each task to a single worker in the worker group. This enables parallel processing of data streams.
 
 3. ❌ **C. Connect connectors can be written in Java, Scala, or Python, with Python support provided via the PyKafka library.**  
    **Incorrect**. While connectors are typically written in Java or Scala, Python connectors require a separate worker implementation (e.g., via a custom Python worker) and are not natively supported by PyKafka.
 
-4. ✅ **D. Connect's worker configuration property "plugin.path" determines the location of connector JAR files.**  
-   **Correct**. The plugin.path property tells the worker where to look for connector classes and their dependencies.
+4. ✅ **D. Connect's worker configuration property `plugin.path` determines the location of connector JAR files.**  
+   **Correct**. The `plugin.path` property tells the worker where to look for connector classes and their dependencies.
 
-5. ❌ **E. The offset for each connector task is stored in the __consumer_offsets topic.**  
-   **Incorrect**. Connect stores offsets in the dedicated __connect_offsets topic, not in __consumer_offsets.
+5. ❌ **E. The offset for each connector task is stored in the `__consumer_offsets` topic.**  
+   **Incorrect**. Connect stores offsets in the dedicated __connect_offsets topic, not in `__consumer_offsets`.
 
 6. ✅ **F. If a worker node fails, its tasks are automatically reassigned to other workers after the group rebalance.**  
    **Correct**. Connect uses the Kafka consumer group protocol. When a worker leaves or fails, its partitions (tasks) are reassigned to remaining workers during the next rebalance.
@@ -1342,16 +1342,16 @@ Source: Confluent Schema Registry docs - supported formats: Avro, JSON Schema, P
 **Detailed explanation of each option:**
 
 1. ❌ **A. String**  
-   **Incorrect**. String is a primitive type without a schema; the Schema Registry does not manage or enforce schemas for plain string values.
+   **Incorrect**. String is a primitive type without a schema, the Schema Registry does not manage or enforce schemas for plain string values.
 
 2. ✅ **B. JSON Schema**  
    **Correct**. JSON Schema support was added in later releases, enabling the registry to store, validate, and evolve JSON messages using the JSON Schema standard.
 
 3. ❌ **C. Binary (Bytes)**  
-   **Incorrect**. Raw bytes are treated as opaque data; the registry does not impose a schema on arbitrary binary payloads.
+   **Incorrect**. Raw bytes are treated as opaque data, the registry does not impose a schema on arbitrary binary payloads.
 
 4. ❌ **D. JSON (plain)**  
-   **Incorrect**. Plain JSON has no built‑in schema or compatibility enforcement; the Schema Registry does not natively validate or version plain JSON messages.
+   **Incorrect**. Plain JSON has no built‑in schema or compatibility enforcement, the Schema Registry does not natively validate or version plain JSON messages.
 
 5. ✅ **E. Avro**  
    **Correct**. The Schema Registry was originally built for Avro schemas and provides strict schema validation, compatibility checks, and automatic ID assignment for Avro messages.
@@ -1380,16 +1380,16 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Connect is a framework that simplifies data ingestion and extraction between Kafka and external systems. The core concepts include the distinction between source and sink connectors, the ability to use a Schema Registry for schema validation, and the support for incremental offsets to enable fault‑tolerant, resume‑able data capture. Connectors are not standalone processes; they execute within Connect workers and maintain internal state such as offsets. Exactly‑once semantics are not guaranteed out of the box; they require specific configuration and connector support. Understanding these fundamentals is essential for designing robust pipelines and for passing the Confluent Certified Developer exam.  
-Source: https://kafka.apache.org/43/documentation/#connect (connectors, tasks, workers, converters, offsets) ; book Ch. 9. Note: options B and E are loosely worded but B, C, F remain the best answers.
+Kafka Connect is a framework that simplifies data ingestion and extraction between Kafka and external systems. The core concepts include the distinction between source and sink connectors, the ability to use a Schema Registry for schema validation, and the support for incremental offsets to enable fault‑tolerant, resume‑able data capture. Connectors are not standalone processes, they execute within Connect workers and maintain internal state such as offsets. Exactly‑once semantics are not guaranteed out of the box, they require specific configuration and connector support. Understanding these fundamentals is essential for designing robust pipelines and for passing the Confluent Certified Developer exam.  
+Source: https://kafka.apache.org/43/documentation/#connect (connectors, tasks, workers, converters, offsets) , book Ch. 9. Note: options B and E are loosely worded but B, C, F remain the best answers.
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Connectors are always deployed as separate processes independent of the Connect workers.**  
-   **Incorrect**. Connectors run inside Kafka Connect workers; workers can be standalone or distributed. Deploying connectors as separate processes is not required.
+   **Incorrect**. Connectors run inside Kafka Connect workers, workers can be standalone or distributed. Deploying connectors as separate processes is not required.
 
 2. ❌ **B. Kafka Connect guarantees exactly-once delivery semantics by default for all connectors.**  
-   **Incorrect**. Exactly-once semantics are optional and depend on the connector implementation and configuration; they are not guaranteed by default.
+   **Incorrect**. Exactly-once semantics are optional and depend on the connector implementation and configuration, they are not guaranteed by default.
 
 3. ✅ **C. Connectors can be configured to use incremental source offsets for incremental data capture.**  
    **Correct**. Source connectors support incremental offset strategies (e.g., incremental snapshots, incremental change data capture) to resume from the last processed record.
@@ -1469,9 +1469,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka cluster membership management involves coordination primarily by the Kafka Controller, which tracks live brokers and propagates metadata changes. Prior to KIP-500, ZooKeeper stores broker session states and helps detect live brokers through ephemeral nodes. When brokers fail to heartbeat within the session timeout, the Controller marks them as dead and triggers partition leader elections to maintain availability. Membership data is not stored locally on brokers but managed centrally to ensure consistency. Kafka does not employ gossip protocols for membership; instead, it uses a centralized approach for coordination and fault detection. Understanding this mechanism is crucial for developers to troubleshoot broker failures and cluster rebalancing effectively. Note: in Kafka 4.x ZooKeeper is removed; brokers register with and send heartbeats to the KRaft controller quorum. Option A is wrong because the controller elects new leaders for the affected partitions (replicas are not reassigned), and option E is wrong because membership is kept in ZooKeeper/KRaft metadata (a broker only keeps its ID in meta.properties).
+Kafka cluster membership management involves coordination primarily by the Kafka Controller, which tracks live brokers and propagates metadata changes. Prior to KIP-500, ZooKeeper stores broker session states and helps detect live brokers through ephemeral nodes. When brokers fail to heartbeat within the session timeout, the Controller marks them as dead and triggers partition leader elections to maintain availability. Membership data is not stored locally on brokers but managed centrally to ensure consistency. Kafka does not employ gossip protocols for membership, instead, it uses a centralized approach for coordination and fault detection. Understanding this mechanism is crucial for developers to troubleshoot broker failures and cluster rebalancing effectively. Note: in Kafka 4.x ZooKeeper is removed, brokers register with and send heartbeats to the KRaft controller quorum. Option A is wrong because the controller elects new leaders for the affected partitions (replicas are not reassigned), and option E is wrong because membership is kept in ZooKeeper/KRaft metadata (a broker only keeps its ID in meta.properties).
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 6 "Cluster Membership" and "The Controller" (pp. 135-137); https://kafka.apache.org/43/operations/kraft/
+Source: Kafka: The Definitive Guide 2nd ed., ch. 6 "Cluster Membership" and "The Controller" (pp. 135-137), https://kafka.apache.org/43/operations/kraft/
 
 **Detailed explanation of each option:**
 
@@ -1488,7 +1488,7 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 6 "Cluster Membership" and "The
    **Incorrect**. Membership state is maintained in ZooKeeper or the Kafka Raft quorum (post-KIP-500), not locally on individual brokers.
 
 5. ❌ **E. Kafka brokers use a gossip protocol among themselves to exchange membership information and detect failures.**  
-   **Incorrect**. Kafka brokers do not use a gossip protocol; instead, membership is managed centrally by the Controller and ZooKeeper (pre-KIP-500) or the Quorum Controller (post-KIP-500).
+   **Incorrect**. Kafka brokers do not use a gossip protocol, instead, membership is managed centrally by the Controller and ZooKeeper (pre-KIP-500) or the Quorum Controller (post-KIP-500).
 
 6. ✅ **F. The Controller triggers partition leader elections when brokers join or leave the cluster to maintain availability and balance.**  
    **Correct**. The Controller initiates leader elections to adjust partition leadership in response to membership changes to maintain cluster availability.
@@ -1501,7 +1501,7 @@ In Kafka, the key of a record is hashed to determine the target partition. Which
 - A. You can override the default partitioning logic by providing a custom implementation of org.apache.kafka.clients.producer.Partitioner.
 - B. Changing the hashing algorithm on the producer side automatically changes the partitioning behavior on the broker without any broker configuration.
 - C. The default Kafka partitioner uses Murmur2 hashing on the key bytes to select a partition.
-- D. The hash calculation is deterministic; the same key will always map to the same partition within a single cluster.
+- D. The hash calculation is deterministic, the same key will always map to the same partition within a single cluster.
 - E. The partitioner applies the hash to the key's string representation before computing the hash.
 - F. When a key is null, the partitioner selects a partition using a round‑robin strategy(or sticky in newer versions of Kafka).
 
@@ -1514,9 +1514,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka uses the key’s byte array to compute a hash (Murmur2 by default) which is then modded by the partition count. This deterministic mapping ensures that identical keys always go to the same partition as long as the topic’s partition count remains unchanged. Null keys bypass hashing and are spread across partitions (sticky batching since Kafka 2.4, not strict round-robin). Custom partitioning can be achieved by implementing the Partitioner interface and setting the 'partitioner.class' config; only the producer handles hashing, so no broker config changes are required. Understanding these nuances is essential for developers who need predictable ordering or load distribution across partitions.
+Kafka uses the key’s byte array to compute a hash (Murmur2 by default) which is then modded by the partition count. This deterministic mapping ensures that identical keys always go to the same partition as long as the topic’s partition count remains unchanged. Null keys bypass hashing and are spread across partitions (sticky batching since Kafka 2.4, not strict round-robin). Custom partitioning can be achieved by implementing the Partitioner interface and setting the 'partitioner.class' config, only the producer handles hashing, so no broker config changes are required. Understanding these nuances is essential for developers who need predictable ordering or load distribution across partitions.
 
-Source: book ch. 3 "Partitions" (PDF p. 97-99: murmur2 hash of key bytes, null key = sticky/random, custom Partitioner); https://kafka.apache.org/documentation/#producerconfigs_partitioner.class
+Source: book ch. 3 "Partitions" (PDF p. 97-99: murmur2 hash of key bytes, null key = sticky/random, custom Partitioner), https://kafka.apache.org/documentation/#producerconfigs_partitioner.class
 
 **Detailed explanation of each option:**
 
@@ -1524,19 +1524,19 @@ Source: book ch. 3 "Partitions" (PDF p. 97-99: murmur2 hash of key bytes, null k
    **Correct**. Implementing this interface and configuring 'partitioner.class' allows custom hashing or routing logic.
 
 2. ❌ **B. Changing the hashing algorithm on the producer side automatically changes the partitioning behavior on the broker without any broker configuration.**  
-   **Incorrect**. Partitioning is performed by the producer; brokers do not rehash keys. Only producer configuration is needed.
+   **Incorrect**. Partitioning is performed by the producer, brokers do not rehash keys. Only producer configuration is needed.
 
 3. ✅ **C. The default Kafka partitioner uses Murmur2 hashing on the key bytes to select a partition.**  
    **Correct**. Kafka’s DefaultPartitioner computes a Murmur2 hash of the key’s raw byte array and then takes the modulo with the number of partitions.
 
-4. ✅ **D. The hash calculation is deterministic; the same key will always map to the same partition within a single cluster.**  
+4. ✅ **D. The hash calculation is deterministic, the same key will always map to the same partition within a single cluster.**  
    **Correct**. Given the same key bytes and the same cluster metadata, the hash will always produce the same partition number.
 
 5. ❌ **E. The partitioner applies the hash to the key's string representation before computing the hash.**  
    **Incorrect**. The hash is applied directly to the raw key bytes, not to a string conversion.
 
 6. ✅ **F. When a key is null, the partitioner selects a partition using a round‑robin strategy.**  
-   **Correct**. If the key is null, the partitioner picks a partition without hashing; since Kafka 2.4 it is a "sticky" strategy (fills a batch for one partition before switching), not plain round‑robin.
+   **Correct**. If the key is null, the partitioner picks a partition without hashing, since Kafka 2.4 it is a "sticky" strategy (fills a batch for one partition before switching), not plain round‑robin.
 
 </details>
 
@@ -1559,8 +1559,8 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-A Kafka Streams instance exposes, via JMX/KafkaStreams#metrics(), its own Streams metrics (thread, task, processor, state-store, record-cache level) plus the metrics of its embedded producer, consumer and admin clients. `bytes-consumed-rate` and `records-consumed-rate` are consumer fetch metrics of the embedded consumer and are therefore exposed. The names `record-processing-latency-avg`, `stream-task-lag` and `max-thread-idle-time` do not exist (the closest real Streams metrics are `process-latency-avg`, `process-rate`, `record-e2e-latency-avg`; consumer lag is `records-lag-max`), and JVM metrics are not Streams metrics.  
-Verified live (answer C, F confirmed): the page says "A Kafka Streams instance contains all the producer and consumer metrics as well as additional metrics specific to Streams", lists bytes-consumed-rate and records-consumed-rate under consumer-fetch-manager-metrics, and thread-level metrics commit/poll/process/punctuate-latency-*; no stream-task-lag, max-thread-idle-time or record-processing-latency-avg.
+A Kafka Streams instance exposes, via JMX/KafkaStreams#metrics(), its own Streams metrics (thread, task, processor, state-store, record-cache level) plus the metrics of its embedded producer, consumer and admin clients. `bytes-consumed-rate` and `records-consumed-rate` are consumer fetch metrics of the embedded consumer and are therefore exposed. The names `record-processing-latency-avg`, `stream-task-lag` and `max-thread-idle-time` do not exist (the closest real Streams metrics are `process-latency-avg`, `process-rate`, `record-e2e-latency-avg`, consumer lag is `records-lag-max`), and JVM metrics are not Streams metrics.  
+Verified live (answer C, F confirmed): the page says "A Kafka Streams instance contains all the producer and consumer metrics as well as additional metrics specific to Streams", lists bytes-consumed-rate and records-consumed-rate under consumer-fetch-manager-metrics, and thread-level metrics commit/poll/process/punctuate-latency-*, no stream-task-lag, max-thread-idle-time or record-processing-latency-avg.
 Source: https://kafka.apache.org/42/operations/monitoring/
 
 **Detailed explanation of each option:**
@@ -1575,13 +1575,13 @@ Source: https://kafka.apache.org/42/operations/monitoring/
    **Correct**. An embedded consumer metric (consumer-fetch-manager-metrics, `records-consumed-rate`) exposed by the Streams client together with its own Streams metrics.
 
 4. ❌ **D. stream-task-lag – the number of records waiting in a task’s input queue**  
-   **Incorrect**. No Streams metric named `stream-task-lag` exists; lag is visible through the consumer metric `records-lag-max`/`records-lag`.
+   **Incorrect**. No Streams metric named `stream-task-lag` exists, lag is visible through the consumer metric `records-lag-max`/`records-lag`.
 
 5. ❌ **E. record-processing-latency-avg – the average time between record consumption and forwarding**  
-   **Incorrect**. No Streams metric has this name; the closest real ones are `process-latency-avg`/`process-latency-max` (task/thread level).
+   **Incorrect**. No Streams metric has this name, the closest real ones are `process-latency-avg`/`process-latency-max` (task/thread level).
 
 6. ❌ **F. max-thread-idle-time – the maximum idle time of any Streams worker thread**  
-   **Incorrect**. Streams does not expose a metric with this name; thread‑pool metrics are not reported by default.
+   **Incorrect**. Streams does not expose a metric with this name, thread‑pool metrics are not reported by default.
 
 </details>
 
@@ -1591,7 +1591,7 @@ You are developing a Kafka producer that must send data securely to a broker clu
 - A. security.protocol=SSL ssl.truststore.location=/etc/ssl/truststore.jks ssl.truststore.password=truststorepw ssl.endpoint.identification.algorithm=HTTPS
 - B. security.protocol=SSL ssl.certificate.location=/etc/ssl/client.crt ssl.key.location=/etc/ssl/client.key ssl.endpoint.identification.algorithm=HTTPS
 - C. security.protocol=PLAINTEXT ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS
-- D. security.protocol=SASL_SSL sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="user" password="pw"; ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS
+- D. security.protocol=SASL_SSL sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="user" password="pw", ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS
 
 Choose the correct answer.
 
@@ -1602,7 +1602,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-To secure client‑to‑broker traffic with TLS, the client must set security.protocol=SSL. The truststore contains the broker’s CA certificates, allowing the client to validate the broker’s certificate chain; ssl.truststore.location and ssl.truststore.password provide these files. The ssl.endpoint.identification.algorithm=HTTPS property enforces hostname verification, preventing man‑in‑the‑middle attacks. Options 2 and 4 omit essential TLS settings, while option 3 adds unnecessary SASL authentication. Proper configuration ensures encrypted communication and integrity of the broker identity, which is a core requirement for Confluent‑Certified developers.
+To secure client‑to‑broker traffic with TLS, the client must set security.protocol=SSL. The truststore contains the broker’s CA certificates, allowing the client to validate the broker’s certificate chain, ssl.truststore.location and ssl.truststore.password provide these files. The ssl.endpoint.identification.algorithm=HTTPS property enforces hostname verification, preventing man‑in‑the‑middle attacks. Options 2 and 4 omit essential TLS settings, while option 3 adds unnecessary SASL authentication. Proper configuration ensures encrypted communication and integrity of the broker identity, which is a core requirement for Confluent‑Certified developers.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 11 "Security Protocols"/"SASL" (pp. 268-286)
 
@@ -1617,7 +1617,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 11 "Security Protocols"/"SASL" (
 3. ❌ **C. security.protocol=PLAINTEXT ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS**  
    **Incorrect**. PLAINTEXT disables TLS, so traffic is not encrypted. The other properties are irrelevant without TLS.
 
-4. ❌ **D. security.protocol=SASL_SSL sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="user" password="pw"; ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS**  
+4. ❌ **D. security.protocol=SASL_SSL sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="user" password="pw", ssl.truststore.location=/etc/ssl/truststore.jks ssl.endpoint.identification.algorithm=HTTPS**  
    **Incorrect**. SASL_SSL requires both SASL authentication and TLS. If the application does not need SASL, this configuration is unnecessarily complex. The exam question explicitly asks for TLS with server verification only, not authentication.
 
 </details>
@@ -1630,7 +1630,7 @@ Which of the following statements about Kafka message headers are correct? (Sele
 - C. Header values can be compressed using GZIP to reduce record size.
 - D. The total size of all headers is limited to 1 MB, independent of the record size.
 - E. Header values are persisted in the Kafka broker as part of the record metadata and are available to consumers regardless of client version.
-- F. Header keys must be unique per message; duplicate keys are allowed but only the last value is kept.
+- F. Header keys must be unique per message, duplicate keys are allowed but only the last value is kept.
 
 Choose the correct answers (select 3).
 
@@ -1648,7 +1648,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "Headers" (p. 71)
 **Detailed explanation of each option:**
 
 1. ✅ **A. Header names cannot contain null bytes and are case-sensitive.**  
-   **Correct**. Header keys are strings; the Java implementation forbids null characters, and key comparison is case-sensitive.
+   **Correct**. Header keys are strings, the Java implementation forbids null characters, and key comparison is case-sensitive.
 
 2. ✅ **B. Headers can store arbitrary binary data and are transmitted with the record to the broker.**  
    **Correct**. In Kafka, a header consists of a string key and a byte array value, allowing any binary payload. Headers travel with the record and are persisted by the broker.
@@ -1662,8 +1662,8 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "Headers" (p. 71)
 5. ✅ **E. Header values are persisted in the Kafka broker as part of the record metadata and are available to consumers regardless of client version.**  
    **Correct**. Header data is stored with the record and can be retrieved by any consumer that supports the header API. Older clients simply ignore headers but the data remains intact.
 
-6. ❌ **F. Header keys must be unique per message; duplicate keys are allowed but only the last value is kept.**  
-   **Incorrect**. Kafka headers are an ordered list of (key, value) pairs; duplicate keys ARE allowed and ALL values are kept (`lastHeader(key)` returns the last, `headers(key)` all of them). Keys are not required to be unique and nothing is dropped.
+6. ❌ **F. Header keys must be unique per message, duplicate keys are allowed but only the last value is kept.**  
+   **Incorrect**. Kafka headers are an ordered list of (key, value) pairs, duplicate keys ARE allowed and ALL values are kept (`lastHeader(key)` returns the last, `headers(key)` all of them). Keys are not required to be unique and nothing is dropped.
 
 </details>
 
@@ -1686,9 +1686,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Processing semantics in Kafka revolve around how producers and consumers handle duplicates and data loss. Exactly‑once semantics require atomicity between producing records and committing offsets, achievable with transactional producers and `sendOffsetsToTransaction` (consumers downstream use `isolation.level=read_committed`). At‑least‑once is what you get when offsets are committed AFTER processing (Streams `commit.interval.ms` default), and on the producer side `acks=all` with retries (adding `enable.idempotence=true` even removes the duplicates). At‑most‑once is the opposite: commit offsets BEFORE processing, so records can be lost but never re-processed. Hence F is wrong: committing with `commitSync()` after each processed record is still at-least-once (a crash between processing and commit causes re-processing); the original answer key was wrong here. B is right per the book: acks=all + sufficient delivery.timeout.ms guarantees at-least-once delivery to Kafka (idempotence additionally prevents duplicates). C is not a way to prevent duplicates - idempotence already does that and allows up to 5 in-flight requests while preserving order. E is wrong: auto-commit gives at-least-once at best (or loss if the commit happens before processing finishes), never exactly-once.
+Processing semantics in Kafka revolve around how producers and consumers handle duplicates and data loss. Exactly‑once semantics require atomicity between producing records and committing offsets, achievable with transactional producers and `sendOffsetsToTransaction` (consumers downstream use `isolation.level=read_committed`). At‑least‑once is what you get when offsets are committed AFTER processing (Streams `commit.interval.ms` default), and on the producer side `acks=all` with retries (adding `enable.idempotence=true` even removes the duplicates). At‑most‑once is the opposite: commit offsets BEFORE processing, so records can be lost but never re-processed. Hence F is wrong: committing with `commitSync()` after each processed record is still at-least-once (a crash between processing and commit causes re-processing), the original answer key was wrong here. B is right per the book: acks=all + sufficient delivery.timeout.ms guarantees at-least-once delivery to Kafka (idempotence additionally prevents duplicates). C is not a way to prevent duplicates - idempotence already does that and allows up to 5 in-flight requests while preserving order. E is wrong: auto-commit gives at-least-once at best (or loss if the commit happens before processing finishes), never exactly-once.
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 3 (enable.idempotence, acks, max.in.flight), ch. 4 (Commits and Offsets - commit after processing), ch. 8 (Exactly Once Semantics); https://kafka.apache.org/documentation/#semantics
+Source: Kafka: The Definitive Guide 2nd ed., ch. 3 (enable.idempotence, acks, max.in.flight), ch. 4 (Commits and Offsets - commit after processing), ch. 8 (Exactly Once Semantics), https://kafka.apache.org/documentation/#semantics
 
 **Detailed explanation of each option:**
 
@@ -1731,9 +1731,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Streams guarantees fault tolerance for stateful processing through three intertwined mechanisms: (1) every local state store has a corresponding changelog topic, enabling state restoration on restart or reassignment; (2) RocksDB checkpoints provide an additional local recovery point; and (3) tasks are distributed as consumer‑group members, so the protocol automatically rebalances tasks when a node fails. These features together ensure that, even after a crash, the application can resume with its exact state and correct results. EOS, while useful for eliminating duplicate writes, does not recover state, and GlobalKTables or repartitioning are for data sharing and load balancing rather than fault tolerance. Note: the RocksDB "checkpoint" is a local `.checkpoint` file holding the changelog offsets up to which the store is already persisted on disk, so after a clean restart only the missing tail of the changelog has to be replayed (it is an optimization on top of the changelog, not a replacement for it).
+Kafka Streams guarantees fault tolerance for stateful processing through three intertwined mechanisms: (1) every local state store has a corresponding changelog topic, enabling state restoration on restart or reassignment, (2) RocksDB checkpoints provide an additional local recovery point, and (3) tasks are distributed as consumer‑group members, so the protocol automatically rebalances tasks when a node fails. These features together ensure that, even after a crash, the application can resume with its exact state and correct results. EOS, while useful for eliminating duplicate writes, does not recover state, and GlobalKTables or repartitioning are for data sharing and load balancing rather than fault tolerance. Note: the RocksDB "checkpoint" is a local `.checkpoint` file holding the changelog offsets up to which the store is already persisted on disk, so after a clean restart only the missing tail of the changelog has to be replayed (it is an optimization on top of the changelog, not a replacement for it).
 
-Source: Kafka Streams architecture/fault tolerance - https://kafka.apache.org/documentation/streams/architecture (sections "Fault Tolerance", "State"); Kafka: The Definitive Guide 2nd ed., ch. 14 (Stream Processing - local state, rebalancing, changelog).
+Source: Kafka Streams architecture/fault tolerance - https://kafka.apache.org/documentation/streams/architecture (sections "Fault Tolerance", "State"), Kafka: The Definitive Guide 2nd ed., ch. 14 (Stream Processing - local state, rebalancing, changelog).
 
 **Detailed explanation of each option:**
 
@@ -1744,7 +1744,7 @@ Source: Kafka Streams architecture/fault tolerance - https://kafka.apache.org/do
    **Correct**. Each Streams task behaves as a member of a consumer group. When a task fails or a node leaves, the group protocol reassigns tasks to other members, ensuring continuous processing. This dynamic rebalancing is a key fault‑tolerance feature.
 
 3. ❌ **C. Global tables are replicated across all instances for consistent state**  
-   **Incorrect**. A GlobalKTable loads the entire topic into every instance, providing a read‑only, consistent view. However, this is not a fault‑tolerance mechanism for stateful processing; it is a design choice for read‑only data sharing.
+   **Incorrect**. A GlobalKTable loads the entire topic into every instance, providing a read‑only, consistent view. However, this is not a fault‑tolerance mechanism for stateful processing, it is a design choice for read‑only data sharing.
 
 4. ✅ **D. State store restoration from changelog topics upon restart**  
    **Correct**. Kafka Streams backs every local state store with a changelog topic. When an instance restarts or a task is reassigned, the store is rebuilt by replaying the changelog, ensuring exact recovery of state. This is a core fault‑tolerance feature of Streams.
@@ -1776,14 +1776,14 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-Kafka topics are logical namespaces split into partitions, each with its own ordered, immutable log. Offsets are indices within a partition, starting at 0, and are the consumer’s position marker. Consumers store committed offsets in the internal topic __consumer_offsets, providing isolation per consumer group. The default partitioner hashes a record’s key, ensuring records with the same key are routed to the same partition and preserving order for those keys. If a consumer needs to reprocess data, it can seek to a lower offset, effectively rolling back. Misconceptions often arise around global offsets, ZooKeeper usage, and automatic consumption of new partitions; understanding these nuances is essential for correct design and troubleshooting.
+Kafka topics are logical namespaces split into partitions, each with its own ordered, immutable log. Offsets are indices within a partition, starting at 0, and are the consumer’s position marker. Consumers store committed offsets in the internal topic __consumer_offsets, providing isolation per consumer group. The default partitioner hashes a record’s key, ensuring records with the same key are routed to the same partition and preserving order for those keys. If a consumer needs to reprocess data, it can seek to a lower offset, effectively rolling back. Misconceptions often arise around global offsets, ZooKeeper usage, and automatic consumption of new partitions, understanding these nuances is essential for correct design and troubleshooting.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 "Topics and Partitions" (pp. 5-6)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Offsets are global across all partitions of a topic and are unique for each record.**  
-   **Incorrect**. Offsets are maintained per partition; the same offset number can appear in many partitions.
+   **Incorrect**. Offsets are maintained per partition, the same offset number can appear in many partitions.
 
 2. ❌ **B. A consumer's committed offset is stored in ZooKeeper and is shared across all consumer groups.**  
    **Incorrect**. Since Kafka 0.10, committed offsets are stored in the internal topic __consumer_offsets, not ZooKeeper, and each consumer group has its own offset state.
@@ -1792,10 +1792,10 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 "Topics and Partitions" (pp. 5
    **Correct**. The default partitioner uses a key hash to consistently map the same key to a specific partition, guaranteeing intra-key ordering.
 
 4. ❌ **D. The maximum number of partitions per topic is limited by the broker's configured `num.partitions` setting.**  
-   **Incorrect**. `num.partitions` is only a default value; topics can have more partitions, though large numbers can impact broker performance.
+   **Incorrect**. `num.partitions` is only a default value, topics can have more partitions, though large numbers can impact broker performance.
 
 5. ❌ **E. When a new partition is added to a topic, existing consumers automatically start consuming from the new partition.**  
-   **Incorrect**. Adding partitions triggers a rebalance; consumers may or may not receive assignments to the new partitions depending on group dynamics.
+   **Incorrect**. Adding partitions triggers a rebalance, consumers may or may not receive assignments to the new partitions depending on group dynamics.
 
 6. ✅ **F. Offsets can be rolled back by consuming from a lower offset value.**  
    **Correct**. A consumer can seek to an earlier offset (e.g., using seek() or resetting offsets) to reprocess messages.
@@ -1831,7 +1831,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 11 "Security Protocols"/"SASL" (
    **Incorrect**. `SASL_PLAINTEXT` does not encrypt traffic, which is unacceptable for a secured cluster that requires SSL. Attempting to use this protocol will result in a connection failure on a cluster that mandates TLS.
 
 2. ✅ **B. Provide a JAAS configuration file (or set `java.security.auth.login.config`) containing the client principal and password, and reference it via the `SASL_CLIENT_JAAS_CONFIG` system property.**  
-   **Correct**. The JAAS file supplies the SASL credentials (username/password or keytab). The client must read these credentials; otherwise SASL authentication cannot occur, leading to a connection failure.
+   **Correct**. The JAAS file supplies the SASL credentials (username/password or keytab). The client must read these credentials, otherwise SASL authentication cannot occur, leading to a connection failure.
 
 3. ✅ **C. Configure the `ssl.truststore.location` and `ssl.truststore.password` properties to trust the broker’s certificate chain.**  
    **Correct**. The truststore holds the CA certificates that signed the broker’s certificate. Without a trusted CA, the SSL handshake will fail, preventing the client from establishing a secure connection.
@@ -1840,10 +1840,10 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 11 "Security Protocols"/"SASL" (
    **Correct**. This property tells the client to use SSL for encryption and SASL for authentication. It is mandatory for a secured cluster that requires both encryption and SASL credentials. Without it, the client will attempt an unsecured connection and fail.
 
 5. ❌ **E. Include the broker’s hostname in the `bootstrap.servers` list using the `ssl://` scheme, e.g., `ssl://broker:9093`.**  
-   **Incorrect**. The `bootstrap.servers` property uses plain host:port pairs; adding a scheme prefix is not supported and will cause a parsing error. The correct format is `broker:9093` with the protocol set via `security.protocol`.
+   **Incorrect**. The `bootstrap.servers` property uses plain host:port pairs, adding a scheme prefix is not supported and will cause a parsing error. The correct format is `broker:9093` with the protocol set via `security.protocol`.
 
 6. ❌ **F. Specify `ssl.keystore.location` and `ssl.keystore.password` to supply a client certificate for mutual TLS authentication.**  
-   **Incorrect**. Mutual TLS is optional; most Confluent Cloud clusters use SASL for client authentication. Including a keystore will work if the cluster requires mutual TLS, but it is not a mandatory step for standard SASL/SSL setups.
+   **Incorrect**. Mutual TLS is optional, most Confluent Cloud clusters use SASL for client authentication. Including a keystore will work if the cluster requires mutual TLS, but it is not a mandatory step for standard SASL/SSL setups.
 
 </details>
 
@@ -1866,7 +1866,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Producer tuning primarily focuses on batching, linger, and compression to reduce network round‑trips and payload size, thereby boosting throughput and lowering latency. A larger batch.size lets the broker pack more records into a single request, improving throughput but potentially adding a small delay if records arrive slowly. A small linger.ms allows the producer to wait briefly for additional records before sending, striking a balance between batch fullness and response time. Compression (e.g., snappy) cuts the message payload, reducing bandwidth usage and time spent on network I/O, while still keeping CPU overhead reasonable. Settings like acks=0, max.block.ms, or enabling idempotence are not intended for performance gains; they either trade durability for speed or introduce unnecessary blocking/overhead.
+Producer tuning primarily focuses on batching, linger, and compression to reduce network round‑trips and payload size, thereby boosting throughput and lowering latency. A larger batch.size lets the broker pack more records into a single request, improving throughput but potentially adding a small delay if records arrive slowly. A small linger.ms allows the producer to wait briefly for additional records before sending, striking a balance between batch fullness and response time. Compression (e.g., snappy) cuts the message payload, reducing bandwidth usage and time spent on network I/O, while still keeping CPU overhead reasonable. Settings like acks=0, max.block.ms, or enabling idempotence are not intended for performance gains, they either trade durability for speed or introduce unnecessary blocking/overhead.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "compression.type" (p. 59)
 
@@ -1911,10 +1911,10 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka consumers in a consumer group coordinate to ensure each partition is consumed by only one consumer instance, maintaining message order and avoiding duplicates. Offsets track consumption progress and can be committed automatically or manually based on application needs, which impacts fault tolerance and exactly-once semantics. When consumers join or leave a group, Kafka triggers a rebalance to redistribute partitions fairly. Frequent calls to poll() are essential to send heartbeats and avoid session timeouts that cause unnecessary rebalances. Misunderstandings often arise regarding partition sharing within groups and offset reset behaviors; knowing these details is critical for designing robust Kafka consumer applications.
-Heartbeats are sent by a separate background thread (since KIP-62), so poll() does not send them; poll() must be called within max.poll.interval.ms, otherwise the consumer is removed from the group and a rebalance is triggered. (Option E's "session timeouts" wording is therefore loose, but it is still the best third answer; F describes multiple consumer *groups*, not one group.)
+Kafka consumers in a consumer group coordinate to ensure each partition is consumed by only one consumer instance, maintaining message order and avoiding duplicates. Offsets track consumption progress and can be committed automatically or manually based on application needs, which impacts fault tolerance and exactly-once semantics. When consumers join or leave a group, Kafka triggers a rebalance to redistribute partitions fairly. Frequent calls to poll() are essential to send heartbeats and avoid session timeouts that cause unnecessary rebalances. Misunderstandings often arise regarding partition sharing within groups and offset reset behaviors, knowing these details is critical for designing robust Kafka consumer applications.
+Heartbeats are sent by a separate background thread (since KIP-62), so poll() does not send them, poll() must be called within max.poll.interval.ms, otherwise the consumer is removed from the group and a rebalance is triggered. (Option E's "session timeouts" wording is therefore loose, but it is still the best third answer, F describes multiple consumer *groups*, not one group.)
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (pp. 83-90: heartbeat thread, max.poll.interval.ms, rebalance); https://kafka.apache.org/43/configuration/consumer-configs/
+Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (pp. 83-90: heartbeat thread, max.poll.interval.ms, rebalance), https://kafka.apache.org/43/configuration/consumer-configs/
 
 **Detailed explanation of each option:**
 
@@ -1922,7 +1922,7 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (pp. 83-90: heartbeat thread,
    **Incorrect**. Within a single consumer group, each partition is assigned to only one consumer at a time to guarantee message order and avoid duplicate processing.
 
 2. ✅ **B. The consumer poll() method must be called frequently to avoid session timeouts and trigger rebalances.**  
-   **Correct**. Regular calls to poll() (within max.poll.interval.ms) keep the consumer a live member of the group; heartbeats themselves are sent by a background thread (session.timeout.ms / heartbeat.interval.ms).
+   **Correct**. Regular calls to poll() (within max.poll.interval.ms) keep the consumer a live member of the group, heartbeats themselves are sent by a background thread (session.timeout.ms / heartbeat.interval.ms).
 
 3. ❌ **C. Kafka consumers automatically handle offset resets by discarding messages if offsets are out of range.**  
    **Incorrect**. Offset resets depend on the 'auto.offset.reset' configuration and may cause consumers to start reading from earliest or latest offsets, but they do not simply discard messages automatically.
@@ -1963,13 +1963,13 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 2 "Topic Defaults" (retention.ms
 **Detailed explanation of each option:**
 
 1. ❌ **A. A. The broker will delete log segments that are older than 7 days, ignoring the 1 GB size limit.**  
-   **Incorrect**. The size limit defined by `retention.bytes` is enforced in addition to age; the broker will not ignore it.
+   **Incorrect**. The size limit defined by `retention.bytes` is enforced in addition to age, the broker will not ignore it.
 
 2. ❌ **B. C. The broker will delete segments that are either older than 7 days or cause the size to exceed 1 GB, whichever condition is met first.**  
-   **Incorrect**. The broker does not wait for both conditions; it will enforce the size limit before the age limit when the size is exceeded.
+   **Incorrect**. The broker does not wait for both conditions, it will enforce the size limit before the age limit when the size is exceeded.
 
 3. ❌ **C. E. The broker will delete segments only if they both exceed 1 GB and are older than 7 days.**  
-   **Incorrect**. Deletion is triggered by each limit independently; the broker does not require both to be satisfied simultaneously.
+   **Incorrect**. Deletion is triggered by each limit independently, the broker does not require both to be satisfied simultaneously.
 
 4. ❌ **D. D. The broker will not delete any segments until the oldest segment is older than 7 days.**  
    **Incorrect**. The size limit can trigger deletion before the age threshold is reached.
@@ -1998,9 +1998,9 @@ Choose the correct answer.
 
 In Kafka Connect distributed mode, multiple workers must coordinate to share connector and task configurations. This coordination relies on Kafka topics internally, so specifying 'bootstrap.servers' is essential for workers to connect with the Kafka cluster and join the Connect cluster. Other properties, such as 'key.converter.schemas.enable' or 'offset.flush.interval.ms,' affect message serialization or offset commit behavior but do not influence worker coordination. 'connector.class' is a per-connector setting and not relevant at the worker cluster level. Understanding the role of 'bootstrap.servers' is critical for running Kafka Connect correctly in distributed mode.
 
-NOTE: the property that actually makes workers form one Connect cluster is group.id (same value on all workers; plus config.storage.topic, offset.storage.topic, status.storage.topic). It is not offered here, so C (bootstrap.servers, also required) is the best of the listed options.
+NOTE: the property that actually makes workers form one Connect cluster is group.id (same value on all workers, plus config.storage.topic, offset.storage.topic, status.storage.topic). It is not offered here, so C (bootstrap.servers, also required) is the best of the listed options.
 
-Source: https://kafka.apache.org/documentation/#connectconfigs (group.id, config.storage.topic); Kafka: The Definitive Guide 2nd ed. Ch. 9 "Running Connect" (distributed mode)
+Source: https://kafka.apache.org/documentation/#connectconfigs (group.id, config.storage.topic), Kafka: The Definitive Guide 2nd ed. Ch. 9 "Running Connect" (distributed mode)
 
 **Detailed explanation of each option:**
 
@@ -2037,7 +2037,7 @@ Choose the correct answers (select 4).
 
 **Explanation:**
 
-The Confluent Schema Registry plays a critical role in managing and evolving schemas in Kafka ecosystems. By default, it enforces backward compatibility to ensure consumers can read older data seamlessly. It stores schemas in an internal Kafka topic, providing distributed and fault-tolerant schema storage. Each schema registered is assigned a unique ID, embedded in serialized messages to aid consumers in schema lookup during deserialization. While Schema Registry supports multiple schema formats (Avro, JSON Schema, Protobuf), it does not automatically convert data between schema versions; compatibility rules guide schema evolution but do not transform data. Setting compatibility to NONE disables compatibility checks, allowing flexible but potentially unsafe schema changes. Understanding these behaviors is essential for developers to design robust, schema-evolution-safe Kafka applications.
+The Confluent Schema Registry plays a critical role in managing and evolving schemas in Kafka ecosystems. By default, it enforces backward compatibility to ensure consumers can read older data seamlessly. It stores schemas in an internal Kafka topic, providing distributed and fault-tolerant schema storage. Each schema registered is assigned a unique ID, embedded in serialized messages to aid consumers in schema lookup during deserialization. While Schema Registry supports multiple schema formats (Avro, JSON Schema, Protobuf), it does not automatically convert data between schema versions, compatibility rules guide schema evolution but do not transform data. Setting compatibility to NONE disables compatibility checks, allowing flexible but potentially unsafe schema changes. Understanding these behaviors is essential for developers to design robust, schema-evolution-safe Kafka applications.
 
 Source: Confluent Schema Registry docs - "Schema Evolution and Compatibility" (BACKWARD/FORWARD/FULL rules)
 
@@ -2053,7 +2053,7 @@ Source: Confluent Schema Registry docs - "Schema Evolution and Compatibility" (B
    **Correct**. Each registered schema receives a unique ID that producers embed in messages, enabling consumers to retrieve the correct schema for deserialization.
 
 4. ❌ **D. Schema Registry automatically converts data encoded with older schema versions to the latest schema version during consumption.**  
-   **Incorrect**. Schema Registry does not perform automatic data conversion; compatibility rules ensure schemas evolve safely, but consumers handle data according to the schema version.
+   **Incorrect**. Schema Registry does not perform automatic data conversion, compatibility rules ensure schemas evolve safely, but consumers handle data according to the schema version.
 
 5. ✅ **E. Schema Registry enforces backward compatibility by default for all schema versions unless explicitly configured otherwise.**  
    **Correct**. By default, Schema Registry enforces backward compatibility, ensuring new schema versions can read data produced with previous versions.
@@ -2082,9 +2082,9 @@ Choose the correct answers (select 2).
 
 **Explanation:**
 
-E is false. The `topics` / `topics.regex` properties exist only for sink connectors (they select which topics to consume). Source connectors do not have a `topics` property; the destination topic is chosen by connector-specific settings (e.g. `topic`, `topic.prefix`) or by SMTs such as RegexRouter. So only A and B are correct (select 2). Original text follows.
+E is false. The `topics` / `topics.regex` properties exist only for sink connectors (they select which topics to consume). Source connectors do not have a `topics` property, the destination topic is chosen by connector-specific settings (e.g. `topic`, `topic.prefix`) or by SMTs such as RegexRouter. So only A and B are correct (select 2). Original text follows.
 
-In Kafka Connect, source connectors ingest data from external systems and publish to Kafka topics, controlled by the `topics` or `topics.regex` configuration. Sink connectors consume from those topics and push data to external destinations, again using the same `topics` setting to define the source streams. CDC connectors are a subclass of source connectors that capture database change events via mechanisms such as binlogs; they publish both data and schema changes, typically storing schema evolution in a separate history topic (e.g., `database.history.kafka.topic`). Misconceptions arise when one assumes sink connectors can write to Kafka or source connectors can read from Kafka; both statements are false. Understanding these distinctions is essential for designing correct data pipelines and for the Confluent Certified Developer exam. For reference, see the Kafka Connect documentation (https://docs.confluent.io/platform/current/connect/index.html) and Debezium CDC guide (https://debezium.io/documentation/reference/).
+In Kafka Connect, source connectors ingest data from external systems and publish to Kafka topics, controlled by the `topics` or `topics.regex` configuration. Sink connectors consume from those topics and push data to external destinations, again using the same `topics` setting to define the source streams. CDC connectors are a subclass of source connectors that capture database change events via mechanisms such as binlogs, they publish both data and schema changes, typically storing schema evolution in a separate history topic (e.g., `database.history.kafka.topic`). Misconceptions arise when one assumes sink connectors can write to Kafka or source connectors can read from Kafka, both statements are false. Understanding these distinctions is essential for designing correct data pipelines and for the Confluent Certified Developer exam. For reference, see the Kafka Connect documentation (https://docs.confluent.io/platform/current/connect/index.html) and Debezium CDC guide (https://debezium.io/documentation/reference/).
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kafka Connect" (pp. 211-214)
 
@@ -2094,7 +2094,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kaf
    **Incorrect**. `topics` / `topics.regex` are sink-connector properties. Source connectors define their target topics through connector-specific settings (e.g. `topic.prefix`) or routing SMTs.
 
 2. ❌ **B. Sink connectors can be configured to write data to Kafka topics.**  
-   **Incorrect**. Sink connectors consume from Kafka and write to external systems; they do not produce to Kafka topics.
+   **Incorrect**. Sink connectors consume from Kafka and write to external systems, they do not produce to Kafka topics.
 
 3. ❌ **C. Source connectors can read data from Kafka topics and write it back to external systems.**  
    **Incorrect**. Source connectors read from external systems, not from Kafka topics, and publish to Kafka.
@@ -2130,7 +2130,7 @@ Choose the correct answers (select 2).
 **Explanation:**
 
 In Kafka observability, consumer lag is a primary metric for diagnosing throughput issues. The kafka-consumer-groups tool, when used with the --describe flag, reports per‑partition committed and log offsets, allowing calculation of lag. kafka-consumer-groups has no --json option. The kafka-topics command with --describe provides topic metadata—partition layout, replicas, and ISR—which is essential for understanding replication lag or partition misconfiguration. Commands missing the --describe flag or referencing non‑existent tools do not yield the required data. Knowing which CLI commands deliver which pieces of information is critical for efficient troubleshooting.  
-Source: book Ch. 12 (Consumer Groups, --describe output, p. 342 of PDF) ; Kafka source ConsumerGroupCommandOptions (no --json) and ClusterTool
+Source: book Ch. 12 (Consumer Groups, --describe output, p. 342 of PDF) , Kafka source ConsumerGroupCommandOptions (no --json) and ClusterTool
 
 **Detailed explanation of each option:**
 
@@ -2147,7 +2147,7 @@ Source: book Ch. 12 (Consumer Groups, --describe output, p. 342 of PDF) ; Kafka 
    **Incorrect**. A `kafka-cluster` tool exists (subcommands such as cluster-id, unregister, list-endpoints) but it has no `--describe` and gives no lag or topic metadata.
 
 5. ❌ **E. kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group order-processor --json**  
-   **Incorrect**. `kafka-consumer-groups.sh` has no `--json` option (unrecognized option error); the `--describe` output is plain text only.
+   **Incorrect**. `kafka-consumer-groups.sh` has no `--json` option (unrecognized option error), the `--describe` output is plain text only.
 
 </details>
 
@@ -2170,19 +2170,19 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Streams relies on a combination of configuration properties and API choices to achieve fault tolerance and exactly‑once semantics. Setting `processing.guarantee` to an exactly-once mode activates Kafka transactions, which guarantees that each input record is processed and output is written atomically (option B; note that in current Kafka the value is `exactly_once_v2` - the old `exactly_once` value was deprecated and removed in 4.0, so the option is correct conceptually but its wording is dated). State stores created with a `Stores.keyValueStoreBuilder` and added to the topology have logging enabled by default, so a changelog topic is created automatically. GlobalKTables replicate the full reference data to every instance, allowing fast local joins (option E). Misconceptions often arise around `application.id` (it must be shared among instances), `state.dir` (local persistence alone does not provide fault tolerance), or `commit.interval.ms` (a low value trades performance for latency but does not ensure state is always current). Understanding these concepts is essential for designing resilient Streams applications.
+Kafka Streams relies on a combination of configuration properties and API choices to achieve fault tolerance and exactly‑once semantics. Setting `processing.guarantee` to an exactly-once mode activates Kafka transactions, which guarantees that each input record is processed and output is written atomically (option B, note that in current Kafka the value is `exactly_once_v2` - the old `exactly_once` value was deprecated and removed in 4.0, so the option is correct conceptually but its wording is dated). State stores created with a `Stores.keyValueStoreBuilder` and added to the topology have logging enabled by default, so a changelog topic is created automatically. GlobalKTables replicate the full reference data to every instance, allowing fast local joins (option E). Misconceptions often arise around `application.id` (it must be shared among instances), `state.dir` (local persistence alone does not provide fault tolerance), or `commit.interval.ms` (a low value trades performance for latency but does not ensure state is always current). Understanding these concepts is essential for designing resilient Streams applications.
 
-Source: https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html;
-https://kafka.apache.org/documentation/streams/developer-guide/processor-api.html (state store logging);
-https://kafka.apache.org/documentation/streams/architecture; Kafka: The Definitive Guide 2nd ed. ch. 14 "Kafka Streams".
+Source: https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html,
+https://kafka.apache.org/documentation/streams/developer-guide/processor-api.html (state store logging),
+https://kafka.apache.org/documentation/streams/architecture, Kafka: The Definitive Guide 2nd ed. ch. 14 "Kafka Streams".
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Setting `application.id` to a unique value for each instance is required to avoid duplicate consumer group metadata.**  
-   **Incorrect**. `application.id` identifies a logical Streams application and is shared by all instances that should participate in the same processing group. Using a unique ID for each instance defeats load balancing and rebalancing; it is not a requirement for avoiding duplicate metadata.
+   **Incorrect**. `application.id` identifies a logical Streams application and is shared by all instances that should participate in the same processing group. Using a unique ID for each instance defeats load balancing and rebalancing, it is not a requirement for avoiding duplicate metadata.
 
 2. ✅ **B. Enabling `processing.guarantee` to `exactly_once_v2` guarantees that each record is processed exactly once even in the presence of failures.**  
-   **Correct**. Setting `processing.guarantee` to an exactly-once mode (today `exactly_once_v2`; plain `exactly_once` was removed in Kafka 4.0) enables transactional processing, ensuring each input record is processed once and output records are written atomically. It requires Kafka to be configured with transactions and a transactional producer.
+   **Correct**. Setting `processing.guarantee` to an exactly-once mode (today `exactly_once_v2`, plain `exactly_once` was removed in Kafka 4.0) enables transactional processing, ensuring each input record is processed once and output records are written atomically. It requires Kafka to be configured with transactions and a transactional producer.
 
 3. ✅ **C. Registering a GlobalKTable via `builder.globalTable()` ensures that each instance of the Streams application receives the full table materialized locally for efficient join operations.**  
    **Correct**. A GlobalKTable is replicated to every Streams instance. Each instance has a local copy of the full table, enabling efficient joins without needing a repartitioned topic. This is a correct statement.
@@ -2191,7 +2191,7 @@ https://kafka.apache.org/documentation/streams/architecture; Kafka: The Definiti
    **Incorrect**. `state.dir` specifies where local state stores are materialized. While it persists state locally, fault tolerance relies on Kafka changelog topics that are replicated across the cluster. A local directory alone does not provide fault tolerance.
 
 5. ❌ **E. Setting `commit.interval.ms` to a very low value ensures that the application state is always up-to-date in case of a crash.**  
-   **Incorrect**. `commit.interval.ms` controls how often the application commits offsets and state. A very low value increases latency and CPU overhead; it does not guarantee the state is always up-to-date, as state updates may still be in the changelog but not yet committed.
+   **Incorrect**. `commit.interval.ms` controls how often the application commits offsets and state. A very low value increases latency and CPU overhead, it does not guarantee the state is always up-to-date, as state updates may still be in the changelog but not yet committed.
 
 6. ✅ **F. Registering a state store with the `Stores.keyValueStoreBuilder` automatically creates a changelog topic that is replicated based on `replication.factor`.**  
    **Correct**. When a state store is registered, Streams creates a corresponding changelog topic (logging is enabled by default) whose replication factor is set by the Streams config `replication.factor` (in recent versions -1 = broker default). This ensures state changes are replicated for fault tolerance.
@@ -2257,7 +2257,7 @@ Choose the correct answers (select 3).
 
 For high‑throughput Kafka producers that still need durability, the key tuning knobs are batch.size, acks, and compression.type. A larger batch.size lets the producer send more records per request, reducing the per‑record overhead. Setting acks to all guarantees that all replicas acknowledge the write, ensuring durability. Compression reduces the size of each request, improving effective throughput on network‑bound workloads. Options like linger.ms=0 hurt batching (a bigger batch.size only helps together with linger.ms > 0), and min.insync.replicas is a broker/topic setting, not a client one. max.in.flight.requests.per.connection=5 is the default and is safe for ordering with idempotence (default enabled since 3.0).
 
-Source: book ch. 3 (PDF p. 89-90: max.in.flight, idempotence; batch.size, linger.ms, compression.type); https://kafka.apache.org/documentation/#producerconfigs
+Source: book ch. 3 (PDF p. 89-90: max.in.flight, idempotence, batch.size, linger.ms, compression.type), https://kafka.apache.org/documentation/#producerconfigs
 
 **Detailed explanation of each option:**
 
@@ -2271,10 +2271,10 @@ Source: book ch. 3 (PDF p. 89-90: max.in.flight, idempotence; batch.size, linger
    **Incorrect**. Setting linger.ms to 0 disables batching, forcing the producer to send records immediately. This reduces latency but also limits throughput because each record is sent in its own network request.
 
 4. ❌ **D. max.in.flight.requests.per.connection=5**  
-   **Incorrect**. 5 is already the default; with enable.idempotence=true (default since Kafka 3.0) ordering is preserved for up to 5 in-flight requests, so it is not a tuning change.
+   **Incorrect**. 5 is already the default, with enable.idempotence=true (default since Kafka 3.0) ordering is preserved for up to 5 in-flight requests, so it is not a tuning change.
 
 5. ❌ **E. min.insync.replicas=2**  
-   **Incorrect**. This is a broker/topic configuration, not a client (producer) setting; it works with acks=all to require at least two in-sync replicas. The question asks for client settings.
+   **Incorrect**. This is a broker/topic configuration, not a client (producer) setting, it works with acks=all to require at least two in-sync replicas. The question asks for client settings.
 
 6. ✅ **F. compression.type=gzip**  
    **Correct**. Enabling gzip compression reduces the payload size, leading to fewer bytes sent over the network. This can improve throughput, especially on bandwidth‑constrained links, at the cost of additional CPU usage.
@@ -2286,7 +2286,7 @@ Which of the following statements correctly describes Kafka's native support for
 
 - A. Kafka automatically encrypts messages using the broker's file system encryption settings.
 - B. Kafka encrypts only the headers but not the payload when using SASL/SSL.
-- C. Kafka does not provide native message payload encryption; encryption must be handled by clients or external tools.
+- C. Kafka does not provide native message payload encryption, encryption must be handled by clients or external tools.
 - D. Kafka natively encrypts message payloads using AES‑256 when TLS is enabled.
 - E. Kafka can encrypt message payloads at rest using the built‑in "data‑at‑rest‑encryption" feature in Confluent Platform 7.x.
 
@@ -2299,23 +2299,23 @@ Choose the correct answer.
 
 **Explanation:**
 
-Kafka provides transport‑layer encryption (TLS) and authentication (SASL) to secure data in transit. For data at rest, Confluent Platform relies on storage‑level encryption or external tools; it does not natively encrypt the payload itself. Many developers mistakenly believe TLS protects the payload or that Kafka includes a built‑in at‑rest encryption feature. Understanding this distinction is critical for designing secure Kafka deployments and for selecting appropriate encryption strategies for both transit and storage.
+Kafka provides transport‑layer encryption (TLS) and authentication (SASL) to secure data in transit. For data at rest, Confluent Platform relies on storage‑level encryption or external tools, it does not natively encrypt the payload itself. Many developers mistakenly believe TLS protects the payload or that Kafka includes a built‑in at‑rest encryption feature. Understanding this distinction is critical for designing secure Kafka deployments and for selecting appropriate encryption strategies for both transit and storage.
 
-Source: book ch. 11 "Securing Kafka" – Encryption / data at rest / end-to-end encryption (PDF p. 318); https://kafka.apache.org/documentation/#security_ssl
+Source: book ch. 11 "Securing Kafka" – Encryption / data at rest / end-to-end encryption (PDF p. 318), https://kafka.apache.org/documentation/#security_ssl
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Kafka automatically encrypts messages using the broker's file system encryption settings.**  
-   **Incorrect**. File system encryption is independent of Kafka; Kafka will write data to disk as received. The broker does not automatically apply encryption.
+   **Incorrect**. File system encryption is independent of Kafka, Kafka will write data to disk as received. The broker does not automatically apply encryption.
 
 2. ❌ **B. Kafka encrypts only the headers but not the payload when using SASL/SSL.**  
    **Incorrect**. SASL/SSL encrypts the entire communication channel, including headers and payload. Kafka does not selectively encrypt headers only.
 
-3. ✅ **C. Kafka does not provide native message payload encryption; encryption must be handled by clients or external tools.**  
+3. ✅ **C. Kafka does not provide native message payload encryption, encryption must be handled by clients or external tools.**  
    **Correct**. Kafka’s core platform offers TLS/SASL for transport security and supports encryption at rest via storage‑level mechanisms, but it does not encrypt the payload data itself.
 
 4. ❌ **D. Kafka natively encrypts message payloads using AES‑256 when TLS is enabled.**  
-   **Incorrect**. TLS encrypts the entire transport channel between client and broker, not just the payload. Kafka does not apply AES‑256 to individual records; encryption is applied at the TCP layer.
+   **Incorrect**. TLS encrypts the entire transport channel between client and broker, not just the payload. Kafka does not apply AES‑256 to individual records, encryption is applied at the TCP layer.
 
 5. ❌ **E. Kafka can encrypt message payloads at rest using the built‑in "data‑at‑rest‑encryption" feature in Confluent Platform 7.x.**  
    **Incorrect**. Confluent Platform does not ship a built‑in per‑topic encryption feature for stored records. Encryption at rest must be provided by the storage system (e.g., LUKS, file system encryption) or external tooling.
@@ -2367,7 +2367,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "linger.ms"/"batch.size" (pp. 
 When using the Kafka Producer API to set custom headers, which statement accurately reflects the size and ordering constraints defined by the Kafka broker?
 
 - A. The combined size of all headers and the record payload cannot exceed the broker's `max.message.bytes` setting, and header ordering is not guaranteed.
-- B. Header keys are strings and values are byte arrays; there is no per-header size limit, only the total record batch size limit (`message.max.bytes` / `max.message.bytes`) applies.
+- B. Header keys are strings and values are byte arrays, there is no per-header size limit, only the total record batch size limit (`message.max.bytes` / `max.message.bytes`) applies.
 - C. Header keys must be no longer than 256 bytes, header values no longer than 4 KB, and the order of headers is preserved as they are added.
 - D. Each header can be up to 1 MB in size, and headers are sorted alphabetically before transmission.
 
@@ -2380,7 +2380,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-Record headers are an ordered collection of key/value pairs (keys are Strings, values are byte[]; duplicate keys are allowed). Kafka defines NO header-specific size limits (the 256 B / 4 KB figures in option A do not exist in Kafka); headers only count toward the overall record batch size limit (`message.max.bytes` on the broker / `max.message.bytes` on the topic, `max.request.size` on the producer). Header order IS preserved. Verified: the Headers Javadoc says "A mutable ordered collection of Header objects ... The order of headers is preserved in the order they were added" and documents no size limits. 
+Record headers are an ordered collection of key/value pairs (keys are Strings, values are byte[], duplicate keys are allowed). Kafka defines NO header-specific size limits (the 256 B / 4 KB figures in option A do not exist in Kafka), headers only count toward the overall record batch size limit (`message.max.bytes` on the broker / `max.message.bytes` on the topic, `max.request.size` on the producer). Header order IS preserved. Verified: the Headers Javadoc says "A mutable ordered collection of Header objects ... The order of headers is preserved in the order they were added" and documents no size limits. 
 
 
 Source: https://kafka.apache.org/42/javadoc/org/apache/kafka/common/header/Headers.html
@@ -2390,14 +2390,14 @@ Source: https://kafka.apache.org/42/javadoc/org/apache/kafka/common/header/Heade
 1. ❌ **A. The combined size of all headers and the record payload cannot exceed the broker's `max.message.bytes` setting, and header ordering is not guaranteed.**  
    **Incorrect**. The size part is right, but Kafka guarantees that the order in which headers are added to a `ProducerRecord` is preserved when sent to the broker. Header ordering is therefore deterministic, not arbitrary.
 
-2. ✅ **B. Header keys are strings and values are byte arrays; there is no per-header size limit, only the total record batch size limit (`message.max.bytes` / `max.message.bytes`) applies.**  
-   **Correct**. There is no per-header limit, only the total record size limit; header keys are strings and values are byte arrays.
+2. ✅ **B. Header keys are strings and values are byte arrays, there is no per-header size limit, only the total record batch size limit (`message.max.bytes` / `max.message.bytes`) applies.**  
+   **Correct**. There is no per-header limit, only the total record size limit, header keys are strings and values are byte arrays.
 
 3. ❌ **C. Header keys must be no longer than 256 bytes, header values no longer than 4 KB, and the order of headers is preserved as they are added.**  
-   **Incorrect**. Kafka documents no such 256 B / 4 KB header limits; only the total record/batch size limits apply (the ordering part is true).
+   **Incorrect**. Kafka documents no such 256 B / 4 KB header limits, only the total record/batch size limits apply (the ordering part is true).
 
 4. ❌ **D. Each header can be up to 1 MB in size, and headers are sorted alphabetically before transmission.**  
-   **Incorrect**. Kafka defines no per-header size limit (neither 1 MB nor 4 KB; only the total record/batch limit applies), and it does not sort headers alphabetically—order is maintained.
+   **Incorrect**. Kafka defines no per-header size limit (neither 1 MB nor 4 KB, only the total record/batch limit applies), and it does not sort headers alphabetically—order is maintained.
 
 </details>
 
@@ -2442,7 +2442,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "State" / "Surviving Failures
    **Correct**. When the key is modified, Kafka Streams creates repartition topics to redistribute data correctly for stateful operations.
 
 6. ✅ **F. State stores are automatically compacted by Kafka Streams without any configuration needed on the changelog topics.**  
-   **Correct**. Kafka Streams auto-creates changelog topics with `cleanup.policy=compact` (or `compact,delete` for windowed stores); no user configuration is needed.
+   **Correct**. Kafka Streams auto-creates changelog topics with `cleanup.policy=compact` (or `compact,delete` for windowed stores), no user configuration is needed.
 
 </details>
 
@@ -2463,9 +2463,9 @@ Choose the correct answer.
 
 **Explanation:**
 
-When `enable.auto.commit` is disabled, the consumer only records offsets after an explicit commit. If the application crashes before committing the current batch, the broker’s stored offset (in `__consumer_offsets`) remains at the last successful commit. On restart the consumer resumes from that last committed offset, which means the batch that was processed but not committed is read (and processed) again, i.e. at‑least‑once semantics with possible duplicates. D states exactly this. C is worded confusingly ("last committed offset plus the uncommitted batch again") - the uncommitted batch lies after the last committed offset, so it is the same data, not an additional re-read; D is the precise statement. (Ambiguous question: C and D describe the same behaviour; D is cleaner.)
+When `enable.auto.commit` is disabled, the consumer only records offsets after an explicit commit. If the application crashes before committing the current batch, the broker’s stored offset (in `__consumer_offsets`) remains at the last successful commit. On restart the consumer resumes from that last committed offset, which means the batch that was processed but not committed is read (and processed) again, i.e. at‑least‑once semantics with possible duplicates. D states exactly this. C is worded confusingly ("last committed offset plus the uncommitted batch again") - the uncommitted batch lies after the last committed offset, so it is the same data, not an additional re-read, D is the precise statement. (Ambiguous question: C and D describe the same behaviour, D is cleaner.)
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (Commits and Offsets, Committing the Current Offset - "Re-processing"); https://kafka.apache.org/documentation/#consumerconfigs_enable.auto.commit
+Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (Commits and Offsets, Committing the Current Offset - "Re-processing"), https://kafka.apache.org/documentation/#consumerconfigs_enable.auto.commit
 
 **Detailed explanation of each option:**
 
@@ -2476,10 +2476,10 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (Commits and Offsets, Committ
    **Incorrect**. Restarting does not reset the offset to the topic beginning unless a special reset policy is applied. The consumer continues from the last committed position.
 
 3. ❌ **C. It will read messages from the last committed offset plus the uncommitted batch again.**  
-   **Incorrect** (imprecise). The uncommitted batch is already part of "everything after the last committed offset", so this is a confusing way to say the same as D; it also wrongly implies a separate re-read on top of the committed position. (The batch is re-processed, so duplicates are possible.)
+   **Incorrect** (imprecise). The uncommitted batch is already part of "everything after the last committed offset", so this is a confusing way to say the same as D, it also wrongly implies a separate re-read on top of the committed position. (The batch is re-processed, so duplicates are possible.)
 
 4. ✅ **D. It will start from the last committed offset.**  
-   **Correct**. The consumer resumes from the last committed offset; since the crashed batch was never committed, its records are delivered again.
+   **Correct**. The consumer resumes from the last committed offset, since the crashed batch was never committed, its records are delivered again.
 
 </details>
 
@@ -2503,7 +2503,7 @@ Choose the correct answer.
 
 Kafka Streams exposes a set of metrics under the `streams.*` group. The metric `streams.records.per-sec` is the key throughput indicator, reporting how many records the stream processing logic handles each second. Cumulative counters like `streams.records.in-total` give total counts but cannot express rate, while byte‑based metrics are useful for payload size analysis, not record throughput. Recognizing the correct metric is essential for monitoring performance, diagnosing bottlenecks, and setting alerts in a production Streams application. The official documentation lists all available metrics and their descriptions (see https://kafka.apache.org/documentation/#streams_metrics).
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 13 "Monitoring Kafka" (pp. 339-378) — NOTE: StreamsMetrics throughput metric; exact metric name is illustrative.
+Source: Kafka: The Definitive Guide 2nd ed. Ch. 13 "Monitoring Kafka" (pp. 339-378) — NOTE: StreamsMetrics throughput metric, exact metric name is illustrative.
 
 **Detailed explanation of each option:**
 
@@ -2520,7 +2520,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 13 "Monitoring Kafka" (pp. 339-3
    **Incorrect**. This is another cumulative counter, similar to `streams.records.in-total`. It indicates the total number processed but not the rate.
 
 5. ❌ **E. streams.records.in-total-rate**  
-   **Incorrect**. No such metric exists in the StreamsMetrics group; the correct throughput metric is `streams.records.per-sec`.
+   **Incorrect**. No such metric exists in the StreamsMetrics group, the correct throughput metric is `streams.records.per-sec`.
 
 </details>
 
@@ -2589,7 +2589,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-`exactly_once_batched` is not a real Kafka Streams config or `processing.guarantee` value (the real values are `at_least_once`, `exactly_once_v2`, and the deprecated `exactly_once` / `exactly_once_beta`). Only C is correct (Streams derives and manages `transactional.id` itself; the key setting is `processing.guarantee`). Original text follows.
+`exactly_once_batched` is not a real Kafka Streams config or `processing.guarantee` value (the real values are `at_least_once`, `exactly_once_v2`, and the deprecated `exactly_once` / `exactly_once_beta`). Only C is correct (Streams derives and manages `transactional.id` itself, the key setting is `processing.guarantee`). Original text follows.
 
 Exactly‑once semantics in Kafka Streams rely on the Streams client’s ability to use Kafka transactions to atomically commit both state changes and output records. The core requirement is setting `processing.guarantee` to either "exactly_once" or "exactly_once_batched". The Streams runtime automatically generates a transactional.id and performs the necessary commit logic. Optional optimizations include `exactly_once_batched=true`, which batches records per transaction for higher throughput. Features like caching, retention policies, idempotence, or offset reset do not affect the exactly‑once contract. Misconceptions often arise from conflating idempotent producer writes with full transactional guarantees. Correctly configuring the guarantee property and transactional id ensures that each record is processed and stored exactly once, even in the presence of failures.
 
@@ -2636,7 +2636,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Streams distinguishes between KStreams (unbounded event streams) and KTables (stateful changelog‑backed tables). KTables expose state stores that are persisted via changelog topics and can be queried interactively, which makes option 1 true. The DSL ‘through’ operator preserves the original record while writing to an intermediate topic, invalidating option 2. Global tables are fully replicated and queryable, contradicting option 3, but option 6 correctly states that they are read‑only and replicated. The ‘transform’ operator bridges the DSL with the Processor API, allowing stateful processing without altering key/value semantics, validating option 4. Finally, not all stores are changelog‑backed; transient stores lack changelogs, so option 5 is false. This knowledge is essential for designing fault‑tolerant, stateful stream applications.
+Kafka Streams distinguishes between KStreams (unbounded event streams) and KTables (stateful changelog‑backed tables). KTables expose state stores that are persisted via changelog topics and can be queried interactively, which makes option 1 true. The DSL ‘through’ operator preserves the original record while writing to an intermediate topic, invalidating option 2. Global tables are fully replicated and queryable, contradicting option 3, but option 6 correctly states that they are read‑only and replicated. The ‘transform’ operator bridges the DSL with the Processor API, allowing stateful processing without altering key/value semantics, validating option 4. Finally, not all stores are changelog‑backed, transient stores lack changelogs, so option 5 is false. This knowledge is essential for designing fault‑tolerant, stateful stream applications.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (pp. 402-410)
 
@@ -2652,10 +2652,10 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (p
    **Correct**. `transform` is a DSL operator that delegates to a user‑supplied Transformer which can use state stores and emit zero, one or more output records while preserving the stream’s semantics.
 
 4. ✅ **D. Global tables are replicated to all instances and can be read from any instance but are not mutable by user code.**  
-   **Correct**. Global tables are read‑only views that are replicated to each instance, and applications cannot mutate them directly; updates come only from the source topic.
+   **Correct**. Global tables are read‑only views that are replicated to each instance, and applications cannot mutate them directly, updates come only from the source topic.
 
 5. ❌ **E. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.**  
-   **Incorrect**. Only persistent state stores are backed by changelog topics; transient (in‑memory) stores are not. Users must declare the store type in the topology.
+   **Incorrect**. Only persistent state stores are backed by changelog topics, transient (in‑memory) stores are not. Users must declare the store type in the topology.
 
 6. ❌ **F. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.**  
    **Incorrect**. Global tables are fully replicated to every instance and their state stores are accessible via the Interactive Queries API, just like local KTables.
@@ -2679,14 +2679,14 @@ Choose the correct answer.
 
 **Explanation:**
 
-Tumbling windows in Kafka Streams define fixed, non-overlapping time intervals where each event belongs to exactly one window. The window start time is inclusive, while the end time is exclusive, so events at the boundary belong to the subsequent window. Event-time processing manages out-of-order and late-arriving events by maintaining a retention period (or grace period), during which late events can still update aggregates for their windows. This feature is essential for accurate stream processing in real-world scenarios where event arrival can be delayed. Misunderstandings often arise around window boundaries and late event handling; knowing these details is critical for implementing correct time-windowed aggregations in Kafka Streams. Precisely: a late record is accepted into its window as long as stream-time has not passed window end + grace period; window store retention must be >= window size + grace. So A is true as an approximation (the grace period, not retention, is the actual cut-off).
+Tumbling windows in Kafka Streams define fixed, non-overlapping time intervals where each event belongs to exactly one window. The window start time is inclusive, while the end time is exclusive, so events at the boundary belong to the subsequent window. Event-time processing manages out-of-order and late-arriving events by maintaining a retention period (or grace period), during which late events can still update aggregates for their windows. This feature is essential for accurate stream processing in real-world scenarios where event arrival can be delayed. Misunderstandings often arise around window boundaries and late event handling, knowing these details is critical for implementing correct time-windowed aggregations in Kafka Streams. Precisely: a late record is accepted into its window as long as stream-time has not passed window end + grace period, window store retention must be >= window size + grace. So A is true as an approximation (the grace period, not retention, is the actual cut-off).
 
-Source: https://kafka.apache.org/documentation/streams/developer-guide/dsl-api.html#windowing ; https://kafka.apache.org/documentation/streams/core-concepts#streams_time ; Kafka: The Definitive Guide 2nd ed. Ch. 14 (Windowed joins/aggregations)
+Source: https://kafka.apache.org/documentation/streams/developer-guide/dsl-api.html#windowing , https://kafka.apache.org/documentation/streams/core-concepts#streams_time , Kafka: The Definitive Guide 2nd ed. Ch. 14 (Windowed joins/aggregations)
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. The window's start and end timestamps are inclusive, meaning events with timestamps equal to the window's end time are included in that window.**  
-   **Incorrect**. The window's start time is inclusive, but the end time is exclusive; events with timestamps equal to the window's end fall into the next window.
+   **Incorrect**. The window's start time is inclusive, but the end time is exclusive, events with timestamps equal to the window's end fall into the next window.
 
 2. ❌ **B. Tumbling windows can overlap, allowing an event to belong to multiple windows simultaneously.**  
    **Incorrect**. Tumbling windows are fixed-size, non-overlapping time intervals, so each event belongs to exactly one window.
@@ -2695,7 +2695,7 @@ Source: https://kafka.apache.org/documentation/streams/developer-guide/dsl-api.h
    **Incorrect**. Fixed-size hop intervals are used in hopping windows, not tumbling windows, which have no overlap and no hops.
 
 4. ✅ **D. In event-time processing, late-arriving events can be assigned to a window if they arrive before the window retention period expires.**  
-   **Correct**. Kafka Streams allows late-arriving events to update windowed aggregates as long as they arrive within the configured grace period (the window store retention must be at least window size + grace); once the grace period expires the record is dropped.
+   **Correct**. Kafka Streams allows late-arriving events to update windowed aggregates as long as they arrive within the configured grace period (the window store retention must be at least window size + grace), once the grace period expires the record is dropped.
 
 </details>
 
@@ -2765,7 +2765,7 @@ Choose the correct answers (select 3).
 
 In Kafka Streams, stateful operators such as KTable joins maintain a local state store and write a changelog topic to enable fault tolerance. When keys differ across join partners, Streams automatically inserts a repartition topic to align keys. GlobalKTable, unlike a normal KTable, is replicated on every instance and therefore has no changelog. The foreach operator is a terminal operation that performs side‑effects but does not produce records. Suppress is intended to hide intermediate aggregation results, making it useful for windowed aggregations. Finally, store names must be consistent across instances to enable proper state recovery from changelog topics. These concepts are essential for designing robust, fault‑tolerant stream processing applications.
 
-Source: book ch. 14 "Kafka Streams" (DSL, GlobalKTable, state stores); https://kafka.apache.org/42/streams/developer-guide/dsl-api/ (groupBy causes re-partitioning; GlobalKTable has no changelog); https://docs.confluent.io/current/streams/developer-guide.html
+Source: book ch. 14 "Kafka Streams" (DSL, GlobalKTable, state stores), https://kafka.apache.org/42/streams/developer-guide/dsl-api/ (groupBy causes re-partitioning, GlobalKTable has no changelog), https://docs.confluent.io/current/streams/developer-guide.html
 
 **Detailed explanation of each option:**
 
@@ -2773,15 +2773,15 @@ Source: book ch. 14 "Kafka Streams" (DSL, GlobalKTable, state stores); https://k
    **Correct**. True. The store name is used to locate the store’s backing changelog topic. All instances must use the same name for a given logical store so that state can be recovered from the changelog during restarts.
 
 2. ✅ **B. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.**  
-   **Correct**. DSL docs: "groupBy always causes data re-partitioning"; aggregations use a changelog-backed store. (The original wording about KTable joins was wrong: KTable-KTable joins need co-partitioned inputs and Streams does not repartition for them; foreign-key joins handle co-partitioning internally. The option was reworded.)
+   **Correct**. DSL docs: "groupBy always causes data re-partitioning", aggregations use a changelog-backed store. (The original wording about KTable joins was wrong: KTable-KTable joins need co-partitioned inputs and Streams does not repartition for them, foreign-key joins handle co-partitioning internally. The option was reworded.)
 
 3. ✅ **C. GlobalKTable is materialized per instance and does not produce changelog topics.**  
-   **Correct**. True. GlobalKTable keeps a full copy of the source topic on every instance; it is not partitioned and therefore does not emit a changelog topic. It is refreshed by reading the source topic fully during startup or on change events.
+   **Correct**. True. GlobalKTable keeps a full copy of the source topic on every instance, it is not partitioned and therefore does not emit a changelog topic. It is refreshed by reading the source topic fully during startup or on change events.
 
 4. ❌ **D. Suppress operator cannot be used on aggregations that emit intermediate results.**  
    **Incorrect**. False. Suppress can be applied to aggregations (e.g., windowed aggregations) to suppress intermediate updates until the window closes, allowing downstream operators to receive only the final result.
 
-5. ❌ **E. Each source node reads from a topic; partition assignment is round‑robin.**  
+5. ❌ **E. Each source node reads from a topic, partition assignment is round‑robin.**  
    **Incorrect**. False. Kafka Streams assigns topic partitions to stream tasks based on the group coordinator’s assignment algorithm, not a round‑robin strategy. Each task owns a subset of partitions, which can be imbalanced depending on the cluster configuration.
 
 6. ❌ **F. A KStream-foreach always writes to a sink topic automatically.**  
@@ -2806,9 +2806,9 @@ Choose the correct answer.
 
 **Explanation:**
 
-The `key.converter` property determines how Kafka Connect serializes the key part of records before sending them to Kafka. It can be any converter class, such as `StringConverter` for plain strings or `JsonConverter` for JSON payloads. Connectors can set their own converters; the cluster does not enforce a single converter across all connectors, so option 3 is the false statement. Misconceptions often arise from conflating the need for a common converter with the cluster’s ability to mix converters. Understanding this property is essential for proper schema handling and data format compatibility in production deployments. Refer to the official Kafka Connect configuration documentation for details.
+The `key.converter` property determines how Kafka Connect serializes the key part of records before sending them to Kafka. It can be any converter class, such as `StringConverter` for plain strings or `JsonConverter` for JSON payloads. Connectors can set their own converters, the cluster does not enforce a single converter across all connectors, so option 3 is the false statement. Misconceptions often arise from conflating the need for a common converter with the cluster’s ability to mix converters. Understanding this property is essential for proper schema handling and data format compatibility in production deployments. Refer to the official Kafka Connect configuration documentation for details.
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kafka Connect" (pp. 211-214) — NOTE: Verified against Kafka Connect docs: key.converter is per-connector/worker; the Connect worker default is JsonConverter, not StringConverter (option A's premise is itself inaccurate, but D is the stated false statement).
+Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kafka Connect" (pp. 211-214) — NOTE: Verified against Kafka Connect docs: key.converter is per-connector/worker, the Connect worker default is JsonConverter, not StringConverter (option A's premise is itself inaccurate, but D is the stated false statement).
 
 **Detailed explanation of each option:**
 
@@ -2816,7 +2816,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kaf
    **Incorrect**. `StringConverter` is a valid built‑in converter suitable for simple string keys.
 
 2. ✅ **B. It must be the same converter for all connectors in a Kafka Connect cluster, otherwise the cluster will reject the connector configuration.**  
-   **Correct**. Each connector can independently specify its own `key.converter`; the cluster does not enforce a uniform converter across connectors.
+   **Correct**. Each connector can independently specify its own `key.converter`, the cluster does not enforce a uniform converter across connectors.
 
 3. ❌ **C. If not specified, the default value is `org.apache.kafka.connect.storage.StringConverter`.**  
    **Incorrect**. The default converter for keys is the StringConverter.
@@ -2845,14 +2845,14 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Streams guarantees fault tolerance for stateful operators by persisting each local state store to a replicated changelog topic. This replication ensures that if an instance fails, another can recover the exact state from the topic. Exactly‑once semantics (EOS) further guarantees that state updates and output records are written atomically, preventing duplicates during replay. Global tables replicate the entire table to every instance, providing a consistent read‑only view without repartitioning. Common misconceptions include assuming an external DB is required or that retention of changelog topics is limited; in reality, changelog topics for non-windowed stores are log-compacted (`cleanup.policy=compact`, latest value per key kept indefinitely), while changelogs of windowed stores use `compact,delete` with retention = window retention + 1 day (not 7 days), and they rely on Kafka’s replication. Option D (repartition topics) is a true statement but concerns re-keying, not fault tolerance/durability, hence not selected. These mechanisms together provide robust consistency and durability for stream processing applications.
+Kafka Streams guarantees fault tolerance for stateful operators by persisting each local state store to a replicated changelog topic. This replication ensures that if an instance fails, another can recover the exact state from the topic. Exactly‑once semantics (EOS) further guarantees that state updates and output records are written atomically, preventing duplicates during replay. Global tables replicate the entire table to every instance, providing a consistent read‑only view without repartitioning. Common misconceptions include assuming an external DB is required or that retention of changelog topics is limited, in reality, changelog topics for non-windowed stores are log-compacted (`cleanup.policy=compact`, latest value per key kept indefinitely), while changelogs of windowed stores use `compact,delete` with retention = window retention + 1 day (not 7 days), and they rely on Kafka’s replication. Option D (repartition topics) is a true statement but concerns re-keying, not fault tolerance/durability, hence not selected. These mechanisms together provide robust consistency and durability for stream processing applications.
 
-Source: https://kafka.apache.org/documentation/streams/architecture and https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html (state store changelog configs); Kafka: The Definitive Guide 2nd ed., ch. 14 (local state, rebalancing, exactly-once in Streams).
+Source: https://kafka.apache.org/documentation/streams/architecture and https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html (state store changelog configs), Kafka: The Definitive Guide 2nd ed., ch. 14 (local state, rebalancing, exactly-once in Streams).
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Kafka Streams writes its local state store to an external database for durability.**  
-   **Incorrect**. Kafka Streams relies on its own changelog topics to replicate the local state; it does not persist state to an external database.
+   **Incorrect**. Kafka Streams relies on its own changelog topics to replicate the local state, it does not persist state to an external database.
 
 2. ✅ **B. Kafka Streams uses exactly-once semantics (EOS) to prevent duplicate records when reprocessing after a failure.**  
    **Correct**. EOS guarantees that state changes and output records are written atomically and idempotently, ensuring consistency after a failure.
@@ -2890,20 +2890,20 @@ Choose the correct answers (select 4).
 
 **Explanation:**
 
-In Kafka producers, serializers convert Java objects to byte arrays for transmission. StringSerializer is suitable for simple text, encoding strings as UTF-8. AvroSerializer integrates tightly with Confluent Schema Registry to manage Avro schemas and enable schema evolution. KafkaProducer requires both key.serializer and value.serializer to be explicitly set for correct operation. Custom serializers must implement the Serializer interface to be compatible. ByteArraySerializer does not serialize complex objects but rather passes byte arrays through. JsonSerializer serializes objects to JSON but does not enforce schema validation against Schema Registry by default, which can be a common misconception. Understanding these distinctions is critical for producing data correctly in Confluent Kafka environments. (The Confluent class is KafkaAvroSerializer; key.serializer/value.serializer have no defaults - alternatively serializer instances can be passed to the KafkaProducer constructor.)
+In Kafka producers, serializers convert Java objects to byte arrays for transmission. StringSerializer is suitable for simple text, encoding strings as UTF-8. AvroSerializer integrates tightly with Confluent Schema Registry to manage Avro schemas and enable schema evolution. KafkaProducer requires both key.serializer and value.serializer to be explicitly set for correct operation. Custom serializers must implement the Serializer interface to be compatible. ByteArraySerializer does not serialize complex objects but rather passes byte arrays through. JsonSerializer serializes objects to JSON but does not enforce schema validation against Schema Registry by default, which can be a common misconception. Understanding these distinctions is critical for producing data correctly in Confluent Kafka environments. (The Confluent class is KafkaAvroSerializer, key.serializer/value.serializer have no defaults - alternatively serializer instances can be passed to the KafkaProducer constructor.)
 
-Source: Kafka: The Definitive Guide 2nd ed., ch. 3 "Serializers"; https://kafka.apache.org/43/configuration/producer-configs/ ; https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/
+Source: Kafka: The Definitive Guide 2nd ed., ch. 3 "Serializers", https://kafka.apache.org/43/configuration/producer-configs/ , https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. The ByteArraySerializer converts complex Java objects directly into byte arrays without additional configuration or schema requirements.**  
-   **Incorrect**. ByteArraySerializer simply passes through byte arrays; it does not convert complex Java objects. Complex objects require explicit serialization to byte arrays before using ByteArraySerializer.
+   **Incorrect**. ByteArraySerializer simply passes through byte arrays, it does not convert complex Java objects. Complex objects require explicit serialization to byte arrays before using ByteArraySerializer.
 
 2. ✅ **B. Custom serializers must implement the org.apache.kafka.common.serialization.Serializer interface to be compatible with KafkaProducer.**  
    **Correct**. To integrate custom serialization logic, the serializer must implement Kafka's Serializer interface to ensure compatibility and proper behavior within KafkaProducer.
 
 3. ❌ **C. Using JsonSerializer automatically enforces schema validation against the Schema Registry before serialization.**  
-   **Incorrect**. JsonSerializer serializes Java objects to JSON format but does not enforce schema validation via Schema Registry by default; that functionality requires additional configuration or use of specific Confluent serializers.
+   **Incorrect**. JsonSerializer serializes Java objects to JSON format but does not enforce schema validation via Schema Registry by default, that functionality requires additional configuration or use of specific Confluent serializers.
 
 4. ✅ **D. KafkaProducer requires both key.serializer and value.serializer properties to be set for proper serialization of message keys and values.**  
    **Correct**. KafkaProducer mandates setting both key.serializer and value.serializer properties to correctly serialize keys and values before sending messages to Kafka topics.
@@ -2994,7 +2994,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Appendix B "Additional Kafka Tools" 
    **Incorrect**. `--list` lists all consumer groups in the cluster, not the offsets or lag for a specific group. It does not provide the information requested.
 
 4. ❌ **D. kafka-consumer-groups --bootstrap-server <broker> --group <group-id> --describe --topic <topic>**  
-   **Incorrect (rationale CORRECTED)**. `--topic` IS a recognized flag of `kafka-consumer-groups`, but it is documented for `--reset-offsets`/`--delete-offsets`, not as a filter for `--describe`; A is the canonical invocation for showing lag.
+   **Incorrect (rationale CORRECTED)**. `--topic` IS a recognized flag of `kafka-consumer-groups`, but it is documented for `--reset-offsets`/`--delete-offsets`, not as a filter for `--describe`, A is the canonical invocation for showing lag.
 
 </details>
 
@@ -3016,7 +3016,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-In Kafka, a consumer without a committed offset relies on the "auto.offset.reset" configuration to determine its starting point. The default value for this setting is "latest", meaning the consumer begins at the most recent offset in each partition. Many developers mistakenly believe the default is "earliest"; this confusion often leads to missed records in real‑time processing. The other options describe non‑existent defaults or erroneous behaviors. Understanding this default is crucial for designing reliable consumer groups, especially when handling late‑joining consumers or during cluster restarts.
+In Kafka, a consumer without a committed offset relies on the "auto.offset.reset" configuration to determine its starting point. The default value for this setting is "latest", meaning the consumer begins at the most recent offset in each partition. Many developers mistakenly believe the default is "earliest", this confusion often leads to missed records in real‑time processing. The other options describe non‑existent defaults or erroneous behaviors. Understanding this default is crucial for designing reliable consumer groups, especially when handling late‑joining consumers or during cluster restarts.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 4 "auto.offset.reset" (p. 91)
 
@@ -3056,7 +3056,7 @@ Choose the correct answer.
 
 **Explanation:**
 
-CORRECTION: the request handler (I/O) threads (KafkaRequestHandler) only take requests off the shared request queue and call KafkaApis.handle(); it is KafkaApis that checks the request's API key, performs authorization/validation and dispatches to the matching handler (handleProduceRequest, handleFetchRequest, ...). The network processor threads only read/write bytes, and ReplicaManager is a lower-level component used by those handlers. Original text follows.
+CORRECTION: the request handler (I/O) threads (KafkaRequestHandler) only take requests off the shared request queue and call KafkaApis.handle(), it is KafkaApis that checks the request's API key, performs authorization/validation and dispatches to the matching handler (handleProduceRequest, handleFetchRequest, ...). The network processor threads only read/write bytes, and ReplicaManager is a lower-level component used by those handlers. Original text follows.
 
 Kafka's request processing pipeline begins with network I/O managed by the NetworkProcessor, which reads raw requests. However, the critical step of validating and routing these requests to the correct API handler is performed by the RequestHandler. This component ensures the request conforms to protocol expectations and directs it to KafkaApis or other internal components as needed. ReplicaManager operates at a different layer, managing partition states and replication, not client request routing. KafkaApis implements the logic for handling specific API calls but depends on RequestHandler for routing. Understanding this flow is essential for developers to troubleshoot request handling latency and errors in Kafka brokers.
 
@@ -3071,7 +3071,7 @@ Source (out of CCDAK scope): Kafka: The Definitive Guide 2nd ed. Ch. 6 "Request 
    **Incorrect**. ReplicaManager manages partition replicas and their state but does not handle client request validation or routing.
 
 3. ❌ **C. RequestHandler**  
-   **Incorrect**. The request handler threads just pull requests from the shared request queue and hand them to KafkaApis; they do not route by request type themselves.
+   **Incorrect**. The request handler threads just pull requests from the shared request queue and hand them to KafkaApis, they do not route by request type themselves.
 
 4. ❌ **D. NetworkProcessor**  
    **Incorrect**. The NetworkProcessor handles the low-level network I/O and socket management but does not perform request validation or routing.
@@ -3097,21 +3097,21 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Documented tuning/scaling levers for Kafka Streams: increase `num.stream.threads` (config name; default 1) up to the number of tasks/partitions and/or add instances; enlarge the record cache (`statestore.cache.max.bytes`, formerly `cache.max.bytes.buffering`, default 10 MB) which reduces writes to RocksDB and downstream/changelog traffic; tune RocksDB via a `rocksdb.config.setter`. Disabling changelogs sacrifices fault tolerance; shrinking join windows changes the application semantics; creating multiple stores per topology is not a recognized query-performance technique. Verified live: `statestore.cache.max.bytes` (default 10485760; `cache.max.bytes.buffering` deprecated), `num.stream.threads` (default 1), `rocksdb.config.setter` exist; the record cache reduces output records. Option F was reworded (the original 'very large value' was dubious); the original key was B, D, E but E has no documentation support.
+Documented tuning/scaling levers for Kafka Streams: increase `num.stream.threads` (config name, default 1) up to the number of tasks/partitions and/or add instances, enlarge the record cache (`statestore.cache.max.bytes`, formerly `cache.max.bytes.buffering`, default 10 MB) which reduces writes to RocksDB and downstream/changelog traffic, tune RocksDB via a `rocksdb.config.setter`. Disabling changelogs sacrifices fault tolerance, shrinking join windows changes the application semantics, creating multiple stores per topology is not a recognized query-performance technique. Verified live: `statestore.cache.max.bytes` (default 10485760, `cache.max.bytes.buffering` deprecated), `num.stream.threads` (default 1), `rocksdb.config.setter` exist, the record cache reduces output records. Option F was reworded (the original 'very large value' was dubious), the original key was B, D, E but E has no documentation support.
 Still unverified: that RocksDB compression=snappy is a documented throughput tuning (B), docs only show rocksdb.config.setter for RocksDB tuning.
 
-Source: https://kafka.apache.org/42/streams/developer-guide/memory-mgmt/ ; https://kafka.apache.org/42/streams/developer-guide/config-streams/
+Source: https://kafka.apache.org/42/streams/developer-guide/memory-mgmt/ , https://kafka.apache.org/42/streams/developer-guide/config-streams/
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Use the materialized-as clause to create multiple state stores for a single topology to improve query performance.**  
-   **Incorrect (unsupported by docs; changed from the original key)**. Defining separate state stores allows the application to keep different key/value sets in distinct RocksDB instances, which can reduce contention and enable more efficient compaction. This technique is beneficial when the application needs to expose multiple queryable state tables.
+   **Incorrect (unsupported by docs, changed from the original key)**. Defining separate state stores allows the application to keep different key/value sets in distinct RocksDB instances, which can reduce contention and enable more efficient compaction. This technique is beneficial when the application needs to expose multiple queryable state tables.
 
 2. ❌ **B. Disable the use of changelog topics for state stores to reduce network traffic.**  
    **Incorrect**. Changelog topics are essential for fault‑tolerance and state recovery. Disabling them would make the state store unreplicated, leading to data loss after a crash or rebalance, and is not a recommended tuning option.
 
 3. ✅ **C. Increase the number of stream threads (default 1) to match the number of partitions for parallel processing.**  
-   **Correct**. Kafka Streams runs tasks (one per input partition of a subtopology) on stream threads; the config is `num.stream.threads`; setting it equal to or slightly higher than the number of topic partitions allows each thread to process a subset of the data in parallel, improving throughput. However, it should not exceed the number of available CPU cores to avoid context‑switch overhead.
+   **Correct**. Kafka Streams runs tasks (one per input partition of a subtopology) on stream threads, the config is `num.stream.threads`, setting it equal to or slightly higher than the number of topic partitions allows each thread to process a subset of the data in parallel, improving throughput. However, it should not exceed the number of available CPU cores to avoid context‑switch overhead.
 
 4. ✅ **D. Increase the record cache size (`statestore.cache.max.bytes`) to reduce writes to the state store and downstream traffic.**  
    **Correct (with a caveat)**. A larger cache can reduce writes to the underlying RocksDB, but it also consumes more heap. An excessively large cache can trigger frequent garbage collection pauses and may lead to out‑of‑memory errors. The recommended approach is to use a moderate cache (e.g., 10–15% of available RAM) and tune based on the workload.
@@ -3120,7 +3120,7 @@ Source: https://kafka.apache.org/42/streams/developer-guide/memory-mgmt/ ; https
    **Correct**. Using a lightweight compression algorithm such as snappy reduces CPU usage during writes while still compressing data, which can lower disk I/O and improve overall throughput, especially on high‑throughput workloads.
 
 6. ❌ **F. Reduce the window size in windowed joins to lower latency and memory usage.**  
-   **Incorrect**. Shorter windows reduce the amount of state kept per key, which can lower memory consumption and increase responsiveness. However, it can also increase the number of windows that need to be processed, potentially raising overhead; the effect depends on the application semantics.
+   **Incorrect**. Shorter windows reduce the amount of state kept per key, which can lower memory consumption and increase responsiveness. However, it can also increase the number of windows that need to be processed, potentially raising overhead, the effect depends on the application semantics.
 
 </details>
 
@@ -3153,16 +3153,16 @@ Source: https://docs.confluent.io/platform/current/schema-registry/develop/api.h
    **Correct**. Backward compatibility means the new schema can read data written with the previous schema(s). Note: the real server property name is `schema.compatibility.level` (env var `SCHEMA_REGISTRY_SCHEMA_COMPATIBILITY_LEVEL`), not `schema.registry.schema.compatibility.level`.
 
 2. ✅ **B. Deploying Schema Registry with `compatibility` set to `FORWARD` at the cluster level guarantees that consumers can read data written with newer schema.**  
-   **Correct**. Forward compatibility ensures that older consumers can deserialize data written with newer schemas; setting it at the cluster level applies this rule globally to all subjects.
+   **Correct**. Forward compatibility ensures that older consumers can deserialize data written with newer schemas, setting it at the cluster level applies this rule globally to all subjects.
 
 3. ❌ **C. Using the `latest compatible` endpoint of Schema Registry to retrieve the most compatible schema for a given subject.**  
-   **Incorrect**. No such endpoint exists. The Schema Registry API offers `POST /compatibility/subjects/{subject}/versions/{version}` to TEST whether a schema is compatible with a given/latest version; it does not return a 'most compatible' schema.
+   **Incorrect**. No such endpoint exists. The Schema Registry API offers `POST /compatibility/subjects/{subject}/versions/{version}` to TEST whether a schema is compatible with a given/latest version, it does not return a 'most compatible' schema.
 
 4. ❌ **D. Enabling `auto.register.schemas=false` in the producer config prevents schema evolution issues.**  
-   **Incorrect**. This flag simply disables automatic schema registration; it does not affect compatibility checks and can actually increase the risk of mismatched schemas if the client does not register the correct schema.
+   **Incorrect**. This flag simply disables automatic schema registration, it does not affect compatibility checks and can actually increase the risk of mismatched schemas if the client does not register the correct schema.
 
 5. ❌ **E. Changing the logical type of a field (e.g., from `int32` to `int64`) is allowed under `FULL` compatibility but not under `BACKWARD`.**  
-   **Incorrect**. Avro promotion int -> long is allowed under BACKWARD (a new reader schema with `long` can read old `int` data) but not under FORWARD, hence not under FULL; the statement has it reversed.
+   **Incorrect**. Avro promotion int -> long is allowed under BACKWARD (a new reader schema with `long` can read old `int` data) but not under FORWARD, hence not under FULL, the statement has it reversed.
 
 6. ❌ **F. Defining a JSON schema with a `default` value for new fields allows producers to omit the field without breaking consumers.**  
    **Incorrect**. While default values are supported in Avro schemas, JSON Schema defaults are not used by Kafka consumers. Consumers rely on Avro default values or schema evolution rules, not JSON Schema defaults.
@@ -3188,9 +3188,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Correction: F is true. `tasks.max` is optional; `ConnectorConfig` defines it with a default of 1, so it can be omitted (only `name` and `connector.class` are required). Hence A, E, F (select 3). Original text follows (its claim that tasks.max is required is wrong).
+Correction: F is true. `tasks.max` is optional, `ConnectorConfig` defines it with a default of 1, so it can be omitted (only `name` and `connector.class` are required). Hence A, E, F (select 3). Original text follows (its claim that tasks.max is required is wrong).
 
-In distributed Kafka Connect, connectors are deployed by posting their JSON configuration to the worker REST endpoint; this is the only supported deployment method. The required configuration includes the fully‑qualified connector.class and a tasks.max value that controls parallelism. Other properties are source‑specific or optional and do not make the configuration valid. Understanding these requirements prevents common deployment failures such as missing class names or absent tasks.max. The other statements describe behaviors that belong to standalone mode, sink connectors, or ZooKeeper usage, which are not applicable to distributed source connector deployment.
+In distributed Kafka Connect, connectors are deployed by posting their JSON configuration to the worker REST endpoint, this is the only supported deployment method. The required configuration includes the fully‑qualified connector.class and a tasks.max value that controls parallelism. Other properties are source‑specific or optional and do not make the configuration valid. Understanding these requirements prevents common deployment failures such as missing class names or absent tasks.max. The other statements describe behaviors that belong to standalone mode, sink connectors, or ZooKeeper usage, which are not applicable to distributed source connector deployment.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
 
@@ -3212,7 +3212,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
    **Correct**. The connector.class property must specify the fully qualified class name of the implementation, which must extend SourceConnector (or sink). This ensures the worker can instantiate the connector. Reference: https://docs.confluent.io/platform/current/connect/configuration.html#connector-class
 
 6. ❌ **F. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.**  
-   **Incorrect**. In distributed mode, connector configs are not automatically loaded from files; they must be submitted via the REST API. Files in the config directory are used only for worker settings. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
+   **Incorrect**. In distributed mode, connector configs are not automatically loaded from files, they must be submitted via the REST API. Files in the config directory are used only for worker settings. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
 
 </details>
 
@@ -3237,12 +3237,12 @@ Choose the correct answers (select 3).
 
 Monitoring a Kafka‑based application requires collecting metrics, visualizing performance, and inspecting state. JMX metrics exposed by Kafka and Kafka Streams can be scraped by Prometheus and visualized with Grafana, giving real‑time throughput and lag data. Confluent Control Center offers built‑in dashboards that expose similar metrics in a user‑friendly interface. Kafka Streams interactive queries let developers probe the state store to confirm correctness and detect anomalies. Relying only on logs or the Connect REST API does not provide the granular, continuous metrics needed for robust observability, and OpenTelemetry, while valuable for tracing, is complementary rather than a primary monitoring tool. These three approaches collectively cover metric collection, visualization, and state inspection, aligning with best practices for Observability & Testing in Confluent Certified Developer exams. Note: OpenTelemetry is a legitimate tool in general (KIP-714 even uses the OpenTelemetry metrics format for client telemetry), so option E was reworded to say 'only tracing, no Kafka metrics', which makes it unambiguously wrong. Control Center is Confluent-platform specific.
 
-Source (verified): https://kafka.apache.org/42/operations/monitoring/ (JMX metrics); https://cwiki.apache.org/confluence/display/KAFKA/KIP-714%3A+Client+metrics+and+observability
+Source (verified): https://kafka.apache.org/42/operations/monitoring/ (JMX metrics), https://cwiki.apache.org/confluence/display/KAFKA/KIP-714%3A+Client+metrics+and+observability
 
 **Detailed explanation of each option:**
 
 1. ❌ **A. Rely only on OpenTelemetry distributed tracing (collecting no Kafka client metrics at all) to track consumer lag and topic throughput**  
-   **Incorrect**. Tracing alone does not give consumer lag or topic throughput; OpenTelemetry is complementary to metrics, not a replacement.
+   **Incorrect**. Tracing alone does not give consumer lag or topic throughput, OpenTelemetry is complementary to metrics, not a replacement.
 
 2. ✅ **B. Query the Kafka Streams state store via interactive queries to check the state of application data**  
    **Correct**. Interactive queries expose the current state of a Streams application, allowing developers to monitor the contents and health of state stores.
@@ -3280,9 +3280,9 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Schema evolution in Confluent Kafka relies on compatibility settings that determine whether a new schema version can coexist with older ones. BACKWARD (the default) means consumers using the NEW schema can read data written with the OLD schema (so you may delete fields and add optional fields with defaults; upgrade consumers first). FORWARD means consumers using the OLD schema can read data written with the NEW schema (you may add fields and delete optional fields; upgrade producers first). So option B is wrong - it describes FORWARD, not BACKWARD. Optional fields with defaults (E), widening numeric types such as int to long (D, Avro type promotion) and disabling compatibility checks (NONE; any change, e.g. removing a field, is accepted) are valid. Caveat on C: the premise "removing a field breaks backward compatibility" is inaccurate (removing a field is actually BACKWARD-compatible; it breaks FORWARD compatibility unless the field had a default), but the conclusion (succeeds under NONE) is true, and it is the best third choice.
+Schema evolution in Confluent Kafka relies on compatibility settings that determine whether a new schema version can coexist with older ones. BACKWARD (the default) means consumers using the NEW schema can read data written with the OLD schema (so you may delete fields and add optional fields with defaults, upgrade consumers first). FORWARD means consumers using the OLD schema can read data written with the NEW schema (you may add fields and delete optional fields, upgrade producers first). So option B is wrong - it describes FORWARD, not BACKWARD. Optional fields with defaults (E), widening numeric types such as int to long (D, Avro type promotion) and disabling compatibility checks (NONE, any change, e.g. removing a field, is accepted) are valid. Caveat on C: the premise "removing a field breaks backward compatibility" is inaccurate (removing a field is actually BACKWARD-compatible, it breaks FORWARD compatibility unless the field had a default), but the conclusion (succeeds under NONE) is true, and it is the best third choice.
 
-Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html (compatibility types table, Avro); Kafka: The Definitive Guide 2nd ed., ch. 3 (Schema Registry, schema evolution).
+Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html (compatibility types table, Avro), Kafka: The Definitive Guide 2nd ed., ch. 3 (Schema Registry, schema evolution).
 
 **Detailed explanation of each option:**
 
@@ -3293,7 +3293,7 @@ Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/
    **Incorrect**. FORWARD means data written with the new schema can be read by consumers using the previous schema. It does not stop older producers' messages from being readable by older consumers.
 
 3. ❌ **C. The "--auto-register" flag in the schema registry UI automatically registers new fields as required when a schema is updated.**  
-   **Incorrect**. There is no such flag in a "schema registry UI"; automatic registration is the serializer setting `auto.register.schemas` (default true) and it never changes field requirement semantics.
+   **Incorrect**. There is no such flag in a "schema registry UI", automatic registration is the serializer setting `auto.register.schemas` (default true) and it never changes field requirement semantics.
 
 4. ❌ **D. Setting the schema registry compatibility level to "BACKWARD" allows producers with a new schema to write records that older consumers (using the old schema) can still read.**  
    **Incorrect**. That is FORWARD compatibility. BACKWARD means consumers with the NEW schema can read data written with the OLD schema.
@@ -3325,7 +3325,7 @@ Choose the correct answers (select 3).
 
 **Explanation:**
 
-Kafka Connect in distributed mode supports dynamic management of connector configurations via REST API, allowing updates without worker restarts. It automatically balances task assignments across workers to optimize resource utilization and ensure fault tolerance. Connector configs and offsets are stored in Kafka internal topics, enabling recovery and distributed coordination. Contrary to some misconceptions, tasks run concurrently in multiple threads per worker, and when a worker fails, tasks are automatically reassigned rather than lost. Also, connectors and tasks have distinct configurations; tasks may require specific settings for parallel processing. These behaviors are critical for designing scalable, reliable Kafka Connect deployments in production environments.
+Kafka Connect in distributed mode supports dynamic management of connector configurations via REST API, allowing updates without worker restarts. It automatically balances task assignments across workers to optimize resource utilization and ensure fault tolerance. Connector configs and offsets are stored in Kafka internal topics, enabling recovery and distributed coordination. Contrary to some misconceptions, tasks run concurrently in multiple threads per worker, and when a worker fails, tasks are automatically reassigned rather than lost. Also, connectors and tasks have distinct configurations, tasks may require specific settings for parallel processing. These behaviors are critical for designing scalable, reliable Kafka Connect deployments in production environments.
 
 Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connect" (pp. 225-229)
 
