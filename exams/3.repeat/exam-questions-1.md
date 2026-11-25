@@ -1772,7 +1772,7 @@ Choose the correct answers (select 2).
 <details>
 <summary>Response:</summary>
 
-**Answer:** F, C
+**Answer:** F, C, E
 
 **Explanation:**
 
@@ -1794,8 +1794,8 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 "Topics and Partitions" (pp. 5
 4. ❌ **D. The maximum number of partitions per topic is limited by the broker's configured `num.partitions` setting.**  
    **Incorrect**. `num.partitions` is only a default value, topics can have more partitions, though large numbers can impact broker performance.
 
-5. ❌ **E. When a new partition is added to a topic, existing consumers automatically start consuming from the new partition.**  
-   **Incorrect**. Adding partitions triggers a rebalance, consumers may or may not receive assignments to the new partitions depending on group dynamics.
+5. ✅ **E. When a new partition is added to a topic, existing consumers automatically start consuming from the new partition.**  
+   **Correct**. The rebalance will redistribute ALL partitions including the new one across the consumer group. Every partition ends up assigned to exactly one consumer — the new partition is not special, it doesn't get skipped.
 
 6. ✅ **F. Offsets can be rolled back by consuming from a lower offset value.**  
    **Correct**. A consumer can seek to an earlier offset (e.g., using seek() or resetting offsets) to reprocess messages.
@@ -2451,8 +2451,8 @@ A Kafka consumer is configured with `enable.auto.commit=false` and the applicati
 
 - A. It will skip the messages that were processed before the crash.
 - B. It will re-read the messages from the beginning of the topic.
-- C. It will read messages from the last committed offset plus the uncommitted batch again.
-- D. It will start from the last committed offset.
+- C. C. It will throw an exception and refuse to restart until offsets are manually reset.
+- D. It will restart from the last committed offset and re-process the uncommitted batch.
 
 Choose the correct answer.
 
@@ -2483,16 +2483,15 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 4 (Commits and Offsets, Committ
 
 </details>
 
-## Question 58 (Application Observability): [-]
-In a Kafka Streams application, which metric from the **StreamsMetrics** group most directly represents the throughput of records processed by the application, measured in records per second?
+## Question 58 (Application Observability):
+In a Kafka Streams application, which JMX metric most directly represents the throughput of records processed by the application, measured in records per second?
 
-- A. streams.records.per-sec
-- B. streams.records.in-total
-- C. stream.processed.bytes-per-sec
-- D. streams.processed.records-total
-- E. streams.records.in-total-rate
-
-Choose the correct answer.
+- A. `process-rate` on `stream-thread-metrics`
+- B. `process-total` on `stream-thread-metrics`
+- C. `process-latency-avg` on `stream-thread-metrics`
+- D. `records-consumed-rate` on `consumer-fetch-manager-metrics`
+- E. `poll-rate` on `stream-thread-metrics`
+  Choose the correct answer.
 
 <details>
 <summary>Response:</summary>
@@ -2501,32 +2500,32 @@ Choose the correct answer.
 
 **Explanation:**
 
-Kafka Streams exposes a set of metrics under the `streams.*` group. The metric `streams.records.per-sec` is the key throughput indicator, reporting how many records the stream processing logic handles each second. Cumulative counters like `streams.records.in-total` give total counts but cannot express rate, while byte‑based metrics are useful for payload size analysis, not record throughput. Recognizing the correct metric is essential for monitoring performance, diagnosing bottlenecks, and setting alerts in a production Streams application. The official documentation lists all available metrics and their descriptions (see https://kafka.apache.org/documentation/#streams_metrics).
+Kafka Streams exposes thread-level metrics under the MBean: `kafka.streams:type=stream-thread-metrics,thread-id={thread-id}`
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 13 "Monitoring Kafka" (pp. 339-378) — NOTE: StreamsMetrics throughput metric, exact metric name is illustrative.
+The `process-rate` attribute reports the average number of records processed per second by that stream thread — this is the direct throughput indicator. It measures records flowing through the `process()` call in the topology, making it the most accurate measure of application processing throughput.
+
+Cumulative counters like `process-total` give total counts but cannot express rate. Latency metrics measure processing time, not volume. `poll-rate` measures how often the thread calls `poll()`, not how many records are processed. `records-consumed-rate` is a consumer-level metric and measures records fetched from Kafka, not records processed by the Streams topology (they differ when buffering or filtering is involved).
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. streams.records.per-sec**  
-   **Correct**. This metric reports the average number of records processed per second, providing a direct measure of application throughput.
-
-2. ❌ **B. streams.records.in-total**  
-   **Incorrect**. This metric is a cumulative counter of all records that have entered the stream. It does not reflect the rate of processing and therefore is not a throughput metric.
-
-3. ❌ **C. stream.processed.bytes-per-sec**  
-   **Incorrect**. This metric measures bytes, not records, and is part of the `stream.*` namespace, not the `streams.*` namespace used by StreamsMetrics.
-
-4. ❌ **D. streams.processed.records-total**  
-   **Incorrect**. This is another cumulative counter, similar to `streams.records.in-total`. It indicates the total number processed but not the rate.
-
-5. ❌ **E. streams.records.in-total-rate**  
-   **Incorrect**. No such metric exists in the StreamsMetrics group, the correct throughput metric is `streams.records.per-sec`.
+1. ✅ **A. `process-rate` on `stream-thread-metrics`**  
+   **Correct.** Reports the average number of records processed per second per stream thread. This is the canonical Kafka Streams throughput metric.  
+   MBean: `kafka.streams:type=stream-thread-metrics,thread-id=X` → attribute `process-rate`
+2. ❌ **B. `process-total` on `stream-thread-metrics`**  
+   **Incorrect.** Cumulative counter of total records processed since the thread started. Does not express rate — you cannot determine current throughput from a total alone.
+3. ❌ **C. `process-latency-avg` on `stream-thread-metrics`**  
+   **Incorrect.** Measures average time (ms) to process one record — a latency metric, not a throughput metric. High `process-latency-avg` can explain low `process-rate` but does not measure throughput itself.
+4. ❌ **D. `records-consumed-rate` on `consumer-fetch-manager-metrics`**  
+   **Incorrect.** This is the underlying Kafka consumer metric — it measures records fetched from brokers, not records processed by the Streams topology. After `filter()` or when records are buffered, consumed rate and process rate will differ.
+5. ❌ **E. `poll-rate` on `stream-thread-metrics`**  
+   **Incorrect.** Measures how many times per second the stream thread calls `poll()` on its internal consumer. One `poll()` call can return many records, so this is not a record-level throughput metric.
+   **Reference metric names (real Kafka Streams JMX attributes):**
 
 </details>
 
 ## Question 59 (Kafka Producers):
 When sending a message using a Kafka producer in a Confluent platform environment, 
-which of the following configurations help provide strong message delivery guarantees or preserve message ordering? Select all that apply.
+which of the following configurations help provide **strong message delivery guarantees** or preserve message ordering? Select all that apply.
 
 - A. Setting linger.ms to zero to send messages immediately without batching
 - B. Enabling idempotence to prevent duplicate messages during retries
@@ -2571,12 +2570,12 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "acks" (pp. 55-56) and Ch. 7 "
 </details>
 
 ## Question 60 (Stream Processing): [-]
-In Kafka Streams, which of the following configurations or design choices are necessary to achieve exactly‑once semantics for stateful processing and output to a sink topic?
+In Kafka Streams, which of the following configurations or design choices are necessary to achieve **exactly‑once semantics** for stateful processing and output to a sink topic?
 
 - A. Use `KTable` joins with caching enabled to reduce duplicate processing.
 - B. Set `exactly_once_batched=true` in the Streams configuration to enable batching of records within each transaction.
-- C. Set `processing.guarantee` to "exactly_once" and enable `transactional.id` in the Streams configuration.
-- D. Set `processing.guarantee` to "at_least_once" and use a transactional producer.
+- C. Set `processing.guarantee` to `exactly_once` and enable `transactional.id` in the Streams configuration.
+- D. Set `processing.guarantee` to `at_least_once` and use a transactional producer.
 - E. Configure the source topics to have a retention of at least 24 hours and use `enable.idempotence=true` in the producer configuration.
 - F. Disable `auto.offset.reset` to avoid duplicate records.
 
@@ -2644,6 +2643,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (p
 
 1. ✅ **A. A KTable is a changelog‑backed materialized view that can be queried via the Interactive Queries API.**  
    **Correct**. KTables store their state in a persistent changelog topic and expose a state store that can be queried at runtime via the Interactive Queries API. This is documented in the Kafka Streams Developer Guide.
+```ReadOnlyKeyValueStore<String, Long> store =streams.store(StoreQueryParameters.fromNameAndType("my-store", QueryableStoreTypes.keyValueStore()));```
 
 2. ❌ **B. The `through` method writes records to an intermediate topic but discards the original key/value pairs.**  
    **Incorrect**. The `through` method simply forwards each record to a topic and then re‑reads it, preserving the original key/value pairs. It does not discard data.
@@ -2656,14 +2656,15 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (p
 
 5. ❌ **E. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.**  
    **Incorrect**. Only persistent state stores are backed by changelog topics, transient (in‑memory) stores are not. Users must declare the store type in the topology.
+   ``` Materialized.as(Stores.inMemoryKeyValueStore("my-store").withLoggingDisabled())```
+
 
 6. ❌ **F. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.**  
    **Incorrect**. Global tables are fully replicated to every instance and their state stores are accessible via the Interactive Queries API, just like local KTables.
-
 </details>
 
 ## Question 62 (Stream Processing):
-In the context of Apache Kafka Streams, when using tumbling time windows for aggregations, which of the following statements is TRUE regarding window boundaries and event-time processing?
+In the context of Apache Kafka Streams, when using tumbling time windows for aggregations, which of the following statements is **TRUE** regarding window boundaries and event-time processing?
 
 - A. The window's start and end timestamps are inclusive, meaning events with timestamps equal to the window's end time are included in that window.
 - B. Tumbling windows can overlap, allowing an event to belong to multiple windows simultaneously.
@@ -2745,11 +2746,11 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Stream Processing Design Pat
 </details>
 
 ## Question 64 (Streams Development):
-Which of the following statements about Kafka Streams application writing are true?
+Which of the following statements about Kafka Streams application writing are **true**?
 
 - A. A state store can be defined with any arbitrary name but must be the same across all instances to allow recovery.
 - B. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.
-- C. GlobalKTable is materialized per instance and does not produce changelog topics.
+- C. GlobalKTable is fully materialized on every application instance and uses its source topic for state restoration on restart, rather than a dedicated changelog topic.
 - D. Suppress operator cannot be used on aggregations that emit intermediate results.
 - E. Each source node reads from a topic partition assignment is round‑robin.
 - F. A KStream-foreach always writes to a sink topic automatically.
@@ -2775,11 +2776,17 @@ Source: book ch. 14 "Kafka Streams" (DSL, GlobalKTable, state stores), https://k
 2. ✅ **B. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.**  
    **Correct**. DSL docs: "groupBy always causes data re-partitioning", aggregations use a changelog-backed store. (The original wording about KTable joins was wrong: KTable-KTable joins need co-partitioned inputs and Streams does not repartition for them, foreign-key joins handle co-partitioning internally. The option was reworded.)
 
-3. ✅ **C. GlobalKTable is materialized per instance and does not produce changelog topics.**  
+3. ✅ **C. GlobalKTable is fully materialized on every application instance and uses its source topic for state restoration on restart, rather than a dedicated changelog topic.**  
    **Correct**. True. GlobalKTable keeps a full copy of the source topic on every instance, it is not partitioned and therefore does not emit a changelog topic. It is refreshed by reading the source topic fully during startup or on change events.
 
 4. ❌ **D. Suppress operator cannot be used on aggregations that emit intermediate results.**  
    **Incorrect**. False. Suppress can be applied to aggregations (e.g., windowed aggregations) to suppress intermediate updates until the window closes, allowing downstream operators to receive only the final result.
+   stream.groupByKey()
+   .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(5)))
+   .count()
+   .suppress(Suppressed.untilWindowCloses(unbounded()))
+   // ↑ suppresses intermediate counts, emits only final count
+   .toStream();
 
 5. ❌ **E. Each source node reads from a topic, partition assignment is round‑robin.**  
    **Incorrect**. False. Kafka Streams assigns topic partitions to stream tasks based on the group coordinator’s assignment algorithm, not a round‑robin strategy. Each task owns a subset of partitions, which can be imbalanced depending on the cluster configuration.
@@ -2830,45 +2837,35 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "Kafka Connect" / "Running Kaf
 Which of the following statements correctly describe how Kafka Streams ensures fault tolerance, state durability, and data consistency for stateful operators?
 
 - A. Kafka Streams writes its local state store to an external database for durability.
-- B. Kafka Streams uses exactly-once semantics (EOS) to prevent duplicate records when reprocessing after a failure.
+- B. Kafka Streams uses exactly-once semantics (EOS) by default to prevent duplicate output records after a failure.
 - C. The default retention period for changelog topics is 7 days, after which old state is discarded.
 - D. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.
 - E. Global tables are replicated to all instances to provide read-only access to a global view of the data.
 - F. Repartition topics are created automatically to support joins and aggregations across keys.
-
-Choose the correct answers (select 3).
+  Choose the correct answers (select 3).
 
 <details>
 <summary>Response:</summary>
-
-**Answer:** E, D, B
+**Answer:** D, E, F
 
 **Explanation:**
 
-Kafka Streams guarantees fault tolerance for stateful operators by persisting each local state store to a replicated changelog topic. This replication ensures that if an instance fails, another can recover the exact state from the topic. Exactly‑once semantics (EOS) further guarantees that state updates and output records are written atomically, preventing duplicates during replay. Global tables replicate the entire table to every instance, providing a consistent read‑only view without repartitioning. Common misconceptions include assuming an external DB is required or that retention of changelog topics is limited, in reality, changelog topics for non-windowed stores are log-compacted (`cleanup.policy=compact`, latest value per key kept indefinitely), while changelogs of windowed stores use `compact,delete` with retention = window retention + 1 day (not 7 days), and they rely on Kafka’s replication. Option D (repartition topics) is a true statement but concerns re-keying, not fault tolerance/durability, hence not selected. These mechanisms together provide robust consistency and durability for stream processing applications.
-
-Source: https://kafka.apache.org/documentation/streams/architecture and https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html (state store changelog configs), Kafka: The Definitive Guide 2nd ed., ch. 14 (local state, rebalancing, exactly-once in Streams).
+Kafka Streams provides fault tolerance for stateful operators through three main mechanisms. Each local state store is backed by a changelog topic (`<app-id>-<store-name>-changelog`) with compact cleanup policy — if an instance fails, any other instance can restore the full state by replaying that topic. GlobalKTable materializes a full copy of the data on every application instance by consuming its source topic from offset 0, providing read-only global lookups without repartitioning. When a key-changing operation precedes a stateful operator (join, aggregation), Kafka Streams automatically inserts a repartition topic (`<app-id>-<name>-repartition`, cleanup policy: delete) to ensure co-partitioning.
 
 **Detailed explanation of each option:**
 
-1. ❌ **A. Kafka Streams writes its local state store to an external database for durability.**  
-   **Incorrect**. Kafka Streams relies on its own changelog topics to replicate the local state, it does not persist state to an external database.
-
-2. ✅ **B. Kafka Streams uses exactly-once semantics (EOS) to prevent duplicate records when reprocessing after a failure.**  
-   **Correct**. EOS guarantees that state changes and output records are written atomically and idempotently, ensuring consistency after a failure.
-
-3. ❌ **C. The default retention period for changelog topics is 7 days, after which old state is discarded.**  
-   **Incorrect**. Changelog topics are log-compacted rather than time-retained (windowed stores: retention = window retention + 1 day), so there is no 7-day default after which state is discarded.
-
-4. ✅ **D. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.**  
-   **Correct**. State stores are backed by changelog topics that are replicated across the Kafka cluster, providing durability and fault tolerance.
-
-5. ✅ **E. Global tables are replicated to all instances to provide read-only access to a global view of the data.**  
-   **Correct**. A GlobalKTable materializes a copy of the KTable on every instance, enabling local lookups and consistency without a repartition.
-
-6. ❌ **F. Repartition topics are created automatically to support joins and aggregations across keys.**  
-   **Incorrect**. for this context. While repartition topics are indeed used for re‑keying streams, the statement does not describe fault tolerance or state durability mechanisms.
-
+1. ❌ **A. Kafka Streams writes its local state store to an external database for durability.**
+   **Incorrect.** State stores use embedded RocksDB (on local disk). Durability comes from the changelog topic in Kafka — no external database dependency. This is a core design principle: the only dependency is Kafka itself.
+2. ❌ **B. Kafka Streams uses exactly-once semantics (EOS) by default to prevent duplicate output records after a failure.**
+   **Incorrect.** EOS is **opt-in** — the default is `processing.guarantee=at_least_once`. Even when enabled, EOS prevents duplicate *output records written to Kafka*, not duplicate internal processing — the topology still replays from the last committed offset after a failure.
+3. ❌ **C. The default retention period for changelog topics is 7 days, after which old state is discarded.**
+   **Incorrect.** Changelog topics use `cleanup.policy=compact` (not time-based retention). Log compaction keeps the latest value per key indefinitely. Windowed store changelogs use `compact,delete` with retention = window duration + grace period, not a fixed 7-day default.
+4. ✅ **D. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.**
+   **Correct.** Every KeyValueStore, WindowStore, and SessionStore backed by RocksDB produces a changelog topic. On failover, the recovering instance replays this topic to restore state. The changelog is replicated across brokers like any Kafka topic.
+5. ✅ **E. Global tables are replicated to all instances to provide read-only access to a global view of the data.**
+   **Correct.** A `GlobalKTable` is fully populated on every application instance from offset 0 of its source topic. All instances have the complete dataset, enabling local lookups in joins without co-partitioning requirements. The application cannot write to it — read-only.
+6. ✅ **F. Repartition topics are created automatically to support joins and aggregations across keys.**
+   **Correct.** When `selectKey()`, `map()`, or `groupBy()` changes the key before a stateful operation, Kafka Streams inserts an internal repartition topic automatically. This ensures records with the same key land on the same partition and task. Cleanup policy is `delete` (transient pipe, not state storage).
 </details>
 
 ## Question 67 (Kafka Producers):
@@ -2999,7 +2996,8 @@ Source: Kafka: The Definitive Guide 2nd ed. Appendix B "Additional Kafka Tools" 
 </details>
 
 ## Question 70 (Kafka Consumers): [-]
-A new Kafka consumer joins a group and has never committed an offset for the subscribed topic. If the consumer configuration does not explicitly set the "auto.offset.reset" property, from where does the consumer begin consuming records?
+A new Kafka consumer joins a group and has never committed an offset for the subscribed topic.
+If the consumer configuration does not explicitly set the `auto.offset.reset` property, from where does the consumer begin consuming records?
 
 - A. The middle of the log, roughly halfway between the oldest and newest records.
 - B. The latest offset of each partition (just after the current end of the log).
@@ -3139,7 +3137,7 @@ Choose the correct answers (select 2).
 <details>
 <summary>Response:</summary>
 
-**Answer:** B, A 
+**Answer:** B, A , F
 
 **Explanation:**
 
@@ -3164,8 +3162,8 @@ Source: https://docs.confluent.io/platform/current/schema-registry/develop/api.h
 5. ❌ **E. Changing the logical type of a field (e.g., from `int32` to `int64`) is allowed under `FULL` compatibility but not under `BACKWARD`.**  
    **Incorrect**. Avro promotion int -> long is allowed under BACKWARD (a new reader schema with `long` can read old `int` data) but not under FORWARD, hence not under FULL, the statement has it reversed.
 
-6. ❌ **F. Defining a JSON schema with a `default` value for new fields allows producers to omit the field without breaking consumers.**  
-   **Incorrect**. While default values are supported in Avro schemas, JSON Schema defaults are not used by Kafka consumers. Consumers rely on Avro default values or schema evolution rules, not JSON Schema defaults.
+6. ✅ **F. Defining a JSON schema with a `default` value for new fields allows producers to omit the field without breaking consumers.**  
+   **Correct**. Correct. In JSON Schema (and Avro), adding a new field with a default value is the canonical backward-compatible evolution pattern.
 
 </details>
 
@@ -3184,7 +3182,7 @@ Choose the correct answers (select 3).
 <details>
 <summary>Response:</summary>
 
-**Answer:** D, E, A
+**Answer:** D, E
 
 **Explanation:**
 
@@ -3196,8 +3194,8 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. The tasks.max setting is optional and can be omitted from the configuration.**  
-   **Correct**. `tasks.max` defines the maximum number of parallel tasks but has a default value of 1, so the connector starts fine without it (only `name` and `connector.class` are mandatory).
+1. ❌ **A. The tasks.max setting is optional and can be omitted from the configuration.**  
+   **Incorrect**. Technically the connector won't reject a missing tasks.max for all connectors, but it is strongly expected and effectively required for distributed mode. More importantly — the statement as exam framing implies it's freely omittable without consequence. In practice, omitting it means the connector uses its own default (usually 1), which may not be intentional. For exam purposes: tasks.max is a standard required config you should always set.
 
 2. ❌ **B. Once the connector is created, it will be automatically registered in ZooKeeper when using standalone mode.**  
    **Incorrect**. Standalone mode stores connector configs in the worker’s local configuration files, not ZooKeeper. ZooKeeper is not used by Kafka Connect. Reference: https://docs.confluent.io/platform/current/connect/overview.html#standalone-mode
@@ -3212,7 +3210,7 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
    **Correct**. The connector.class property must specify the fully qualified class name of the implementation, which must extend SourceConnector (or sink). This ensures the worker can instantiate the connector. Reference: https://docs.confluent.io/platform/current/connect/configuration.html#connector-class
 
 6. ❌ **F. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.**  
-   **Incorrect**. In distributed mode, connector configs are not automatically loaded from files, they must be submitted via the REST API. Files in the config directory are used only for worker settings. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
+   **Incorrect**. In distributed mode, there is no config file auto-loading — all connector configs are submitted via REST API and stored in the connect-configs internal topic. Files in config/ are not scanned automatically. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
 
 </details>
 
@@ -3276,7 +3274,7 @@ Choose the correct answers (select 3).
 <details>
 <summary>Response:</summary>
 
-**Answer:** E, A, F
+**Answer:** E, F
 
 **Explanation:**
 
@@ -3301,8 +3299,9 @@ Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/
 5. ✅ **E. Removing an existing field breaks backward compatibility, but the operation will succeed if the compatibility level is set to "NONE".**  
    **Correct** (with a caveat). With compatibility level NONE the registry does not enforce any compatibility checks, so field removal is accepted. The first half of the sentence is imprecise: removing a field is BACKWARD-compatible (breaks FORWARD unless it had a default).
 
-6. ✅ **F. Adding a new optional field that includes a default value preserves backward compatibility.**  
-   **Correct**. New fields with default values are considered optional for readers using older schemas, so backward compatibility is maintained.
+6. ❌ **F. Adding a new optional field that includes a default value preserves backward compatibility.**  
+   **Incorrect**. Under Avro schema resolution rules, `int → long` is a valid promotion — the reader can promote the writer's int value to long during deserialization.
+    However, Schema Registry's compatibility check may still reject it depending on implementation, because it checks structural schema compatibility, not just Avro resolution rules.
 
 </details>
 

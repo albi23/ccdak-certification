@@ -1363,44 +1363,48 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 1 "Topics and Partitions" (pp. 5
 
 </details>
 
-## Question 33 (Kafka Consumers): [-]
-A new Kafka consumer joins a group and has never committed an offset for the subscribed topic. If the consumer configuration does not explicitly set the "auto.offset.reset" property, from where does the consumer begin consuming records?
+## Question 33 (Deployment & Ops):
+In a Confluent Platform deployment, which of the following statements accurately describe how schema evolution is handled by the Schema Registry to ensure seamless producer‑consumer compatibility?
 
-- A. The latest offset of each partition (just after the current end of the log).
-- B. A random offset chosen by the broker.
-- C. The earliest offset of each partition (the beginning of the log).
-- D. The middle of the log, roughly halfway between the oldest and newest records.
-- E. The consumer will fail to join the group and throw an error.
+- A. Setting `schema.registry.schema.compatibility.level=BACKWARD` ensures that a newly registered schema can read data written with the older schema.
+- B. Deploying Schema Registry with `compatibility` set to `FORWARD` at the cluster level guarantees that consumers can read data written with newer schema.
+- C. Using the `latest compatible` endpoint of Schema Registry to retrieve the most compatible schema for a given subject.
+- D. Enabling `auto.register.schemas=false` in the producer config prevents schema evolution issues.
+- E. Changing the logical type of a field (e.g., from `int32` to `int64`) is allowed under `FULL` compatibility but not under `BACKWARD`.
+- F. Defining a JSON schema with a `default` value for new fields allows producers to omit the field without breaking consumers.
 
-Choose the correct answer.
+Choose the correct answers (select 2).
 
 <details>
 <summary>Response:</summary>
 
-**Answer:** A
+**Answer:** B, A , F
 
 **Explanation:**
 
-In Kafka, a consumer without a committed offset relies on the "auto.offset.reset" configuration to determine its starting point. The default value for this setting is "latest", meaning the consumer begins at the most recent offset in each partition. Many developers mistakenly believe the default is "earliest", this confusion often leads to missed records in real‑time processing. The other options describe non‑existent defaults or erroneous behaviors. Understanding this default is crucial for designing reliable consumer groups, especially when handling late‑joining consumers or during cluster restarts.
-
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 4 "auto.offset.reset" (p. 91)
+Schema evolution in Confluent Kafka relies on compatibility levels defined per subject or cluster. Backward compatibility guarantees that new schemas can read data produced with older ones, while forward compatibility ensures older consumers can read data produced with newer schemas. Full compatibility requires both. There is no `latest compatible` endpoint: compatibility is tested with `POST /compatibility/subjects/{subject}/versions/{version}` and the default level is set via `PUT /config`. Defaults in Avro, not JSON Schema, support optional fields during evolution. Configuring compatibility at the cluster level applies a consistent rule across subjects, but the flag `auto.register.schemas=false` only stops automatic registration and does not influence compatibility semantics.  
+Verified live: the API reference has POST /compatibility/subjects/{subject}/versions/{version}, POST /compatibility/subjects/{subject}/versions, GET/PUT /config, GET /subjects/{subject}/versions/latest and no 'latest compatible' endpoint (C false). Still unverified: JSON Schema default semantics (A).
+Source: https://docs.confluent.io/platform/current/schema-registry/develop/api.html
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. The latest offset of each partition (just after the current end of the log).**  
-   **Correct**. With no prior offset and the default setting of "auto.offset.reset=latest", the consumer starts at the end of each partition.
+1. ✅ **A. Setting `schema.registry.schema.compatibility.level=BACKWARD` ensures that a newly registered schema can read data written with the older schema.**  
+   **Correct**. Backward compatibility means the new schema can read data written with the previous schema(s). Note: the real server property name is `schema.compatibility.level` (env var `SCHEMA_REGISTRY_SCHEMA_COMPATIBILITY_LEVEL`), not `schema.registry.schema.compatibility.level`.
 
-2. ❌ **B. A random offset chosen by the broker.**  
-   **Incorrect**. The offset is deterministic based on the "auto.offset.reset" policy.
+2. ✅ **B. Deploying Schema Registry with `compatibility` set to `FORWARD` at the cluster level guarantees that consumers can read data written with newer schema.**  
+   **Correct**. Forward compatibility ensures that older consumers can deserialize data written with newer schemas, setting it at the cluster level applies this rule globally to all subjects.
 
-3. ❌ **C. The earliest offset of each partition (the beginning of the log).**  
-   **Incorrect**. The default value of "auto.offset.reset" is "latest", not "earliest".
+3. ❌ **C. Using the `latest compatible` endpoint of Schema Registry to retrieve the most compatible schema for a given subject.**  
+   **Incorrect**. No such endpoint exists. The Schema Registry API offers `POST /compatibility/subjects/{subject}/versions/{version}` to TEST whether a schema is compatible with a given/latest version, it does not return a 'most compatible' schema.
 
-4. ❌ **D. The middle of the log, roughly halfway between the oldest and newest records.**  
-   **Incorrect**. Kafka does not provide a default middle‑offset behavior.
+4. ❌ **D. Enabling `auto.register.schemas=false` in the producer config prevents schema evolution issues.**  
+   **Incorrect**. This flag simply disables automatic schema registration, it does not affect compatibility checks and can actually increase the risk of mismatched schemas if the client does not register the correct schema.
 
-5. ❌ **E. The consumer will fail to join the group and throw an error.**  
-   **Incorrect**. It will join successfully and apply the default offset reset policy.
+5. ❌ **E. Changing the logical type of a field (e.g., from `int32` to `int64`) is allowed under `FULL` compatibility but not under `BACKWARD`.**  
+   **Incorrect**. Avro promotion int -> long is allowed under BACKWARD (a new reader schema with `long` can read old `int` data) but not under FORWARD, hence not under FULL, the statement has it reversed.
+
+6. ✅ **F. Defining a JSON schema with a `default` value for new fields allows producers to omit the field without breaking consumers.**  
+   **Correct**. Correct. In JSON Schema (and Avro), adding a new field with a default value is the canonical backward-compatible evolution pattern.
 
 </details>
 
@@ -1776,19 +1780,19 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 4 "Commits and Offsets" (pp. 94-
 ## Question 43 (Kafka Connect):
 Which of the following statements are true about configuring and deploying a source connector in Kafka Connect when running in distributed mode?
 
-- A. The connector configuration must be submitted via the REST endpoint /connectors with a POST request.
-- B. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.
+- A. The tasks.max setting is optional and can be omitted from the configuration.
+- B. Once the connector is created, it will be automatically registered in ZooKeeper when using standalone mode.
 - C. For a source connector, a topics.pattern property must be specified to capture multiple source tables.
-- D. Once the connector is created, it will be automatically registered in ZooKeeper when using standalone mode.
+- D. The connector configuration must be submitted via the REST endpoint /connectors with a POST request.
 - E. The connector class name must be fully qualified and must implement the SourceConnector interface.
-- F. The tasks.max setting is optional and can be omitted from the configuration.
+- F. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.
 
 Choose the correct answers (select 3).
 
 <details>
 <summary>Response:</summary>
 
-**Answer:** A, E, F
+**Answer:** D, E
 
 **Explanation:**
 
@@ -1800,23 +1804,23 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 9 "A Deeper Look at Kafka Connec
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. The connector configuration must be submitted via the REST endpoint /connectors with a POST request.**  
-   **Correct**. In distributed mode, connectors are created or updated by POSTing a JSON payload to the worker’s REST API (e.g., POST /connectors). This is the standard way to register a connector with the cluster. Reference: https://docs.confluent.io/platform/current/connect/using.html#create-a-connector
+1. ❌ **A. The tasks.max setting is optional and can be omitted from the configuration.**  
+   **Incorrect**. Technically the connector won't reject a missing tasks.max for all connectors, but it is strongly expected and effectively required for distributed mode. More importantly — the statement as exam framing implies it's freely omittable without consequence. In practice, omitting it means the connector uses its own default (usually 1), which may not be intentional. For exam purposes: tasks.max is a standard required config you should always set.
 
-2. ❌ **B. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.**  
-   **Incorrect**. In distributed mode, connector configs are not automatically loaded from files, they must be submitted via the REST API. Files in the config directory are used only for worker settings. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
+2. ❌ **B. Once the connector is created, it will be automatically registered in ZooKeeper when using standalone mode.**  
+   **Incorrect**. Standalone mode stores connector configs in the worker’s local configuration files, not ZooKeeper. ZooKeeper is not used by Kafka Connect. Reference: https://docs.confluent.io/platform/current/connect/overview.html#standalone-mode
 
 3. ❌ **C. For a source connector, a topics.pattern property must be specified to capture multiple source tables.**  
    **Incorrect**. topics.pattern is a sink connector setting used to write to multiple topics. Source connectors typically use source-specific properties (e.g., table.whitelist). Reference: https://docs.confluent.io/platform/current/connect/using.html#source-connector-configurations
 
-4. ❌ **D. Once the connector is created, it will be automatically registered in ZooKeeper when using standalone mode.**  
-   **Incorrect**. Standalone mode stores connector configs in the worker’s local configuration files, not ZooKeeper. ZooKeeper is not used by Kafka Connect. Reference: https://docs.confluent.io/platform/current/connect/overview.html#standalone-mode
+4. ✅ **D. The connector configuration must be submitted via the REST endpoint /connectors with a POST request.**  
+   **Correct**. In distributed mode, connectors are created or updated by POSTing a JSON payload to the worker’s REST API (e.g., POST /connectors). This is the standard way to register a connector with the cluster. Reference: https://docs.confluent.io/platform/current/connect/using.html#create-a-connector
 
 5. ✅ **E. The connector class name must be fully qualified and must implement the SourceConnector interface.**  
    **Correct**. The connector.class property must specify the fully qualified class name of the implementation, which must extend SourceConnector (or sink). This ensures the worker can instantiate the connector. Reference: https://docs.confluent.io/platform/current/connect/configuration.html#connector-class
 
-6. ✅ **F. The tasks.max setting is optional and can be omitted from the configuration.**  
-   **Correct**. `tasks.max` defines the maximum number of parallel tasks but has a default value of 1, so the connector starts fine without it (only `name` and `connector.class` are mandatory).
+6. ❌ **F. The connector configuration file can be placed in the 'config' directory of the worker and will be automatically loaded when the worker starts.**  
+   **Incorrect**. In distributed mode, there is no config file auto-loading — all connector configs are submitted via REST API and stored in the connect-configs internal topic. Files in config/ are not scanned automatically. Reference: https://docs.confluent.io/platform/current/connect/overview.html#distributed-mode
 
 </details>
 
@@ -2246,16 +2250,15 @@ Source (out of CCDAK scope): Kafka: The Definitive Guide 2nd ed. Ch. 11 "Authori
 
 </details>
 
-## Question 54 (Application Observability): [-]
-In a Kafka Streams application, which metric from the **StreamsMetrics** group most directly represents the throughput of records processed by the application, measured in records per second?
+## Question 54 (Application Observability):
+In a Kafka Streams application, which JMX metric most directly represents the throughput of records processed by the application, measured in records per second?
 
-- A. streams.records.per-sec
-- B. stream.processed.bytes-per-sec
-- C. streams.records.in-total-rate
-- D. streams.processed.records-total
-- E. streams.records.in-total
-
-Choose the correct answer.
+- A. `process-rate` on `stream-thread-metrics`
+- B. `process-total` on `stream-thread-metrics`
+- C. `process-latency-avg` on `stream-thread-metrics`
+- D. `records-consumed-rate` on `consumer-fetch-manager-metrics`
+- E. `poll-rate` on `stream-thread-metrics`
+  Choose the correct answer.
 
 <details>
 <summary>Response:</summary>
@@ -2264,26 +2267,26 @@ Choose the correct answer.
 
 **Explanation:**
 
-Kafka Streams exposes a set of metrics under the `streams.*` group. The metric `streams.records.per-sec` is the key throughput indicator, reporting how many records the stream processing logic handles each second. Cumulative counters like `streams.records.in-total` give total counts but cannot express rate, while byte‑based metrics are useful for payload size analysis, not record throughput. Recognizing the correct metric is essential for monitoring performance, diagnosing bottlenecks, and setting alerts in a production Streams application. The official documentation lists all available metrics and their descriptions (see https://kafka.apache.org/documentation/#streams_metrics).
+Kafka Streams exposes thread-level metrics under the MBean: `kafka.streams:type=stream-thread-metrics,thread-id={thread-id}`
 
-Source: Kafka: The Definitive Guide 2nd ed. Ch. 13 "Monitoring Kafka" (pp. 339-378) — NOTE: StreamsMetrics throughput metric, exact metric name is illustrative.
+The `process-rate` attribute reports the average number of records processed per second by that stream thread — this is the direct throughput indicator. It measures records flowing through the `process()` call in the topology, making it the most accurate measure of application processing throughput.
+
+Cumulative counters like `process-total` give total counts but cannot express rate. Latency metrics measure processing time, not volume. `poll-rate` measures how often the thread calls `poll()`, not how many records are processed. `records-consumed-rate` is a consumer-level metric and measures records fetched from Kafka, not records processed by the Streams topology (they differ when buffering or filtering is involved).
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. streams.records.per-sec**  
-   **Correct**. This metric reports the average number of records processed per second, providing a direct measure of application throughput.
-
-2. ❌ **B. stream.processed.bytes-per-sec**  
-   **Incorrect**. This metric measures bytes, not records, and is part of the `stream.*` namespace, not the `streams.*` namespace used by StreamsMetrics.
-
-3. ❌ **C. streams.records.in-total-rate**  
-   **Incorrect**. No such metric exists in the StreamsMetrics group, the correct throughput metric is `streams.records.per-sec`.
-
-4. ❌ **D. streams.processed.records-total**  
-   **Incorrect**. This is another cumulative counter, similar to `streams.records.in-total`. It indicates the total number processed but not the rate.
-
-5. ❌ **E. streams.records.in-total**  
-   **Incorrect**. This metric is a cumulative counter of all records that have entered the stream. It does not reflect the rate of processing and therefore is not a throughput metric.
+1. ✅ **A. `process-rate` on `stream-thread-metrics`**  
+   **Correct.** Reports the average number of records processed per second per stream thread. This is the canonical Kafka Streams throughput metric.  
+   MBean: `kafka.streams:type=stream-thread-metrics,thread-id=X` → attribute `process-rate`
+2. ❌ **B. `process-total` on `stream-thread-metrics`**  
+   **Incorrect.** Cumulative counter of total records processed since the thread started. Does not express rate — you cannot determine current throughput from a total alone.
+3. ❌ **C. `process-latency-avg` on `stream-thread-metrics`**  
+   **Incorrect.** Measures average time (ms) to process one record — a latency metric, not a throughput metric. High `process-latency-avg` can explain low `process-rate` but does not measure throughput itself.
+4. ❌ **D. `records-consumed-rate` on `consumer-fetch-manager-metrics`**  
+   **Incorrect.** This is the underlying Kafka consumer metric — it measures records fetched from brokers, not records processed by the Streams topology. After `filter()` or when records are buffered, consumed rate and process rate will differ.
+5. ❌ **E. `poll-rate` on `stream-thread-metrics`**  
+   **Incorrect.** Measures how many times per second the stream thread calls `poll()` on its internal consumer. One `poll()` call can return many records, so this is not a record-level throughput metric.
+   **Reference metric names (real Kafka Streams JMX attributes):**
 
 </details>
 

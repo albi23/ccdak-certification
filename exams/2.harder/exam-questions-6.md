@@ -1623,14 +1623,14 @@ Source: https://kafka.apache.org/43/documentation/#connectconfigs (offset.storag
 
 </details>
 
-## Question 39 (Streams Development):
-Which of the following statements about Kafka Streams application writing are true?
+## Question 64 (Streams Development):
+Which of the following statements about Kafka Streams application writing are **true**?
 
-- A. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.
-- B. GlobalKTable is materialized per instance and does not produce changelog topics.
-- C. Each source node reads from a topic partition assignment is round‑robin.
+- A. A state store can be defined with any arbitrary name but must be the same across all instances to allow recovery.
+- B. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.
+- C. GlobalKTable is fully materialized on every application instance and uses its source topic for state restoration on restart, rather than a dedicated changelog topic.
 - D. Suppress operator cannot be used on aggregations that emit intermediate results.
-- E. A state store can be defined with any arbitrary name but must be the same across all instances to allow recovery.
+- E. Each source node reads from a topic partition assignment is round‑robin.
 - F. A KStream-foreach always writes to a sink topic automatically.
 
 Choose the correct answers (select 3).
@@ -1638,7 +1638,7 @@ Choose the correct answers (select 3).
 <details>
 <summary>Response:</summary>
 
-**Answer:** A, B, E
+**Answer:** B, C, A
 
 **Explanation:**
 
@@ -1648,20 +1648,26 @@ Source: book ch. 14 "Kafka Streams" (DSL, GlobalKTable, state stores), https://k
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.**  
+1. ✅ **A. A state store can be defined with any arbitrary name but must be the same across all instances to allow recovery.**  
+   **Correct**. True. The store name is used to locate the store’s backing changelog topic. All instances must use the same name for a given logical store so that state can be recovered from the changelog during restarts.
+
+2. ✅ **B. A KTable aggregation (`groupBy(...).aggregate/count`) is a changelog‑enabled stateful transformation, and `groupBy` on a KTable always causes data re-partitioning.**  
    **Correct**. DSL docs: "groupBy always causes data re-partitioning", aggregations use a changelog-backed store. (The original wording about KTable joins was wrong: KTable-KTable joins need co-partitioned inputs and Streams does not repartition for them, foreign-key joins handle co-partitioning internally. The option was reworded.)
 
-2. ✅ **B. GlobalKTable is materialized per instance and does not produce changelog topics.**  
+3. ✅ **C. GlobalKTable is fully materialized on every application instance and uses its source topic for state restoration on restart, rather than a dedicated changelog topic.**  
    **Correct**. True. GlobalKTable keeps a full copy of the source topic on every instance, it is not partitioned and therefore does not emit a changelog topic. It is refreshed by reading the source topic fully during startup or on change events.
-
-3. ❌ **C. Each source node reads from a topic, partition assignment is round‑robin.**  
-   **Incorrect**. False. Kafka Streams assigns topic partitions to stream tasks based on the group coordinator’s assignment algorithm, not a round‑robin strategy. Each task owns a subset of partitions, which can be imbalanced depending on the cluster configuration.
 
 4. ❌ **D. Suppress operator cannot be used on aggregations that emit intermediate results.**  
    **Incorrect**. False. Suppress can be applied to aggregations (e.g., windowed aggregations) to suppress intermediate updates until the window closes, allowing downstream operators to receive only the final result.
+   stream.groupByKey()
+   .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(5)))
+   .count()
+   .suppress(Suppressed.untilWindowCloses(unbounded()))
+   // ↑ suppresses intermediate counts, emits only final count
+   .toStream();
 
-5. ✅ **E. A state store can be defined with any arbitrary name but must be the same across all instances to allow recovery.**  
-   **Correct**. True. The store name is used to locate the store’s backing changelog topic. All instances must use the same name for a given logical store so that state can be recovered from the changelog during restarts.
+5. ❌ **E. Each source node reads from a topic, partition assignment is round‑robin.**  
+   **Incorrect**. False. Kafka Streams assigns topic partitions to stream tasks based on the group coordinator’s assignment algorithm, not a round‑robin strategy. Each task owns a subset of partitions, which can be imbalanced depending on the cluster configuration.
 
 6. ❌ **F. A KStream-foreach always writes to a sink topic automatically.**  
    **Incorrect**. False. The foreach operator performs an action for each record (e.g., logging or external call) but does not emit to a Kafka topic. To write to a topic, the stream must be sent to a sink node with to().
@@ -1885,19 +1891,19 @@ Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/
 ## Question 45 (Deployment & Ops):
 In a production Kafka environment that uses Avro serialization and Confluent Schema Registry, which of the following statements correctly describe valid schema evolution practices that will not cause a compatibility error when a new schema version is registered?
 
-- A. Setting the schema registry compatibility level to `FORWARD` ensures that older producers cannot produce messages that older consumers can read.
-- B. Setting the schema registry compatibility level to `BACKWARD` allows producers with a new schema to write records that older consumers (using the old schema) can still read.
-- C. Removing an existing field breaks backward compatibility, but the operation will succeed if the compatibility level is set to `NONE`.
-- D. Changing the type of an existing field from `int` to `long` is considered compatible by Confluent Schema Registry.
-- E. Adding a new optional field that includes a default value preserves backward compatibility.
-- F. The `--auto-register` flag in the schema registry UI automatically registers new fields as required when a schema is updated.
+- A. Changing the type of an existing field from `int` to `long` is considered compatible by Confluent Schema Registry.
+- B. Setting the schema registry compatibility level to `FORWARD` ensures that older producers cannot produce messages that older consumers can read.
+- C. The `--auto-register` flag in the schema registry UI automatically registers new fields as required when a schema is updated.
+- D. Setting the schema registry compatibility level to `BACKWARD` allows producers with a new schema to write records that older consumers (using the old schema) can still read.
+- E. Removing an existing field breaks backward compatibility, but the operation will succeed if the compatibility level is set to `NONE`.
+- F. Adding a new optional field that includes a default value preserves backward compatibility.
 
 Choose the correct answers (select 3).
 
 <details>
 <summary>Response:</summary>
 
-**Answer:** C, D, E
+**Answer:** E, F
 
 **Explanation:**
 
@@ -1907,23 +1913,24 @@ Source: https://docs.confluent.io/platform/current/schema-registry/fundamentals/
 
 **Detailed explanation of each option:**
 
-1. ❌ **A. Setting the schema registry compatibility level to "FORWARD" ensures that older producers cannot produce messages that older consumers can read.**  
-   **Incorrect**. FORWARD means data written with the new schema can be read by consumers using the previous schema. It does not stop older producers' messages from being readable by older consumers.
-
-2. ❌ **B. Setting the schema registry compatibility level to "BACKWARD" allows producers with a new schema to write records that older consumers (using the old schema) can still read.**  
-   **Incorrect**. That is FORWARD compatibility. BACKWARD means consumers with the NEW schema can read data written with the OLD schema.
-
-3. ✅ **C. Removing an existing field breaks backward compatibility, but the operation will succeed if the compatibility level is set to "NONE".**  
-   **Correct** (with a caveat). With compatibility level NONE the registry does not enforce any compatibility checks, so field removal is accepted. The first half of the sentence is imprecise: removing a field is BACKWARD-compatible (breaks FORWARD unless it had a default).
-
-4. ✅ **D. Changing the type of an existing field from "int" to "long" is considered compatible by Confluent Schema Registry.**  
+1. ✅ **A. Changing the type of an existing field from "int" to "long" is considered compatible by Confluent Schema Registry.**  
    **Correct**. In Avro, widening an integer type to a long is a safe upcast, and Schema Registry marks it as compatible.
 
-5. ✅ **E. Adding a new optional field that includes a default value preserves backward compatibility.**  
-   **Correct**. New fields with default values are considered optional for readers using older schemas, so backward compatibility is maintained.
+2. ❌ **B. Setting the schema registry compatibility level to "FORWARD" ensures that older producers cannot produce messages that older consumers can read.**  
+   **Incorrect**. FORWARD means data written with the new schema can be read by consumers using the previous schema. It does not stop older producers' messages from being readable by older consumers.
 
-6. ❌ **F. The "--auto-register" flag in the schema registry UI automatically registers new fields as required when a schema is updated.**  
+3. ❌ **C. The "--auto-register" flag in the schema registry UI automatically registers new fields as required when a schema is updated.**  
    **Incorrect**. There is no such flag in a "schema registry UI", automatic registration is the serializer setting `auto.register.schemas` (default true) and it never changes field requirement semantics.
+
+4. ❌ **D. Setting the schema registry compatibility level to "BACKWARD" allows producers with a new schema to write records that older consumers (using the old schema) can still read.**  
+   **Incorrect**. That is FORWARD compatibility. BACKWARD means consumers with the NEW schema can read data written with the OLD schema.
+
+5. ✅ **E. Removing an existing field breaks backward compatibility, but the operation will succeed if the compatibility level is set to "NONE".**  
+   **Correct** (with a caveat). With compatibility level NONE the registry does not enforce any compatibility checks, so field removal is accepted. The first half of the sentence is imprecise: removing a field is BACKWARD-compatible (breaks FORWARD unless it had a default).
+
+6. ❌ **F. Adding a new optional field that includes a default value preserves backward compatibility.**  
+   **Incorrect**. Under Avro schema resolution rules, `int → long` is a valid promotion — the reader can promote the writer's int value to long during deserialization.
+   However, Schema Registry's compatibility check may still reject it depending on implementation, because it checks structural schema compatibility, not just Avro resolution rules.
 
 </details>
 
@@ -2522,43 +2529,33 @@ Source: Kafka: The Definitive Guide 2nd ed., ch. 3 (max.request.size, p. 60: "ca
 Which of the following statements correctly describe how Kafka Streams ensures fault tolerance, state durability, and data consistency for stateful operators?
 
 - A. Kafka Streams writes its local state store to an external database for durability.
-- B. Global tables are replicated to all instances to provide read-only access to a global view of the data.
-- C. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.
-- D. Repartition topics are created automatically to support joins and aggregations across keys.
-- E. Kafka Streams uses exactly-once semantics (EOS) to prevent duplicate records when reprocessing after a failure.
-- F. The default retention period for changelog topics is 7 days, after which old state is discarded.
-
-Choose the correct answers (select 3).
+- B. Kafka Streams uses exactly-once semantics (EOS) by default to prevent duplicate output records after a failure.
+- C. The default retention period for changelog topics is 7 days, after which old state is discarded.
+- D. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.
+- E. Global tables are replicated to all instances to provide read-only access to a global view of the data.
+- F. Repartition topics are created automatically to support joins and aggregations across keys.
+  Choose the correct answers (select 3).
 
 <details>
 <summary>Response:</summary>
-
-**Answer:** B, C, E
+**Answer:** D, E, F
 
 **Explanation:**
 
-Kafka Streams guarantees fault tolerance for stateful operators by persisting each local state store to a replicated changelog topic. This replication ensures that if an instance fails, another can recover the exact state from the topic. Exactly‑once semantics (EOS) further guarantees that state updates and output records are written atomically, preventing duplicates during replay. Global tables replicate the entire table to every instance, providing a consistent read‑only view without repartitioning. Common misconceptions include assuming an external DB is required or that retention of changelog topics is limited, in reality, changelog topics for non-windowed stores are log-compacted (`cleanup.policy=compact`, latest value per key kept indefinitely), while changelogs of windowed stores use `compact,delete` with retention = window retention + 1 day (not 7 days), and they rely on Kafka’s replication. Option D (repartition topics) is a true statement but concerns re-keying, not fault tolerance/durability, hence not selected. These mechanisms together provide robust consistency and durability for stream processing applications.
-
-Source: https://kafka.apache.org/documentation/streams/architecture and https://kafka.apache.org/documentation/streams/developer-guide/config-streams.html (state store changelog configs), Kafka: The Definitive Guide 2nd ed., ch. 14 (local state, rebalancing, exactly-once in Streams).
+Kafka Streams provides fault tolerance for stateful operators through three main mechanisms. Each local state store is backed by a changelog topic (`<app-id>-<store-name>-changelog`) with compact cleanup policy — if an instance fails, any other instance can restore the full state by replaying that topic. GlobalKTable materializes a full copy of the data on every application instance by consuming its source topic from offset 0, providing read-only global lookups without repartitioning. When a key-changing operation precedes a stateful operator (join, aggregation), Kafka Streams automatically inserts a repartition topic (`<app-id>-<name>-repartition`, cleanup policy: delete) to ensure co-partitioning.
 
 **Detailed explanation of each option:**
 
-1. ❌ **A. Kafka Streams writes its local state store to an external database for durability.**  
-   **Incorrect**. Kafka Streams relies on its own changelog topics to replicate the local state, it does not persist state to an external database.
-
-2. ✅ **B. Global tables are replicated to all instances to provide read-only access to a global view of the data.**  
-   **Correct**. A GlobalKTable materializes a copy of the KTable on every instance, enabling local lookups and consistency without a repartition.
-
-3. ✅ **C. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.**  
-   **Correct**. State stores are backed by changelog topics that are replicated across the Kafka cluster, providing durability and fault tolerance.
-
-4. ❌ **D. Repartition topics are created automatically to support joins and aggregations across keys.**  
-   **Incorrect**. for this context. While repartition topics are indeed used for re‑keying streams, the statement does not describe fault tolerance or state durability mechanisms.
-
-5. ✅ **E. Kafka Streams uses exactly-once semantics (EOS) to prevent duplicate records when reprocessing after a failure.**  
-   **Correct**. EOS guarantees that state changes and output records are written atomically and idempotently, ensuring consistency after a failure.
-
-6. ❌ **F. The default retention period for changelog topics is 7 days, after which old state is discarded.**  
-   **Incorrect**. Changelog topics are log-compacted rather than time-retained (windowed stores: retention = window retention + 1 day), so there is no 7-day default after which state is discarded.
-
+1. ❌ **A. Kafka Streams writes its local state store to an external database for durability.**
+   **Incorrect.** State stores use embedded RocksDB (on local disk). Durability comes from the changelog topic in Kafka — no external database dependency. This is a core design principle: the only dependency is Kafka itself.
+2. ❌ **B. Kafka Streams uses exactly-once semantics (EOS) by default to prevent duplicate output records after a failure.**
+   **Incorrect.** EOS is **opt-in** — the default is `processing.guarantee=at_least_once`. Even when enabled, EOS prevents duplicate *output records written to Kafka*, not duplicate internal processing — the topology still replays from the last committed offset after a failure.
+3. ❌ **C. The default retention period for changelog topics is 7 days, after which old state is discarded.**
+   **Incorrect.** Changelog topics use `cleanup.policy=compact` (not time-based retention). Log compaction keeps the latest value per key indefinitely. Windowed store changelogs use `compact,delete` with retention = window duration + grace period, not a fixed 7-day default.
+4. ✅ **D. Each state store is mirrored by a changelog topic that replicates state to other cluster nodes.**
+   **Correct.** Every KeyValueStore, WindowStore, and SessionStore backed by RocksDB produces a changelog topic. On failover, the recovering instance replays this topic to restore state. The changelog is replicated across brokers like any Kafka topic.
+5. ✅ **E. Global tables are replicated to all instances to provide read-only access to a global view of the data.**
+   **Correct.** A `GlobalKTable` is fully populated on every application instance from offset 0 of its source topic. All instances have the complete dataset, enabling local lookups in joins without co-partitioning requirements. The application cannot write to it — read-only.
+6. ✅ **F. Repartition topics are created automatically to support joins and aggregations across keys.**
+   **Correct.** When `selectKey()`, `map()`, or `groupBy()` changes the key before a stateful operation, Kafka Streams inserts an internal repartition topic automatically. This ensures records with the same key land on the same partition and task. Cleanup policy is `delete` (transient pipe, not state storage).
 </details>

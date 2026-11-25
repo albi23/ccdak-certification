@@ -794,19 +794,19 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 3 "Partitions" (pp. 68-70) — N
 ## Question 20 (Stream Processing):
 Which of the following statements about Kafka Streams components and APIs are true? Select all that apply.
 
-- A. The `transform` method allows a KStream to be processed using the Processor API while retaining the original key/value semantics.
+- A. A KTable is a changelog‑backed materialized view that can be queried via the Interactive Queries API.
 - B. The `through` method writes records to an intermediate topic but discards the original key/value pairs.
-- C. A KTable is a changelog‑backed materialized view that can be queried via the Interactive Queries API.
-- D. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.
-- E. Global tables are replicated to all instances and can be read from any instance but are not mutable by user code.
-- F. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.
+- C. The `transform` method allows a KStream to be processed using the Processor API while retaining the original key/value semantics.
+- D. Global tables are replicated to all instances and can be read from any instance but are not mutable by user code.
+- E. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.
+- F. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.
 
 Choose the correct answers (select 3).
 
 <details>
 <summary>Response:</summary>
 
-**Answer:** A, C, E
+**Answer:** C, A, D
 
 **Explanation:**
 
@@ -816,24 +816,26 @@ Source: Kafka: The Definitive Guide 2nd ed. Ch. 14 "Kafka Streams by Example" (p
 
 **Detailed explanation of each option:**
 
-1. ✅ **A. The `transform` method allows a KStream to be processed using the Processor API while retaining the original key/value semantics.**  
-   **Correct**. `transform` is a DSL operator that delegates to a user‑supplied Transformer which can use state stores and emit zero, one or more output records while preserving the stream’s semantics.
+1. ✅ **A. A KTable is a changelog‑backed materialized view that can be queried via the Interactive Queries API.**  
+   **Correct**. KTables store their state in a persistent changelog topic and expose a state store that can be queried at runtime via the Interactive Queries API. This is documented in the Kafka Streams Developer Guide.
+   ```ReadOnlyKeyValueStore<String, Long> store =streams.store(StoreQueryParameters.fromNameAndType("my-store", QueryableStoreTypes.keyValueStore()));```
 
 2. ❌ **B. The `through` method writes records to an intermediate topic but discards the original key/value pairs.**  
    **Incorrect**. The `through` method simply forwards each record to a topic and then re‑reads it, preserving the original key/value pairs. It does not discard data.
 
-3. ✅ **C. A KTable is a changelog‑backed materialized view that can be queried via the Interactive Queries API.**  
-   **Correct**. KTables store their state in a persistent changelog topic and expose a state store that can be queried at runtime via the Interactive Queries API. This is documented in the Kafka Streams Developer Guide.
+3. ✅ **C. The `transform` method allows a KStream to be processed using the Processor API while retaining the original key/value semantics.**  
+   **Correct**. `transform` is a DSL operator that delegates to a user‑supplied Transformer which can use state stores and emit zero, one or more output records while preserving the stream’s semantics.
 
-4. ❌ **D. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.**  
-   **Incorrect**. Global tables are fully replicated to every instance and their state stores are accessible via the Interactive Queries API, just like local KTables.
-
-5. ✅ **E. Global tables are replicated to all instances and can be read from any instance but are not mutable by user code.**  
+4. ✅ **D. Global tables are replicated to all instances and can be read from any instance but are not mutable by user code.**  
    **Correct**. Global tables are read‑only views that are replicated to each instance, and applications cannot mutate them directly, updates come only from the source topic.
 
-6. ❌ **F. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.**  
+5. ❌ **E. All state stores in Kafka Streams are automatically backed by changelog topics, and users do not need to configure them.**  
    **Incorrect**. Only persistent state stores are backed by changelog topics, transient (in‑memory) stores are not. Users must declare the store type in the topology.
+   ``` Materialized.as(Stores.inMemoryKeyValueStore("my-store").withLoggingDisabled())```
 
+
+6. ❌ **F. Global tables are replicated to all instances but cannot be queried by the Interactive Queries API.**  
+   **Incorrect**. Global tables are fully replicated to every instance and their state stores are accessible via the Interactive Queries API, just like local KTables.
 </details>
 
 ## Question 21 (Kafka Consumers):
