@@ -41,7 +41,7 @@ Which of the following is true regarding thread safety in the Java Kafka Clients
 - C. One Producer can be safely used in multiple threads
 - D. One Consumer can be safely used in multiple threads
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -213,7 +213,7 @@ date is a logical type
 </details>
 
 ## Question 7 (Kafka Setup and Operations):
-What happens if you try to produce to a topic that does not yet exist? (Choose one)
+What happens if you try to produce to a topic that does not yet exist? 
 
 - A. There will be a runtime error.
 - B. It depends on the broker setting “auto.create.topic.enable“.
@@ -376,7 +376,7 @@ Here, you shouldn‘t commit offsets 11 or 10 as it would indicate that the mess
 </details>
 
 ## Question 12 (Kafka Consumers):
-How to see if a consumer group is committing offsets at all, or how often offsets are being committed? (Choose one)
+How to see if a consumer group is committing offsets at all, or how often offsets are being committed? 
 
 - A. Use the consumer group to consume from the internal partition called __consumer_offsets.
 - B. Consumer offsets are automatically stored and visualized in the Confluent Control Center.
@@ -411,7 +411,7 @@ It is sometimes useful to see what offsets are being committed for the cluster�
 </details>
 
 ## Question 13 (Kafka Consumers):
-You have a consumer group of 12 consumers and when a consumer gets killed by the process management system, rather abruptly, it does not trigger a graceful shutdown of your consumer. Therefore, it takes up to 10 seconds for a rebalance to happen. The business would like to have a 3 seconds rebalance time. What should you do? (select two)
+You have a consumer group of 12 consumers and when a consumer gets killed by the process management system, rather abruptly, it does not trigger a graceful shutdown of your consumer. Therefore, it takes up to 10 seconds for a rebalance to happen. The business would like to have a 3 seconds rebalance time. What should you do? 
 
 - A. decrease max.poll.interval.ms
 - B. Increase session.timeout.ms
@@ -420,7 +420,7 @@ You have a consumer group of 12 consumers and when a consumer gets killed by the
 - E. Decrease session.timeout.ms
 - F. increase max.poll.interval.ms
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -489,14 +489,14 @@ GlobalKTables have their datasets replicated on each Kafka Streams instance and 
 </details>
 
 ## Question 15 (Programming & Serialization):
-Which of the following message schema formats are supported out-of-the box with Confluent Platform, with serializers, deserializers, and command line tools available for each format? (Choose three)
+Which of the following message schema formats are supported out-of-the box with Confluent Platform, with serializers, deserializers, and command line tools available for each format? 
 
 - A. Avro
 - B. ProtoBuf
 - C. JSON
 - D. Bytes
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -555,14 +555,14 @@ SpecificRecord is created from generated record classes
 </details>
 
 ## Question 17 (Kafka Internals):
-By default, which replica will be elected as a partition leader? (select two)
+By default, which replica will be elected as a partition leader? 
 
 - A. Any of the replicas
 - B. An in-sync replica
 - C. Preferred leader broker if it is in-sync and auto.leader.rebalance.enable=false
 - D. Preferred leader broker if it is in-sync and auto.leader.rebalance.enable=true
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -625,7 +625,7 @@ A Custom Partitioner allows you to easily customise how the partition number get
 </details>
 
 ## Question 19 (Kafka Core Concepts):
-In Kafka, every broker… (select three)
+In Kafka, every broker… 
 
 - A. contains all the topics and all the partitions
 - B. knows all the metadata for all topics and partitions
@@ -634,7 +634,7 @@ In Kafka, every broker… (select three)
 - E. knows the metadata for the topics and partitions it has on its disk
 - F. contains only a subset of the topics and the partitions
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -675,7 +675,7 @@ You are sending messages with keys to a topic. To increase throughput, you decid
 - C. Old records will stay in their partitions
 - D. New records may get written to a different partition
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -808,14 +808,14 @@ In Kafka Streams, the application.id is also the underlying group.id for your co
 </details>
 
 ## Question 24 (Kafka Setup and Operations):
-When auto.create.topics.enable is set to true in Kafka configuration, what are the circumstances under which a Kafka broker automatically creates a topic? (select three)
+When auto.create.topics.enable is set to true in Kafka configuration, what are the circumstances under which a Kafka broker automatically creates a topic? 
 
 - A. Client alters number of partitions of a topic
 - B. Producer sends message to a topic
 - C. Client requests metadata for a topic
 - D. Consumer reads message from a topic
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -948,14 +948,14 @@ You will need to set the schemas.enable parameters for the converter to false fo
 </details>
 
 ## Question 28 (Programming & Serialization):
-Which of the following options are Avro primitive types? (Choose three)
+Which of the following options are Avro primitive types? 
 
 - A. null
 - B. timestamp
 - C. bytes
 - D. string
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1014,7 +1014,7 @@ Choose the correct answer.
 </details>
 
 ## Question 30 (Kafka Internals):
-What is true about partitions? (select two)
+What is true about partitions? 
 
 - A. Only out of sync replicas are replicas, the remaining partitions that are in sync are also leader
 - B. A partition has one replica that is a leader, while the other replicas are followers
@@ -1022,7 +1022,7 @@ What is true about partitions? (select two)
 - D. A broker can have a partition and its replica on its disk
 - E. A broker can have different partitions numbers for the same topic on its disk
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -1263,7 +1263,7 @@ Kafka‘s new bidirectional client compatibility introduced in 0.10.2 allows thi
 </details>
 
 ## 🚫 Question 37 (Kafka Setup and Operations):
-Running Kafka in production, what‘s a proper value for setting the java heap size? (Choose one)
+Running Kafka in production, what‘s a proper value for setting the java heap size? 
 
 - A. 6 GB
 - B. 6 TB
@@ -1399,7 +1399,7 @@ Choose the correct answer.
 </details>
 
 ## Question 41 (Kafka Setup and Operations):
-When you enable SSL encryption within Kafka, which feature cannot be used then anymore? (Choose one)
+When you enable SSL encryption within Kafka, which feature cannot be used then anymore? 
 
 - A. Horizontally Scaling
 - B. Data Compression
@@ -1535,14 +1535,14 @@ See: https://docs.confluent.io/current/streams/developer-guide/dsl-api.html#join
 </details>
 
 ## Question 45 (Kafka Ecosystem):
-What are the programming languages Apache Kafka is written in? (Choose two)
+What are the programming languages Apache Kafka is written in? 
 
 - A. Python
 - B. Java
 - C. PHP
 - D. Scala
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -1636,14 +1636,14 @@ Choose the correct answer.
 </details>
 
 ## Question 48 (Kafka Producers):
-Which of the following options are true for Kafka producers? (Choose two)
+Which of the following options are true for Kafka producers? 
 
 - A. Kafka producers send a produce request to the leader of a topic partition.
 - B. Kafka guarantees that all producer messages will be sent to the same partition.
 - C. Kafka producers have no need for group coordination.
 - D. Kafka producers can send data with a key, in which case the data will be send round-robin to all available brokers.
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -1706,7 +1706,7 @@ auto.offset.reset=none means that the consumer will crash if the offsets it‘s 
 </details>
 
 ## Question 50 (Kafka Producers):
-If I supply the setting compression.type=snappy to my producer, what will happen? (select two)
+If I supply the setting compression.type=snappy to my producer, what will happen? 
 
 - A. The Kafka brokers have to de-compress the data
 - B. The Producers have to compress the data
@@ -1714,7 +1714,7 @@ If I supply the setting compression.type=snappy to my producer, what will happen
 - D. The Kafka brokers have to compress the data
 - E. The Consumers have to de-compress the data
 
-Choose the correct answers (select 2).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
@@ -1854,7 +1854,7 @@ Choose the correct answer.
 </details>
 
 ## Question 54 (Kafka Connect):
-Using Kafka Connect Source to read data from an external database, which processes do the actual work and execute connectors and tasks? (Choose one)
+Using Kafka Connect Source to read data from an external database, which processes do the actual work and execute connectors and tasks? 
 
 - A. Transformers
 - B. Workers

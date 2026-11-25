@@ -35,7 +35,7 @@ connect-configs stores configurations, connect-status helps to elect leaders for
 </details>
 
 ## Question 2 (Reliable Data Delivery):
-A topic has three replicas and you set min.insync.replicas to 2. If two out of three replicas are not available, what happens when a produce request with acks=all is sent to broker?
+A topic has three replicas and you set `min.insync.replicas` to 2. If two out of three replicas are not available, what happens when a produce request with acks=all is sent to broker?
 
 - A. Produce request is honored with single in-sync replica
 - B. Produce request will block till one of the two unavailable partition is available again.
@@ -68,7 +68,7 @@ With this configuration, a single in-sync replica becomes read-only. Produce req
 ## Question 3 (Kafka Consumers):
 How does a consumer commit offsets in Kafka?
 
-- A. It directly sends a message to the __consumer_offsets topic
+- A. It directly sends a message to the `__consumer_offsets` topic
 - B. It interacts with the Group Coordinator broker
 - C. It directly commits the offsets in Zookeeper
 
@@ -99,10 +99,10 @@ Consumers do not directly write to the __consumer_offsets topic, they instead in
 ## Question 4 (Kafka Producers):
 Which of the following setting increases the chance of batching for a Kafka Producer?
 
-- A. Increase batch.size
+- A. Increase `batch.size`
 - B. Increase the number of producer threads
-- C. Increase message.max.bytes
-- D. Increase linger.ms
+- C. Increase `message.max.bytes`
+- D. Increase `linger.ms`
 
 Choose the correct answer.
 
@@ -167,7 +167,7 @@ two partitions groups – one for each application so that all messages are deli
 </details>
 
 ## Question 6 (Kafka Producers):
-What is the risk of increasing max.in.flight.requests.per.connection while also enabling retries in a producer?
+What is the risk of increasing `max.in.flight.requests.per.connection` while also enabling retries in a producer?
 
 - A. Message order not preserved
 - B. At least once delivery is not guaranteed
@@ -272,7 +272,7 @@ Although any Kafka Streams application is stateless as the state is stored in Ka
 </details>
 
 ## Question 9 (Kafka Connect):
-You are using a JDBC source connector to copy data from 2 tables to two Kafka topics. There is one connector created with max.tasks = 2 deployed on a cluster of 3 workers. How many tasks are launched?
+You are using a JDBC source connector to copy data from 2 tables to two Kafka topics. There is one connector created with `max.tasks = 2` deployed on a cluster of 3 workers. How many tasks are launched?
 
 - A. 1
 - B. 6
@@ -379,10 +379,10 @@ Choose the correct answer.
 ## Question 12 (Kafka Consumers):
 To allow consumers in a group to resume at the previously committed offset, I need to set the proper value for…
 
-- A. auto.offset.resets
-- B. enable.auto.commit
-- C. value.deserializer
-- D. group.id
+- A. `auto.offset.resets`
+- B. `enable.auto.commit`
+- C. `value.deserializer`
+- D. `group.id`
 
 Choose the correct answer.
 
@@ -548,7 +548,7 @@ Choose the correct answer.
 </details>
 
 ## Question 17 (Kafka Consumers):
-Which actions will trigger partition rebalance for a consumer group? (select three)
+Which actions will trigger partition rebalance for a consumer group?
 
 - A. Add a broker to the cluster
 - B. Increase partitions of a topic
@@ -616,10 +616,10 @@ Kafka logs are append-only and the data is immutable
 ## Question 19 (Kafka Consumers):
 Select all the way for one consumer to subscribe simultaneously to the following topics – topic.history, topic.sports, topic.politics? (select two)
 
-- A. consumer.subscribe(Arrays.asList(“topic.history“, “topic.sports“, “topic.politics“));
-- B. consumer.subscribe(Pattern.compile(“topic\..*“));
-- C. consumer.subscribe(“topic.history“); consumer.subscribe(“topic.sports“); consumer.subscribe(“topic.politics“);
-- D. consumer.subscribePrefix(“topic.“);
+- A. ```consumer.subscribe(Arrays.asList(“topic.history“, “topic.sports“, “topic.politics“));```
+- B. ```consumer.subscribe(Pattern.compile(“topic\..*“));```
+- C. ```consumer.subscribe(“topic.history“); consumer.subscribe(“topic.sports“); consumer.subscribe(“topic.politics“);```
+- D. ```consumer.subscribePrefix(“topic.“);```
 
 Choose the correct answers (select 2).
 
@@ -649,7 +649,7 @@ Multiple topics can be passed as a list or regex pattern.
 </details>
 
 ## Question 20 (Reliable Data Delivery):
-A bank uses a Kafka cluster for credit card payments. What should be the value of the property unclean.leader.election.enable?
+A bank uses a Kafka cluster for credit card payments. What should be the value of the property `unclean.leader.election.enable`?
 
 - A. TRUE
 - B. FALSE
@@ -676,7 +676,7 @@ Setting unclean.leader.election.enable to true means we allow out-of-sync replic
 </details>
 
 ## Question 21 (Kafka Setup and Operations):
-If I produce to a topic that does not exist, and the broker setting auto.create.topic.enable=true, what will happen?
+If I produce to a topic that does not exist, and the broker setting `auto.create.topic.enable=true`, what will happen?
 
 - A. Kafka will automatically create the topic with 1 partition and 1 replication factor
 - B. Kafka will automatically create the topic with the indicated producer settings num.partitions and default.replication.factor
@@ -886,7 +886,7 @@ Sending a message with the null value is called a tombstone in Kafka and will en
 </details>
 
 ## Question 27 (Kafka Consumers):
-A consumer starts and has auto.offset.reset=latest, and the topic partition currently has data for offsets going from 45 to 2311. The consumer group has committed the offset 643 for the topic before. Where will the consumer read from?
+A consumer starts and has `auto.offset.reset=latest`, and the topic partition currently has data for offsets going from 45 to 2311. The consumer group has committed the offset 643 for the topic before. Where will the consumer read from?
 
 - A. it will crash
 - B. offset 643
@@ -1329,7 +1329,7 @@ Producers can set acks=1 to get acknowledgement from partition leader only.
 </details>
 
 ## Question 40 (Kafka Internals):
-Compaction is enabled for a topic in Kafka by setting log.cleanup.policy=compact. What is true about log compaction?
+Compaction is enabled for a topic in Kafka by setting `log.cleanup.policy=compact`. What is true about log compaction?
 
 - A. After cleanup, only one message per key is retained with the first value
 - B. After cleanup, only one message per key is retained with the latest value
@@ -1438,7 +1438,7 @@ Choose the correct answer.
 </details>
 
 ## Question 43 (Kafka Internals):
-How do Kafka brokers ensure great performance between the producers and consumers? (select two)
+How do Kafka brokers ensure great performance between the producers and consumers?
 
 - A. It buffers the messages on disk, and sends messages from the disk reads
 - B. It does not transform the messages

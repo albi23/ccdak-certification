@@ -37,6 +37,20 @@ Every question validated and checked by human :)
 
 Every question has a correct answer with a per-option explanation and was verified against sources: the official Apache Kafka documentation ([kafka.apache.org](https://kafka.apache.org/documentation/)), Confluent docs, and *Kafka: The Definitive Guide, 2nd Edition*. Summaries cite their sources inline.
 
+## ⌨️ Keyboard shortcuts (exam mode)
+
+The interactive quiz can be driven entirely from the keyboard. Shortcuts are active only while answering questions (not in the summary view; while paused only `Space` works).
+
+| Key | Action |
+|---|---|
+| ⬅️ / ➡️ | Previous / next question |
+| `1` – `9` | Single-choice: select the option at that position (1 = A, 2 = B, …) |
+| `1` – `9` | Multiple-choice: toggle the option (press again to deselect) |
+| `Enter` | Check the answer |
+| `Space` | Pause / resume the timer |
+
+Drag-and-drop (ordering) questions ignore the number keys; already-checked questions are locked.
+
 ## Build
 
 The website and the quiz are generated from the markdown files.

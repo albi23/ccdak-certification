@@ -2009,6 +2009,57 @@
 
     window.addEventListener('beforeunload', saveState);
 
+    // ---------- keyboard shortcuts ----------
+    // ←/→ navigate between questions; 1..9 select/toggle options (quiz mode only).
+    document.addEventListener('keydown', e => {
+        const target = e.target;
+        if (target && (target.tagName === 'SELECT' || target.tagName === 'TEXTAREA' ||
+                (target.tagName === 'INPUT' && target.type !== 'radio' && target.type !== 'checkbox'))) return;
+        // only active in exam mode (not summary, not paused)
+        if ($('questionCard').classList.contains('hidden')) return;
+        const paused = !$('pauseOverlay').classList.contains('hidden');
+
+        if (e.key === ' ' || e.code === 'Space') {
+            // let a focused button handle its own Space press
+            if (target && target.tagName === 'BUTTON') return;
+            e.preventDefault(); // also stops page scroll / native checkbox toggle
+            if (!e.repeat) (paused ? resume : pause)();
+            return;
+        }
+        if (paused) return;
+
+        const st = curSt(), exam = curExam();
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault(); // stop radios from changing selection natively
+            const n = st.current + (e.key === 'ArrowRight' ? 1 : -1);
+            if (n >= 0 && n < exam.questions.length) goTo(n);
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            // let a focused button handle its own Enter press
+            if (target && target.tagName === 'BUTTON') return;
+            if (!st.checked[st.current]) { e.preventDefault(); check(); }
+            return;
+        }
+
+        if (!/^[1-9]$/.test(e.key)) return;
+        const i = st.current, q = exam.questions[i];
+        if (q.ordering || st.checked[i]) return;
+        const opt = q.options[Number(e.key) - 1];
+        if (!opt) return;
+        e.preventDefault();
+        let sel = st.answers[i] ? [...st.answers[i]] : [];
+        if (q.multi) {
+            sel = sel.includes(opt.letter) ? sel.filter(x => x !== opt.letter) : [...sel, opt.letter];
+        } else {
+            sel = [opt.letter];
+        }
+        st.answers[i] = sel;
+        saveState();
+        renderQuestion();
+    });
+
     // ---------- init ----------
     (async function boot() {
         try {
