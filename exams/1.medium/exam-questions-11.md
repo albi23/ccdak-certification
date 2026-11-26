@@ -1422,7 +1422,7 @@ With MirrorMaker, Kafka administrators can replicate topics, topic configuration
 </details>
 
 ## Question 42 (Kafka Producers):
-In Kafka, what are the most important producer configurations?(Choose three)
+In Kafka, what are the most important producer configurations?
 
 - A. batch size
 - B. compression

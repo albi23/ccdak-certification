@@ -209,7 +209,7 @@ ksqlDB provides two deployment options: – Headless ksqlDB deployment: The simp
 </details>
 
 ## Question 7 (Kafka Producers):
-Which of the following properties are mandatory for creating a Kafka producer?(Choose three)
+Which of the following properties are mandatory for creating a Kafka producer?
 
 - A. bootstrap.servers
 - B. value.serializer
@@ -419,7 +419,7 @@ By default, the consumer is configured to auto-commit offsets. Using auto-commit
 </details>
 
 ## Question 13 (Kafka Core Concepts):
-In Kafka, if the property “auto.create.topics.enable“ is set to true, what are the circumstances under which a Kafka broker automatically creates a topic?(Choose three)
+In Kafka, if the property “auto.create.topics.enable“ is set to true, what are the circumstances under which a Kafka broker automatically creates a topic?
 
 - A. If a producer sends a message to the topic.
 - B. If a client requests metadata for the topic.
@@ -944,7 +944,7 @@ In Kafka, producers create and write messages to topic partitions and Producers 
 </details>
 
 ## 🚫 Question 28 (Kafka Ecosystem):
-Which of the following data formats are supported by ksqlDB?(Choose three)
+Which of the following data formats are supported by ksqlDB?
 
 - A. Avro message values
 - B. DELIMITED

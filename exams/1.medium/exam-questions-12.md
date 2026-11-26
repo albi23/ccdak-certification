@@ -69,7 +69,7 @@ In Kafka, producers create and write messages to topic partitions. Some concepts
 </details>
 
 ## Question 3 (Programming & Serialization):
-Which of the following options are Avro primitive types?(Choose three)
+Which of the following options are Avro primitive types?
 
 - A. string
 - B. bytes
@@ -637,7 +637,7 @@ Option C. A Kafka Broker is a JVM process that runs on a machine and hosts topic
 </details>
 
 ## Question 19 (Kafka Connect):
-Which connector configurations are mandatory for every connector using Kafka Connect?(Choose three)
+Which connector configurations are mandatory for every connector using Kafka Connect?
 
 - A. The Java class for the connector.
 - B. The key and value converter set by the worker.

@@ -1750,7 +1750,7 @@ To forward specific records to a different topic based on a condition in a Kafka
 </details>
 
 ## 🚫 Question 51 (Kafka Ecosystem):
-Which ksqlDB queries read or write data to Kafka?(Choose three)
+Which ksqlDB queries read or write data to Kafka?
 
 - A. CREATE STREAM AS SELECT
 - B. CREATE TABLE AS SELECT
@@ -1785,7 +1785,7 @@ ksqlDB allows you to query, read, write, and process data in Kafka in real-time 
 </details>
 
 ## 🚫 Question 52 (Kafka Ecosystem):
-Which of the following options can be used to interact with the ksqlDB servers through a REST API in the interactive deployment mode?(Choose three)
+Which of the following options can be used to interact with the ksqlDB servers through a REST API in the interactive deployment mode?
 
 - A. Favorite REST client
 - B. Confluent Control Center
