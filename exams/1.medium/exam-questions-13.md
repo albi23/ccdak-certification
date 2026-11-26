@@ -1,5 +1,5 @@
 ## Question 1 (Programming & Serialization):
-Which of the following options best describe the benefits of the Confluent Schema Registry? (Choose two)
+Which of the following options best describe the benefits of the Confluent Schema Registry? 
 
 - A. Confluent Schema Registry is included in your Kafka brokers and helps to retrieve schemas that describe the data models for the messages.
 - B. Confluent Schema Registry provides a RESTful interface for storing and retrieving your Avro, JSON Schema, and XML schemas.
@@ -34,7 +34,7 @@ Option C. Confluent Schema Registry enforces schema evolution rules through conf
 </details>
 
 ## Question 2 (Kafka Internals):
-In which scenario do you want to set the broker config “unclean.leader.election.enable=true“?(Choose one)
+In which scenario do you want to set the broker config “unclean.leader.election.enable=true“?
 
 - A. If you prioritize durability over scalability.
 - B. If you prioritize durability over availability.
@@ -69,7 +69,7 @@ The broker property unclean.leader.election.enable allows you to specify a prefe
 </details>
 
 ## Question 3 (Kafka Internals):
-Which of the following options is the default cleanup policy for all user topics?(Choose one)
+Which of the following options is the default cleanup policy for all user topics?
 
 - A. log.cleanup.policy=compact
 - B. log.cleanup.policy=max-size
@@ -104,7 +104,7 @@ In Kafka, unlike other messaging systems, the messages on a topic are not immedi
 </details>
 
 ## Question 4 (Kafka Setup and Operations):
-Which of the following options best describes integration testing?(Choose one)
+Which of the following options best describes integration testing?
 
 - A. Integration tests verify that end-to-end tests with other services work as expected.
 - B. Integration tests verify that isolated functional blocks of code work as expected.
@@ -139,7 +139,7 @@ Unit testing, integration testing, and schema compatibility are all important st
 </details>
 
 ## Question 5 (Kafka Producers):
-A company uses Kafka for its sales production application and created a producer to map all the orders into a topic with 5 partitions. The goal was to write all messages for a specific customer id ordered into the same partition, but because one customer orders twice as much products as all other customers together, this specific partition gets too large. The company tries to solve this issue and is looking for a way to give this customer its own partition and then use hash partitioning to map the rest of the accounts to other partitions. What‘s the best possible solution to achieve this?(Choose one)
+A company uses Kafka for its sales production application and created a producer to map all the orders into a topic with 5 partitions. The goal was to write all messages for a specific customer id ordered into the same partition, but because one customer orders twice as much products as all other customers together, this specific partition gets too large. The company tries to solve this issue and is looking for a way to give this customer its own partition and then use hash partitioning to map the rest of the accounts to other partitions. What‘s the best possible solution to achieve this?
 
 - A. Adding a unique partition to the ProducerRecord for the specific customer.
 - B. Implementing a custom partitioning strategy.
@@ -174,7 +174,7 @@ Kafka messages are key-value pairs and while it is possible to create a Producer
 </details>
 
 ## 🚫 Question 6 (Kafka Ecosystem):
-What are possible deployment options for ksqlDB?(Choose two)
+What are possible deployment options for ksqlDB?
 
 - A. Headless ksqlDB deployment
 - B. Interactive ksqlDB deployment
@@ -244,7 +244,7 @@ The first step in writing messages to Kafka is to create a producer object with 
 </details>
 
 ## Question 8 (Kafka Consumers):
-The Kafka consumer is not thread-safe and it is the responsibility of the user to ensure that multi-threaded access is properly synchronized. What‘s the only exception to this rule?(Choose one)
+The Kafka consumer is not thread-safe and it is the responsibility of the user to ensure that multi-threaded access is properly synchronized. What‘s the only exception to this rule?
 
 - A. Wakeup the consumer.
 - B. Close the consumer.
@@ -279,7 +279,7 @@ Multithreading is the ability of a central processing unit (CPU) to provide mult
 </details>
 
 ## Question 9 (Kafka Internals):
-A company has a Kafka cluster with 4 brokers. For a new streaming application, the company wants to create a production topic with two partitions that is resilient to one broker failure and one broker maintenance. What replication factor will the company specify while creating the topic?(Choose one)
+A company has a Kafka cluster with 4 brokers. For a new streaming application, the company wants to create a production topic with two partitions that is resilient to one broker failure and one broker maintenance. What replication factor will the company specify while creating the topic?
 
 - A. 5
 - B. 2
@@ -314,7 +314,7 @@ Kafka replicates the log for each topic‘s partitions across a configurable num
 </details>
 
 ## Question 10 (Kafka Setup and Operations):
-Which CLI command can be used to find out all the partitions without a leader?(Choose one)
+Which CLI command can be used to find out all the partitions without a leader?
 
 - A. bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions
 - B. bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-min-isr-partitions
@@ -349,7 +349,7 @@ In Kafka, the purpose of describing topics is to know the leader for the topic, 
 </details>
 
 ## Question 11 (Kafka Producers):
-When sending a producer record to the Kafka broker, what does the send() method return?(Choose one)
+When sending a producer record to the Kafka broker, what does the send() method return?
 
 - A. The send() method returns a Future Object with RecordMetadata.
 - B. The send() method returns an Object with RecordMetadata.
@@ -384,7 +384,7 @@ KafkaProducer is a Kafka client that publishes records to the Kafka cluster. The
 </details>
 
 ## Question 12 (Kafka Consumers):
-A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s a good way to manually commit the offsets, if the company does not want to block the application until the broker responds to the commit request?(Choose one)
+A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s a good way to manually commit the offsets, if the company does not want to block the application until the broker responds to the commit request?
 
 - A. Use the poll() API.
 - B. Use the commitAsync() API.
@@ -454,7 +454,7 @@ The Kafka broker uses the auto.create.topics.enable property to control automati
 </details>
 
 ## Question 14 (Kafka Internals):
-Which of the following options are true for a Kafka Controller?(Choose two)
+Which of the following options are true for a Kafka Controller?
 
 - A. At any time at least two Controller brokers must exist to perform majority votings.
 - B. It is a Kafka broker which is elected by Zookeeper.
@@ -489,7 +489,7 @@ In a Kafka cluster, one (and only one) of the brokers serves as the controller, 
 </details>
 
 ## Question 15 (Kafka Setup and Operations):
-How does Garbage Collection help to improve Kafka‘s overall performance?(Choose one)
+How does Garbage Collection help to improve Kafka‘s overall performance?
 
 - A. Garbage collection is a JVM process that automatically consumes messages to increase the fetch rate.
 - B. Garbage collection is a JVM process that automatically frees up memory and removes unused pointers to objects.
@@ -524,7 +524,7 @@ Java Garbage Collection is the process by which Java programs perform automatic 
 </details>
 
 ## Question 16 (Kafka Consumers):
-Which API can be used to shutdown a consumer from another thread?(Choose one)
+Which API can be used to shutdown a consumer from another thread?
 
 - A. flush()
 - B. wakeup()
@@ -559,7 +559,7 @@ Multithreading is the ability of a central processing unit (CPU) to provide mult
 </details>
 
 ## Question 17 (Kafka Connect):
-Using Kafka Connect, which type of connectors are there to copy data between Kafka and another system?(Choose two)
+Using Kafka Connect, which type of connectors are there to copy data between Kafka and another system?
 
 - A. SinkConnectors to import data from another system.
 - B. SinkConnectors to export data to another system.
@@ -594,7 +594,7 @@ Kafka Connect is a tool for scalably and reliably streaming data between Apache 
 </details>
 
 ## Question 18 (Kafka Producers):
-A Kafka producer has the retries property set to 2147483647 to resend any record whose send fails with a potentially transient error. Which of the following additional configurations could potentially change the ordering of records? (Choose one)
+A Kafka producer has the retries property set to 2147483647 to resend any record whose send fails with a potentially transient error. Which of the following additional configurations could potentially change the ordering of records? 
 
 - A. enable.idempotence=false
 - B. max.in.flight.requests.per.connection=1
@@ -629,7 +629,7 @@ Choose the correct answer.
 </details>
 
 ## Question 19 (Kafka Producers):
-Which of the following producer callback exceptions is non-retriable and therefore the message will not be sent again?(Choose one)
+Which of the following producer callback exceptions is non-retriable and therefore the message will not be sent again?
 
 - A. TimeoutException
 - B. NotEnoughReplicasException
@@ -664,7 +664,7 @@ In Kafka, producers create and write messages to topic partitions. There are the
 </details>
 
 ## 🚫 Question 20 (Kafka Ecosystem):
-Using ksqlDB, which of the following two options together allow you to use Avro data and integrate with Confluent Schema Registry?(Choose two)
+Using ksqlDB, which of the following two options together allow you to use Avro data and integrate with Confluent Schema Registry?
 
 - A. To use Avro data with ksqlDB you must have Schema Registry installed.
 - B. Configure the “enable.avro.registry“ property in the ksqlDB server configuration and use the Confluent Control Center to point to the Schema Registry.
@@ -699,7 +699,7 @@ To be able to use Avro data and integrate with Confluent Schema Registry you nee
 </details>
 
 ## Question 21 (Kafka Internals):
-Which of the following designs of cluster replication should be used in a multi-cluster environment for analytics purposes only?(Choose one)
+Which of the following designs of cluster replication should be used in a multi-cluster environment for analytics purposes only?
 
 - A. Passive -> Active replication
 - B. Active -> Passive replication
@@ -734,7 +734,7 @@ For Multi-datacenter use cases a replicator can be deployed across clusters and 
 </details>
 
 ## Question 22 (Kafka Internals):
-In Kafka, how often is log compaction evaluated?(Choose one)
+In Kafka, how often is log compaction evaluated?
 
 - A. Every time a message is written to the active segment.
 - B. Every time a message with an existing key is produced.
@@ -769,7 +769,7 @@ The main idea behind Log Compaction is to selectively remove records where there
 </details>
 
 ## Question 23 (Stream Processing):
-A company uses the Kafka Streams API to filter and reduce an input topic into another output topic. Their streams application takes a lot of time and resources to recover the state from Kafka. What can they do in order to speed up recovery? (Choose one)
+A company uses the Kafka Streams API to filter and reduce an input topic into another output topic. Their streams application takes a lot of time and resources to recover the state from Kafka. What can they do in order to speed up recovery? 
 
 - A. Disable encryption in order to speed up recovery.
 - B. Any Kafka Streams application is stateless, so nothing can be done to speed up recovery.
@@ -804,7 +804,7 @@ Although any Kafka Streams application is stateless as the state is stored in Ka
 </details>
 
 ## 🚫 Question 24 (Kafka Setup and Operations):
-If you want to change a broker setting for your entire Kafka cluster, what‘s the best possible solution for this?(Choose one)
+If you want to change a broker setting for your entire Kafka cluster, what‘s the best possible solution for this?
 
 - A. Change the broker configuration in all of your brokers‘ configuration files and restart all the brokers one by one to make this setting active.
 - B. Change the broker configuration in the Zookeeper configuration file and restart the cluster to make this setting active.
@@ -839,7 +839,7 @@ In Kafka, if you want to change a broker property for your entire cluster you ne
 </details>
 
 ## Question 25 (Kafka Consumers):
-What happens for a consumer with the configuration “auto.offset.reset=none“, if there is no initial offset in Kafka or if the current offset does not exist any more on the server?(Choose one)
+What happens for a consumer with the configuration “auto.offset.reset=none“, if there is no initial offset in Kafka or if the current offset does not exist any more on the server?
 
 - A. The consumer restores the offset history from the official Kafka archive.
 - B. The consumer automatically resets the offset to the earliest offset.
@@ -874,7 +874,7 @@ The consumer configuration “auto.offset.reset“ tells the consumer what to do
 </details>
 
 ## Question 26 (Programming & Serialization):
-Using Avro schemas, what type of schema changes are allowed for FORWARD schema evolution? (Choose two)
+Using Avro schemas, what type of schema changes are allowed for FORWARD schema evolution? 
 
 - A. Add optional fields
 - B. Delete optional fields
@@ -909,7 +909,7 @@ Option B. Delete optional fields In FORWARD schema evolution, new consumers usin
 </details>
 
 ## Question 27 (Kafka Producers):
-If you are producing messages to a Kafka topic, which producer property needs to be set if you want to receive leader acknowledgment of data writes?(Choose one)
+If you are producing messages to a Kafka topic, which producer property needs to be set if you want to receive leader acknowledgment of data writes?
 
 - A. acks=leader
 - B. acks=0
@@ -979,7 +979,7 @@ ksqlDB currently supports the following formats: – DELIMITED (e. g. comma-sepa
 </details>
 
 ## Question 29 (Kafka Consumers):
-A company built a consumer application to automatically commit offsets of processed messages. What happens if the committed offset is larger than the offset of the last message the client actually processed?(Choose one)
+A company built a consumer application to automatically commit offsets of processed messages. What happens if the committed offset is larger than the offset of the last message the client actually processed?
 
 - A. All messages between the last processed offset and the committed offset will be missed by the consumer group.
 - B. All messages between the last processed offset and the committed offset will be processed twice by the consumer group.
@@ -1014,7 +1014,7 @@ As a consumer in the group reads messages from the partitions assigned by the co
 </details>
 
 ## Question 30 (Kafka Setup and Operations):
-The new security team of a company configured the Confluent Server Authorizer to be able to capture, protect, and preserve authorization activity into topics in their production Kafka cluster. Which concept name best describes this security configuration which helps to track user and application access across the platform?(Choose one)
+The new security team of a company configured the Confluent Server Authorizer to be able to capture, protect, and preserve authorization activity into topics in their production Kafka cluster. Which concept name best describes this security configuration which helps to track user and application access across the platform?
 
 - A. RBAC tracking
 - B. Audit logs
@@ -1049,7 +1049,7 @@ Kafka does not provide a mechanism for maintaining a record of authorization dec
 </details>
 
 ## Question 31 (Kafka Consumers):
-Consider the following consumer example: while (true) { ConsumerRecords<String, String> records = consumer.poll(100); for (ConsumerRecords<String, String> record : records) { System.out.printf(“topic = %s, partition = %s, offset = %d, customer = %s, country = %s\n“, record.topic(), record.partition(), record.offset(), record.key(), record.value()); } try { consumer.commitSync(); } catch (CommitFailedException e) { log.error(“commit failed“, e) } } Which delivery guarantee does this consumer use? (Choose one)
+Consider the following consumer example: while (true) { ConsumerRecords<String, String> records = consumer.poll(100); for (ConsumerRecords<String, String> record : records) { System.out.printf(“topic = %s, partition = %s, offset = %d, customer = %s, country = %s\n“, record.topic(), record.partition(), record.offset(), record.key(), record.value()); } try { consumer.commitSync(); } catch (CommitFailedException e) { log.error(“commit failed“, e) } } Which delivery guarantee does this consumer use? 
 
 - A. At-most once delivery.
 - B. Exactly once delivery.
@@ -1080,7 +1080,7 @@ Option C. At-least once delivery Why correct: In this code, the consumer process
 </details>
 
 ## Question 32 (Kafka Setup and Operations):
-A company has problems with the performance of their Kafka application and wants to optimize and tune the clients. How could the company measure their bandwidth in an easy way as a first baseline?(Choose one)
+A company has problems with the performance of their Kafka application and wants to optimize and tune the clients. How could the company measure their bandwidth in an easy way as a first baseline?
 
 - A. Measure your bandwidth using the Kafka topic performance configuration settings.
 - B. Measure your bandwidth using the Kafka tool “kafka-client-performance“.
@@ -1115,7 +1115,7 @@ After you complete unit and integration testing, you can benchmark and optimize 
 </details>
 
 ## Question 33 (Stream Processing):
-Which of the following joins does not require input topics to be having the same number of partitions?(Choose one)
+Which of the following joins does not require input topics to be having the same number of partitions?
 
 - A. KStream-KStream
 - B. KTable-KTable
@@ -1150,7 +1150,7 @@ When joining streams or tables input data must be co-partitioned. This ensures t
 </details>
 
 ## Question 34 (Stream Processing):
-Which processing guarantees does Kafka Streams support?(Choose two)
+Which processing guarantees does Kafka Streams support?
 
 - A. exactly-once processing
 - B. at-least-once processing
@@ -1181,7 +1181,7 @@ Kafka Streams supports at-least-once and exactly-once processing guarantees: –
 </details>
 
 ## Question 35 (Kafka Consumers):
-What happens for a consumer application when closing one of the consumers cleanly?(Choose one)
+What happens for a consumer application when closing one of the consumers cleanly?
 
 - A. The consumer application will consume messages with one consumer less.
 - B. The consumer will notify the group coordinator that it is leaving, and the group coordinator will trigger a rebalance immediately.
@@ -1251,7 +1251,7 @@ The KStream and KTable interfaces support a variety of transformation operations
 </details>
 
 ## Question 37 (Stream Processing):
-The following Kafka Streams example demonstrates how to use the reduce function to sum odd numbers. final StreamsBuilder builder = new StreamsBuilder(); final KStream input = builder.stream(“numbers-topic“); final KTable sumOfOddNumbers = input .filter((k, v) -> v % 2 != 0) .selectKey((k, v) -> 1) .groupByKey() .reduce((v1, v2) -> v1 + v2); sumOfOddNumbers.toStream().to(“sum-of-odd-numbers-topic“); builder.build(); What‘s an appropriate topic configuration for the topic “sum-of-odd-numbers-topic“? (Choose one)
+The following Kafka Streams example demonstrates how to use the reduce function to sum odd numbers. final StreamsBuilder builder = new StreamsBuilder(); final KStream input = builder.stream(“numbers-topic“); final KTable sumOfOddNumbers = input .filter((k, v) -> v % 2 != 0) .selectKey((k, v) -> 1) .groupByKey() .reduce((v1, v2) -> v1 + v2); sumOfOddNumbers.toStream().to(“sum-of-odd-numbers-topic“); builder.build(); What‘s an appropriate topic configuration for the topic “sum-of-odd-numbers-topic“? 
 
 - A. cleanup.policy=compact
 - B. flush.messages=9223372036854775807
@@ -1286,7 +1286,7 @@ Kafka Streams is a client library for building streaming applications and micros
 </details>
 
 ## Question 38 (Kafka Producers):
-Which of the following properties should be configured to aim for a high throughput producer application? (Choose three)
+Which of the following properties should be configured to aim for a high throughput producer application?
 
 - A. max.in.flight.requests.per.connection
 - B. batch.size
@@ -1321,7 +1321,7 @@ Option B. batch.size Correct because increasing batch.size allows the producer t
 </details>
 
 ## Question 39 (Kafka Setup and Operations):
-To produce messages with key-value delimiters to a Kafka topic, which two properties need to be set using the “kafka-console-producer“ CLI?(Choose one)
+To produce messages with key-value delimiters to a Kafka topic, which two properties need to be set using the “kafka-console-producer“ CLI?
 
 - A. --property key && --property separator
 - B. --property parse.key && --property key.separator
@@ -1356,7 +1356,7 @@ It is possible to define a key-value delimiter for the given producer instance. 
 </details>
 
 ## 🚫 Question 40 (Kafka Ecosystem):
-A company deployed a Kafka cluster on 10 brokers. The production topic has a replication factor of 3 and 5 topic partitions. Because most of the developers are very familiar with SQL, the company decided to use ksqlDB to process data using intuitive SQL-like syntax. For maximum parallelism, how many ksqlDB servers can be run without having idle servers?(Choose one)
+A company deployed a Kafka cluster on 10 brokers. The production topic has a replication factor of 3 and 5 topic partitions. Because most of the developers are very familiar with SQL, the company decided to use ksqlDB to process data using intuitive SQL-like syntax. For maximum parallelism, how many ksqlDB servers can be run without having idle servers?
 
 - A. As many as the company wants.
 - B. 10
@@ -1391,7 +1391,7 @@ The maximum ksqlDB parallelism depends on the number of topic partitions.Idle se
 </details>
 
 ## Question 41 (Kafka Core Concepts):
-What‘s the main advantage of Kafka‘s pub / sub message communication model over classical request / response (point-to-point) systems?(Choose one)
+What‘s the main advantage of Kafka‘s pub / sub message communication model over classical request / response (point-to-point) systems?
 
 - A. Scalability
 - B. Reliability
@@ -1426,7 +1426,7 @@ In the request / reply messaging model, the message sender sends a message on on
 </details>
 
 ## Question 42 (Kafka Setup and Operations):
-Which of the following choices is best practice when it comes to Kafka security concepts?(Choose one)
+Which of the following choices is best practice when it comes to Kafka security concepts?
 
 - A. Create one principal per application and give each principal only the ACLs it requires and no more.
 - B. Use fine-grained Access Control Lists for authentication to allow only specific users to connect to Kafka.
@@ -1461,7 +1461,7 @@ By default, there is no encryption or authentication, nor are ACLs configured. A
 </details>
 
 ## Question 43 (Kafka Internals):
-A client connects to a broker in the cluster and sends a fetch request for a partition in a topic. If it gets the exception “NotLeaderForPartitionException“ in the response, how does the client handle this situation?(Choose one)
+A client connects to a broker in the cluster and sends a fetch request for a partition in a topic. If it gets the exception “NotLeaderForPartitionException“ in the response, how does the client handle this situation?
 
 - A. The client sends a metadata request to the same broker for the topic and selects the broker hosting the leader replica.
 - B. The client sends a fetch request to each broker in the topic until it finds the broker hosting the leader replica.
@@ -1496,7 +1496,7 @@ In case the consumer has the wrong leader of a partition, it will issue a metada
 </details>
 
 ## Question 44 (Kafka Consumers):
-A company is building a consumer application that processes events from a Kafka topic. What is the most important metric the company should monitor to ensure real-time processing?(Choose one)
+A company is building a consumer application that processes events from a Kafka topic. What is the most important metric the company should monitor to ensure real-time processing?
 
 - A. fetch-total
 - B. records-per-request-avg
@@ -1531,7 +1531,7 @@ The most important consumer fetch metric to ensure real-time-processing is recor
 </details>
 
 ## Question 45 (Kafka Setup and Operations):
-By default, Kafka ships with no authentication. Which of the following authentication mechanisms and protocols can be used with the Confluent Platform to enable authentication for Kafka brokers? (Choose three)
+By default, Kafka ships with no authentication. Which of the following authentication mechanisms and protocols can be used with the Confluent Platform to enable authentication for Kafka brokers?
 
 - A. mTLS
 - B. ACLs
@@ -1566,7 +1566,7 @@ Confluent Platform supports the following authentication mechanisms and protocol
 </details>
 
 ## Question 46 (Kafka Internals):
-A company uses log compaction for their production topic. What happens if someone sends messages to this topic with a key and a null value?(Choose one)
+A company uses log compaction for their production topic. What happens if someone sends messages to this topic with a key and a null value?
 
 - A. The producer will throw a runtime exception.
 - B. The broker will delete all messages for this specific key upon cleanup.
@@ -1601,7 +1601,7 @@ A record with the same key from the record we want to delete is produced to the 
 </details>
 
 ## Question 47 (Stream Processing):
-Which of the following options best describes a requirement for data co-partitioning using Kafka Streams joins?(Choose one)
+Which of the following options best describes a requirement for data co-partitioning using Kafka Streams joins?
 
 - A. The input topics of the join must have the same number of messages stored.
 - B. The input topics of the join must have the same number of partitions.
@@ -1636,7 +1636,7 @@ When joining streams or tables input data must be co-partitioned. This ensures t
 </details>
 
 ## Question 48 (Kafka Producers):
-Which of the following producer configurations can be used to increase the chances of batching messages?(Choose one)
+Which of the following producer configurations can be used to increase the chances of batching messages?
 
 - A. acks=all
 - B. max.request.size=1048576
@@ -1671,7 +1671,7 @@ With batching strategy of Kafka producers, you can batch messages going to the s
 </details>
 
 ## Question 49 (Kafka Setup and Operations):
-Which Kafka CLI script should you use to produce to a topic?(Choose one)
+Which Kafka CLI script should you use to produce to a topic?
 
 - A. bin/kafka-console-consumer.sh
 - B. bin/kafka-producer.sh
@@ -1706,7 +1706,7 @@ The kafka-console-producer tool is used to write messages to a topic in a text b
 </details>
 
 ## Question 50 (Programming & Serialization):
-Using the Confluent Schema Registry, where are all schemas stored?(Choose one)
+Using the Confluent Schema Registry, where are all schemas stored?
 
 - A. In the Confluent Control Center.
 - B. In the Schema Registry filesystem.
@@ -1741,7 +1741,7 @@ Kafka is used as Schema Registry storage backend. The special Kafka topic (defau
 </details>
 
 ## Question 51 (Kafka Connect):
-Which of the following options best describes Kafka Connect?(Choose one)
+Which of the following options best describes Kafka Connect?
 
 - A. Kafka Connect is a database purpose-built to help developers create stream processing applications on top of Apache Kafka.
 - B. Kafka Connect provides a RESTful interface for storing and retrieving your Avro, JSON Schema, and Protobuf schemas.
@@ -1776,7 +1776,7 @@ Kafka Connect is a tool for scalably and reliably streaming data between Apache 
 </details>
 
 ## Question 52 (Kafka Consumers):
-Which of the following property should be configured to aim for a high throughput consumer application?(Choose one)
+Which of the following property should be configured to aim for a high throughput consumer application?
 
 - A. heartbeat.interval.ms
 - B. fetch.max.bytes
@@ -1811,7 +1811,7 @@ A way to optimize for consumer throughput is to adjust how much data consumers r
 </details>
 
 ## Question 53 (Kafka Internals):
-In Kafka, how many leaders can each topic partition have?(Choose one)
+In Kafka, how many leaders can each topic partition have?
 
 - A. Exactly one leader.
 - B. A partition only has followers.
@@ -1846,7 +1846,7 @@ Every topic partition has exactly one partition leader which handles all the rea
 </details>
 
 ## Question 54 (Kafka Setup and Operations):
-A company configured a Kafka cluster with the parameters –log.retention.hours = 200, –log.retention.minutes = 200 and –log.retention.ms = 200. With this configuration, how long will log data be retained before old log segments will be discarded to free up space?(Choose one)
+A company configured a Kafka cluster with the parameters –log.retention.hours = 200, –log.retention.minutes = 200 and –log.retention.ms = 200. With this configuration, how long will log data be retained before old log segments will be discarded to free up space?
 
 - A. 200 seconds
 - B. 200 hours
@@ -1881,7 +1881,7 @@ If more than one similar config is specified, the smaller unit size will take pr
 </details>
 
 ## Question 55 (Programming & Serialization):
-After a FORWARD schema evolution, which order of upgrading producer and consumer clients should you prefer?(Choose one)
+After a FORWARD schema evolution, which order of upgrading producer and consumer clients should you prefer?
 
 - A. Upgrade consumers first.
 - B. Upgrade producers first.
@@ -1916,7 +1916,7 @@ The configured compatibility type has an implication on the order for upgrading 
 </details>
 
 ## Question 56 (Kafka Internals):
-Which of the following options is true about log compaction?(Choose one)
+Which of the following options is true about log compaction?
 
 - A. Log compaction re-orders messages based on key hashes.
 - B. Log compaction changes the message offsets.
@@ -1951,7 +1951,7 @@ Log Compaction ensures that Kafka will always retain at least the last known val
 </details>
 
 ## 🚫 Question 57 (Kafka Setup and Operations):
-Running Kafka in production, how much memory should a machine at least have as a decent choice for storing and caching messages?(Choose one)
+Running Kafka in production, how much memory should a machine at least have as a decent choice for storing and caching messages?
 
 - A. 8 GB
 - B. 16 GB

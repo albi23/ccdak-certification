@@ -1,5 +1,5 @@
 ## Question 1 (Kafka Consumers):
-Which of the following options are true regarding multi-threaded-message processing for Java Kafka clients?(Choose two)
+Which of the following options are true regarding multi-threaded-message processing for Java Kafka clients?
 
 - A. The Kafka consumer is not thread-safe and it is the responsibility of the user to ensure that multi-threaded access is properly synchronized.
 - B. The Kafka producer is not thread-safe and it is the responsibility of the user to ensure that multi-threaded access is properly synchronized.
@@ -104,7 +104,7 @@ In KSQL, to create a new stream by selecting specific fields from an existing st
 </details>
 
 ## Question 4 (Reliable Data Delivery):
-Due to network errors a producer can introduce duplicate messages in Kafka, for example, if a message is processed, but the acknowledgment never reaches the producer. Which producer configuration can be used to guarantee a stable and safe pipeline without processing duplicate messages?(Choose one)
+Due to network errors a producer can introduce duplicate messages in Kafka, for example, if a message is processed, but the acknowledgment never reaches the producer. Which producer configuration can be used to guarantee a stable and safe pipeline without processing duplicate messages?
 
 - A. max.in.flight.requests=1
 - B. acks=all
@@ -139,7 +139,7 @@ When a producer sends messages to a topic, things can go wrong, such as short co
 </details>
 
 ## Question 5 (Kafka Consumers):
-In a consumer group application, what internal consumer mechanism can be used to detect the application being down?(Choose one)
+In a consumer group application, what internal consumer mechanism can be used to detect the application being down?
 
 - A. Heartbeat thread
 - B. Poll thread
@@ -174,7 +174,7 @@ Consumers in a group talk to a consumer group coordinator. To detect consumers t
 </details>
 
 ## Question 6 (Kafka Setup and Operations):
-A company wants to mirror its production topic from the Europe region to 4 different regions worldwide. The environment should be highly available in every region and it should be possible to produce to the topic from everywhere. Using Mirror Maker, what kind of mirroring is this?(Choose one)
+A company wants to mirror its production topic from the Europe region to 4 different regions worldwide. The environment should be highly available in every region and it should be possible to produce to the topic from everywhere. Using Mirror Maker, what kind of mirroring is this?
 
 - A. Aggregation
 - B. Active -> Passive
@@ -209,7 +209,7 @@ With MirrorMaker, Kafka administrators can replicate topics, topic configuration
 </details>
 
 ## Question 7 (Kafka Consumers):
-In Kafka, what is the most important consumer configuration for throughput/performance? (Choose one)
+In Kafka, what is the most important consumer configuration for throughput/performance? 
 
 - A. fetch size
 - B. session timeout
@@ -245,7 +245,7 @@ For consumer **throughput/performance**, the fetch sizing configurations (`fetch
 </details>
 
 ## Question 8 (Kafka Producers):
-Which acknowledgment configuration should be used for a producer to maximize performance?(Choose one)
+Which acknowledgment configuration should be used for a producer to maximize performance?
 
 - A. acks=1
 - B. acks=leader
@@ -280,7 +280,7 @@ In Kafka, producers create and write messages to topic partitions and producers 
 </details>
 
 ## Question 9 (Kafka Producers):
-A Kafka producer is producing at a very high rate and the batches are completely full each time. Which of the following additional configurations help to improve the producer throughput? (Choose two)
+A Kafka producer is producing at a very high rate and the batches are completely full each time. Which of the following additional configurations help to improve the producer throughput? 
 
 - A. Decrease linger.ms
 - B. Increase linger.ms
@@ -385,7 +385,7 @@ The primary disadvantage of request/response communication is Coupling.Explanati
 </details>
 
 ## Question 12 (Programming & Serialization):
-Using Avro schemas, what type of schema changes are allowed for FULL schema evolution?(Choose two)
+Using Avro schemas, what type of schema changes are allowed for FULL schema evolution?
 
 - A. Add optional fields
 - B. Add fields
@@ -525,7 +525,7 @@ For a topic to be resilient to one broker failure and one broker maintenance sim
 </details>
 
 ## Question 16 (Kafka Consumers):
-Which of the following options are true for Kafka consumers?(Choose two)
+Which of the following options are true for Kafka consumers?
 
 - A. Consumers can read data from more than one partition.
 - B. Consumer offsets are stored in Zookeeper.
@@ -692,7 +692,7 @@ The scenario described is an example of Active-Passive mirroring.Explanation:Act
 </details>
 
 ## Question 21 (Kafka Consumers):
-A company uses a consumer application to do complex big data calculations for the Kafka input data before writing the outputs into a data warehouse. The calculations take about 9 to 10 minutes to finish, but the consumer application rebalances even though the calculation is still running. What‘s the best solution to solve this problem?(Choose one)
+A company uses a consumer application to do complex big data calculations for the Kafka input data before writing the outputs into a data warehouse. The calculations take about 9 to 10 minutes to finish, but the consumer application rebalances even though the calculation is still running. What‘s the best solution to solve this problem?
 
 - A. Increase session.timeout.ms to 20000.
 - B. Decrease session.timeout.ms to 20000.
@@ -762,7 +762,7 @@ The configuration you should adjust to increase the parallelism of message proce
 </details>
 
 ## Question 23 (Kafka Setup and Operations):
-Which broker property needs to be used to specify that a broker belongs to a particular rack?(Choose one)
+Which broker property needs to be used to specify that a broker belongs to a particular rack?
 
 - A. broker.rack
 - B. availability.zone
@@ -832,7 +832,7 @@ Option C. Adjust schema compatibility settings for the consumer Confluent Schema
 </details>
 
 ## Question 25 (Kafka Setup and Operations):
-A company developed a sales producer application in their development environment without having any broker to client communication issues. The next step was to deploy the application into the cloud to scale globally in different regions worldwide. After copying the application into the cloud, the producer is able to connect to Kafka but unable to produce to the same Kafka topic because of an authorization issue. What‘s the likely issue?(Choose one)
+A company developed a sales producer application in their development environment without having any broker to client communication issues. The next step was to deploy the application into the cloud to scale globally in different regions worldwide. After copying the application into the cloud, the producer is able to connect to Kafka but unable to produce to the same Kafka topic because of an authorization issue. What‘s the likely issue?
 
 - A. ACLs are configured for specific host IPs only.
 - B. RBAC is not enabled by default for cloud deployments.
@@ -902,7 +902,7 @@ The purpose of the “security.protocol“ configuration setting in a Kafka clus
 </details>
 
 ## Question 27 (Kafka Consumers):
-What‘s one of the main tasks of the consumer group leader? (Choose one)
+What‘s one of the main tasks of the consumer group leader? 
 
 - A. The group leader is one of the consumers in the consumer group and is responsible for sending requests to join the group.
 - B. The group leader is one of the consumers in the consumer group and is responsible for storing all the consumer offsets to Kafka.
@@ -937,7 +937,7 @@ Applications that need to read data from Kafka use a KafkaConsumer to subscribe 
 </details>
 
 ## Question 28 (Stream Processing):
-Which approach should be used when transforming data from one Kafka topic to another one?(Choose one)
+Which approach should be used when transforming data from one Kafka topic to another one?
 
 - A. Use ksqlDB.
 - B. Use Kafka Connect Sink.
@@ -972,7 +972,7 @@ Kafka Streams is a client library for building streaming applications and micros
 </details>
 
 ## Question 29 (Kafka Producers):
-Which properties must be set when producing messages to Kafka by creating a ProducerRecord?(Choose two)
+Which properties must be set when producing messages to Kafka by creating a ProducerRecord?
 
 - A. Partition
 - B. Value
@@ -1007,7 +1007,7 @@ In Kafka, producers create and write messages to topic partitions. We start prod
 </details>
 
 ## Question 30 (Kafka Setup and Operations):
-A company created a production topic named prod_topic. The retention period for prod_topic should be 10 days. How could you accomplish this in the most efficient way?(Choose one)
+A company created a production topic named prod_topic. The retention period for prod_topic should be 10 days. How could you accomplish this in the most efficient way?
 
 - A. Set the topic configuration retention.days=10.
 - B. Set the topic configuration retention.ms=864000000.
@@ -1042,7 +1042,7 @@ The property retention.ms can be configured at topic level while creating topics
 </details>
 
 ## Question 31 (Kafka Consumers):
-What happens if two consumers have the same group id and subscribe to the same topic?(Choose one)
+What happens if two consumers have the same group id and subscribe to the same topic?
 
 - A. Each consumer will be assigned a subset of the partitions in the topic.
 - B. Each consumer will be assigned one of the partitions in the topic.
@@ -1077,7 +1077,7 @@ The group.id is a unique string that identifies the consumer group a consumer be
 </details>
 
 ## Question 32 (Stream Processing):
-What‘s the most appropriate way of modeling a retail store‘s data in Kafka Streams? (Choose one)
+What‘s the most appropriate way of modeling a retail store‘s data in Kafka Streams? 
 
 - A. Sales of products as stream, orders placed for new products as stream, shipments of products that arrive as stream, customer as table.
 - B. Sales of products as stream, orders placed for new products as table, shipments of products that arrive as stream, customer as table.
@@ -1112,7 +1112,7 @@ Option A. Sales of products as stream, orders placed for new products as stream,
 </details>
 
 ## Question 33 (Programming & Serialization):
-Which curl command can be used to fetch a schema by globally unique ID 1?(Choose one)
+Which curl command can be used to fetch a schema by globally unique ID 1?
 
 - A. curl -X GET http://localhost:9092/ids/1
 - B. curl -X GET http://localhost:8081/ids/1
@@ -1147,7 +1147,7 @@ The best way to test the Schema Registry API is to use CURL (command line tool a
 </details>
 
 ## Question 34 (Kafka Producers):
-Consider the following producer example: ProducerRecord<String, String> record = new ProducerRecord<>(“topic“, “key“, “value“); try { producer.send(record).get(); } catch (Exception e) { e.printStackTrace(); } What‘s the purpose of the .get() method? (Choose two)
+Consider the following producer example: ProducerRecord<String, String> record = new ProducerRecord<>(“topic“, “key“, “value“); try { producer.send(record).get(); } catch (Exception e) { e.printStackTrace(); } What‘s the purpose of the .get() method? 
 
 - A. Using Future.get() tells Kafka to send the message asynchronously.
 - B. Using Future.get() waits for a replay from Kafka before continuing.
@@ -1252,7 +1252,7 @@ When configuring schema compatibility settings in Confluent Schema Registry for 
 </details>
 
 ## Question 37 (Kafka Setup and Operations):
-What tool can be used together with Kafka to mirror a source Kafka cluster into a target Kafka cluster?(Choose one)
+What tool can be used together with Kafka to mirror a source Kafka cluster into a target Kafka cluster?
 
 - A. Kafka Connect
 - B. Schema Registry
@@ -1322,7 +1322,7 @@ In a scenario where Avro schemas for Kafka messages are frequently evolving, Con
 </details>
 
 ## Question 39 (Kafka Consumers):
-Which of the following options is a consumer fetch metric?(Choose one)
+Which of the following options is a consumer fetch metric?
 
 - A. compression-rate-avg
 - B. batch-size-max
@@ -1392,7 +1392,7 @@ Option D. 1 Correct because the JDBC source connector creates one task per table
 </details>
 
 ## Question 41 (Kafka Internals):
-Which Kafka broker is responsible for partition leader election?(Choose one)
+Which Kafka broker is responsible for partition leader election?
 
 - A. Partition leader
 - B. Controller
@@ -1462,7 +1462,7 @@ From Kafka version 0.10.2 onwards, the true statement about Kafka brokers and cl
 </details>
 
 ## Question 43 (Kafka Consumers):
-Which offset commit strategy should you use for a consumer log application, if it‘s ok if messages will be lost?(Choose one)
+Which offset commit strategy should you use for a consumer log application, if it‘s ok if messages will be lost?
 
 - A. Auto-commit
 - B. At-most once
@@ -1497,7 +1497,7 @@ At-most once guarantee means the message will be processed exactly once, or not 
 </details>
 
 ## Question 44 (Kafka Consumers):
-Which of the following options is a producer sender metric?(Choose one)
+Which of the following options is a producer sender metric?
 
 - A. records-lag-max
 - B. batch-size-avg
@@ -1645,7 +1645,7 @@ For a Kafka broker in a production setup on a machine with 256 GB of RAM, especi
 </details>
 
 ## Question 48 (Kafka Setup and Operations):
-Which command line script can be used to manage Kafka ACLs?(Choose one)
+Which command line script can be used to manage Kafka ACLs?
 
 - A. bin/acls.sh
 - B. bin/kafka-security.sh
@@ -1820,7 +1820,7 @@ ksqlDB provides two deployment options: – Headless ksqlDB deployment: The simp
 </details>
 
 ## Question 53 (Kafka Consumers):
-A company uses a production consumer application with a large number of consumers. Even for lower activity hours of the day the consumers are using a lot of CPU when fetching messages. Increasing which consumer property is a good choice to possibly reduce the load on both the consumer and the broker?(Choose one)
+A company uses a production consumer application with a large number of consumers. Even for lower activity hours of the day the consumers are using a lot of CPU when fetching messages. Increasing which consumer property is a good choice to possibly reduce the load on both the consumer and the broker?
 
 - A. session.timeout.ms
 - B. auto.offset.reset
@@ -1851,7 +1851,7 @@ Applications that need to read data from Kafka use a KafkaConsumer to subscribe 
 </details>
 
 ## Question 54 (Kafka Consumers):
-In a consumer group application, what internal consumer mechanism can be used to detect a data processing issue?(Choose one)
+In a consumer group application, what internal consumer mechanism can be used to detect a data processing issue?
 
 - A. Offset thread
 - B. Heartbeat thread
@@ -1886,7 +1886,7 @@ Consumers in a group talk to a consumer group coordinator. To detect consumers t
 </details>
 
 ## Question 55 (Kafka Core Concepts):
-Which of the following options are true about topics in Kafka?(Choose two)
+Which of the following options are true about topics in Kafka?
 
 - A. You can have as many topics as you want.
 - B. A topic is identified by its unique id.

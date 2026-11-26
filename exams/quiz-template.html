@@ -191,8 +191,7 @@
             gap: 8px;
             max-height: 150px;
             overflow-y: auto;
-            padding-right: 6px;
-            padding-top: 6px;
+            padding: 6px;
         }
 
         .cell {
@@ -1132,6 +1131,73 @@
             background: #0d1117;
             border-color: var(--border);
         }
+
+        .sad-pop {
+            position: fixed;
+            left: 50%;
+            top: 34%;
+            transform: translate(-50%, -50%) scale(0.4);
+            font-size: 84px;
+            line-height: 1;
+            pointer-events: none;
+            z-index: 9999;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, .28));
+            animation: sadPop 1.15s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+
+        @keyframes sadPop {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.35) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.15) rotate(-8deg);
+            }
+            35% {
+                transform: translate(-50%, -50%) scale(1.0) rotate(8deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.04) rotate(-5deg);
+            }
+            65% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -30%) scale(0.85) rotate(0deg);
+            }
+        }
+
+        .heart-float {
+            position: fixed;
+            bottom: -48px;
+            line-height: 1;
+            pointer-events: none;
+            z-index: 9999;
+            user-select: none;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .2));
+            animation: heartRise var(--dur, 2.8s) ease-out var(--delay, 0s) forwards;
+        }
+
+        @keyframes heartRise {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, 0, 0) scale(0.6) rotate(0deg);
+            }
+            15% {
+                opacity: 1;
+                transform: translate3d(calc(var(--drift, 0px) * 0.3), -16vh, 0) scale(1.05) rotate(var(--rot, 10deg));
+            }
+            75% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(var(--drift, 0px), -112vh, 0) scale(1.15) rotate(calc(var(--rot, 10deg) * -1));
+            }
+        }
     </style>
 </head>
 <body>
@@ -1805,11 +1871,116 @@
         }
     }
 
+    // 1-shot celebratory firework burst on a temporary full-screen canvas
+    function launchFirework() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const canvas = document.createElement('canvas');
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = window.innerWidth, h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const cx = w * (0.38 + Math.random() * 0.24);
+        const cy = h * (0.24 + Math.random() * 0.16);
+        const palette = ['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ec4899', '#14b8a6', '#facc15'];
+        const particles = [];
+        const count = 86;
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.18;
+            const speed = 2.6 + Math.random() * 5.2;
+            particles.push({
+                x: cx,
+                y: cy,
+                px: cx,
+                py: cy,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 1.2,
+                color: palette[i % palette.length],
+                size: 3.2 + Math.random() * 2.4,
+                alpha: 1,
+                decay: 0.015 + Math.random() * 0.012
+            });
+        }
+
+        let flash = 1;
+        function frame() {
+            ctx.clearRect(0, 0, w, h);
+            if (flash > 0) {
+                ctx.save();
+                ctx.globalAlpha = flash * 0.45;
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 26 * (1.2 - flash), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                flash -= 0.12;
+            }
+            let alive = 0;
+            for (const p of particles) {
+                if (p.alpha <= 0) continue;
+                alive++;
+                p.px = p.x;
+                p.py = p.y;
+                p.vx *= 0.965;
+                p.vy = p.vy * 0.965 + 0.11;
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) continue;
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.strokeStyle = p.color;
+                ctx.lineWidth = p.size * 0.85;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(p.px, p.py);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * 0.65, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            if (alive > 0) {
+                requestAnimationFrame(frame);
+            } else {
+                canvas.remove();
+            }
+        }
+        requestAnimationFrame(frame);
+    }
+
+    function showSadEmoji() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const el = document.createElement('div');
+        el.className = 'sad-pop';
+        el.setAttribute('aria-hidden', 'true');
+        el.textContent = '😢';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove(), {once: true});
+    }
+
     function check() {
         const st = curSt();
+        const wasChecked = !!st.checked[st.current];
         st.checked[st.current] = true;
         saveState();
         renderQuestion();
+        if (!wasChecked) {
+            if (isAnswerCorrect(st.current)) {
+                launchFirework();
+            } else {
+                showSadEmoji();
+            }
+        }
     }
 
     function clearAns() {
@@ -1875,6 +2046,26 @@
         return {correct, incorrect, unatt, scored, total, pct, time: st.elapsed, outOfScope, oosAnswered, oosCorrect};
     }
 
+    function launchFloatingHearts() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const hearts = ['❤️', '💖', '💗', '💓', '💕', '💜', '💚'];
+        const count = 28;
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.className = 'heart-float';
+            el.setAttribute('aria-hidden', 'true');
+            el.textContent = hearts[i % hearts.length];
+            el.style.left = (4 + Math.random() * 92) + 'vw';
+            el.style.fontSize = (22 + Math.random() * 22) + 'px';
+            el.style.setProperty('--dur', (2.2 + Math.random() * 1.4).toFixed(2) + 's');
+            el.style.setProperty('--delay', (Math.random() * 0.9).toFixed(2) + 's');
+            el.style.setProperty('--drift', ((Math.random() - 0.5) * 140).toFixed(0) + 'px');
+            el.style.setProperty('--rot', ((Math.random() - 0.5) * 36).toFixed(0) + 'deg');
+            document.body.appendChild(el);
+            el.addEventListener('animationend', () => el.remove(), {once: true});
+        }
+    }
+
     function showSummary() {
         const st = curSt();
         st.finished = true;
@@ -1907,6 +2098,7 @@
         $('questionCard').classList.add('hidden');
         $('reviewCard').classList.add('hidden');
         $('summaryCard').classList.remove('hidden');
+        if (pass) launchFloatingHearts();
     }
 
     // Build the clickable list of questions to revisit (in-scope, not correct).

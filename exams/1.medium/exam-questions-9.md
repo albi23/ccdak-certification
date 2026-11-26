@@ -1,5 +1,5 @@
 ## Question 1 (Kafka Internals):
-In Kafka, how is a topic partition structured? (Choose one)
+In Kafka, how is a topic partition structured? 
 
 - A. Partitions are made of one segment that comes with two indexes.
 - B. Partitions are made of one segment that comes with one index.
@@ -69,7 +69,7 @@ Latest means that data retrievals will start from where the offsets currently en
 </details>
 
 ## Question 3 (Reliable Data Delivery):
-Which of the following producer configurations best fits a company‘s requirement to have a very safe data pipeline without message loss? (Choose one)
+Which of the following producer configurations best fits a company‘s requirement to have a very safe data pipeline without message loss? 
 
 - A. acks=all, replication.factor=3, min.insync.replicas=2
 - B. acks=1, replication.factor=3, min.insync.replicas=2
@@ -104,7 +104,7 @@ To make your data fault-tolerant, safe and highly-available, every Kafka topic c
 </details>
 
 ## Question 4 (Kafka Core Concepts):
-Why can it be very challenging to add partitions later, if you are sending messages to partitions based on keys? (Choose one)
+Why can it be very challenging to add partitions later, if you are sending messages to partitions based on keys? 
 
 - A. After adding partitions later, it cannot be guaranteed that new messages with the same key will go to the same partition.
 - B. After adding partitions later, it cannot be guaranteed that old messages with the same key will still be on the same partition.
@@ -139,7 +139,7 @@ Correct Option C. After adding partitions later, it cannot be guaranteed that ol
 </details>
 
 ## Question 5 (Reliable Data Delivery):
-Which Kafka API supports exactly-once delivery? (Choose one)
+Which Kafka API supports exactly-once delivery? 
 
 - A. Streams API
 - B. Producer API
@@ -174,7 +174,7 @@ Kafka supports three types of Message Delivery Guarantees: At-most once: Every m
 </details>
 
 ## Question 6 (Kafka Core Concepts):
-In a point-to-point messaging domain, where are the messages exchanged between senders and receivers? (Choose one)
+In a point-to-point messaging domain, where are the messages exchanged between senders and receivers? 
 
 - A. Sink
 - B. Queue
@@ -244,7 +244,7 @@ Kafka Connect Sink is used to export data from Kafka to external databases and K
 </details>
 
 ## Question 8 (Kafka Ecosystem):
-What‘s one of the five core Kafka APIs? (Choose one)
+What‘s one of the five core Kafka APIs? 
 
 - A. Admin API
 - B. Python API
@@ -279,7 +279,7 @@ There are five major APIs in Kafka: – The Producer API allows applications to 
 </details>
 
 ## Question 9 (Kafka Setup and Operations):
-After creating a Kafka topic, which script helps you to check whether the topic you created is available? (Choose one)
+After creating a Kafka topic, which script helps you to check whether the topic you created is available? 
 
 - A. bin/kafka-topics.sh
 - B. bin/kafka-configs.sh
@@ -314,7 +314,7 @@ In Kafka, events are organized and stored in topics. The bin/kafka-topics.sh scr
 </details>
 
 ## Question 10 (Stream Processing):
-Using Kafka Streams, which of the supported join operations are windowed? (Choose one)
+Using Kafka Streams, which of the supported join operations are windowed? 
 
 - A. KTable-to-Ktable
 - B. KStream-to-KTable
@@ -349,7 +349,7 @@ Kafka Streams is a client library for building streaming applications and micros
 </details>
 
 ## Question 11 (Kafka Setup and Operations):
-Which Java versions are supported by Kafka? (Choose two)
+Which Java versions are supported by Kafka? 
 
 - A. Java 11
 - B. Java 5
@@ -384,7 +384,7 @@ Choose the correct answers (select 2).
 </details>
 
 ## Question 12 (Kafka Setup and Operations):
-Which command can be used to create a Kafka topic to store your events? (Choose one)
+Which command can be used to create a Kafka topic to store your events? 
 
 - A. bin/kafka-topics.sh --describe --topic first-topic --bootstrap-server localhost:9092
 - B. bin/topics.sh --create --topic first-topic --bootstrap-server localhost:9092
@@ -489,7 +489,7 @@ Since Confluent 5.4.0, Avro 1.9.1 is used. Since default value was added to enum
 </details>
 
 ## 🚫 Question 15 (Kafka Ecosystem):
-Which Confluent solution can be used as an overview dashboard to enable centralized management and monitoring of key components of the platform, including clusters, brokers, schemas, topics, messages, connectors, ksqlDB queries, security, replication and more? (Choose one)
+Which Confluent solution can be used as an overview dashboard to enable centralized management and monitoring of key components of the platform, including clusters, brokers, schemas, topics, messages, connectors, ksqlDB queries, security, replication and more? 
 
 - A. Confluent Metrics Reporter
 - B. Confluent Health+
@@ -559,7 +559,7 @@ Choose the correct answer.
 </details>
 
 ## Question 17 (Kafka Setup and Operations):
-If you are setting up a multi-broker cluster in Kafka on different machines, which broker property needs to be unique for each node? (Choose one)
+If you are setting up a multi-broker cluster in Kafka on different machines, which broker property needs to be unique for each node? 
 
 - A. all of the other options need to be unique for each node
 - B. port
@@ -594,7 +594,7 @@ For Kafka, a single broker is just a cluster of size one, so nothing much change
 </details>
 
 ## 🚫 Question 18 (Kafka Ecosystem):
-What are the main benefits of using ksqlDB together with Kafka? (Choose two)
+What are the main benefits of using ksqlDB together with Kafka? 
 
 - A. ksqlDB allows you to use SQL-like syntax to setup your Kafka cluster.
 - B. ksqlDB allows you to query, read, write, and process data in Kafka in real-time and at scale using intuitive SQL-like syntax.
@@ -629,7 +629,7 @@ Choose the correct answers (select 2).
 </details>
 
 ## Question 19 (Kafka Core Concepts):
-What option best describes a Kafka Broker? (Choose one)
+What option best describes a Kafka Broker? 
 
 - A. A Kafka Broker is a JVM process that runs on a machine and helps the communication between servers and clients.
 - B. A Kafka Broker is a JVM process that runs on a machine and publishes streams of events.
@@ -664,7 +664,7 @@ A Kafka Broker is nothing more, nothing less, than a JVM process that runs on a 
 </details>
 
 ## Question 20 (Reliable Data Delivery):
-Using the configuration “replication.factor=3“, “min.insync.replicas=2“ and “acks=all“, which exception will be thrown if two brokers are down? (Choose one)
+Using the configuration “replication.factor=3“, “min.insync.replicas=2“ and “acks=all“, which exception will be thrown if two brokers are down? 
 
 - A. Exception: UNKNOWN_SERVER.
 - B. Exception: TIMEOUT.
@@ -804,7 +804,7 @@ The kafka-console-consumer tool can be useful in a couple of ways: – Acting as
 </details>
 
 ## Question 24 (Programming & Serialization):
-Which of the following options best describes the process of serialization and deserialization? (Choose one)
+Which of the following options best describes the process of serialization and deserialization? 
 
 - A. Serialization is the process of consuming key / value based Avro messages from a Kafka topic. Deserialization does the opposite of serialization, in which we produce key / value based Avro messages into a Kafka topic.
 - B. Serialization is the process of converting bytes of arrays into the desired data type that are used for transmission. Deserialization does the opposite of serialization, in which we convert an object into a stream of bytes.
@@ -839,7 +839,7 @@ When writing messages to Kafka you need to create a producer object with the pro
 </details>
 
 ## Question 25 (Programming & Serialization):
-Which of the following fields is optional in an Avro record? (Choose one)
+Which of the following fields is optional in an Avro record? 
 
 - A. doc
 - B. fields
@@ -874,7 +874,7 @@ Choose the correct answer.
 </details>
 
 ## Question 26 (Kafka Core Concepts):
-Which of the following options is true about topic partitions? (Choose one)
+Which of the following options is true about topic partitions? 
 
 - A. Different partitions always have the same number of messages when using a round robin distribution.
 - B. Ordering of messages is guaranteed across topic partitions.
@@ -948,7 +948,7 @@ We can only add partitions to an existing topic, and it must be done using the k
 </details>
 
 ## Question 28 (Kafka Consumers):
-Which consumer becomes the group leader of a consumer application? (Choose one)
+Which consumer becomes the group leader of a consumer application? 
 
 - A. The group leader is elected by the Kafka brokers.
 - B. The group leader is elected by the group coordinator.
@@ -983,7 +983,7 @@ Correct: Option D. The first consumer to join the group. In Apache Kafka consume
 </details>
 
 ## Question 29 (Stream Processing):
-Which of the following options best describes the difference between stateless and stateful operations? (Choose one)
+Which of the following options best describes the difference between stateless and stateful operations? 
 
 - A. Stateless transformations do not require state for processing while stateful transformations depend on state for processing inputs.
 - B. Stateful transformations do not require state for processing while stateless transformations depend on state for processing inputs.
@@ -1088,7 +1088,7 @@ Every topic partition has exactly one partition leader which handles all the rea
 </details>
 
 ## Question 32 (Kafka Setup and Operations):
-What‘s the use of the Kafka Admin API? (Choose one)
+What‘s the use of the Kafka Admin API? 
 
 - A. The Admin API supports managing Zookeeper configuration.
 - B. The Admin API supports managing the producer and consumer communication.
@@ -1123,7 +1123,7 @@ The Admin API supports managing and inspecting topics, brokers, acls, and other 
 </details>
 
 ## Question 33 (Kafka Setup and Operations):
-Which security concept allows you to protect your data in transit instead of using the default unsecured PLAINTEXT protocol? (Choose one)
+Which security concept allows you to protect your data in transit instead of using the default unsecured PLAINTEXT protocol? 
 
 - A. Authentication - configured using SASL or mTLS.
 - B. Encryption - configured using the listener configuration and managing truststores and keystores.
@@ -1158,7 +1158,7 @@ By default, there is no encryption or authentication, nor are ACLs configured. A
 </details>
 
 ## Question 34 (Kafka Producers):
-In Kafka, what are the most important producer configurations? (Choose three)
+In Kafka, what are the most important producer configurations?
 
 - A. acks
 - B. replication factor
@@ -1193,7 +1193,7 @@ The most important producer configurations are: – acks: The number of acknowle
 </details>
 
 ## Question 35 (Kafka Setup and Operations):
-Under the hood, which process is used by Kafka brokers that handles the deletion of unused objects or some objects that are inaccessible to free up memory resources to tune the overall performance? (Choose one)
+Under the hood, which process is used by Kafka brokers that handles the deletion of unused objects or some objects that are inaccessible to free up memory resources to tune the overall performance? 
 
 - A. Data Compression
 - B. Garbage Collection
@@ -1228,7 +1228,7 @@ In Java, process of deallocating memory is handled automatically by the garbage 
 </details>
 
 ## Question 36 (Kafka Consumers):
-Which concept can be used to fetch a specific message with specific offsets or to replay data for a consumer? (Choose one)
+Which concept can be used to fetch a specific message with specific offsets or to replay data for a consumer? 
 
 - A. Use the commitSync() API.
 - B. Use the fetch() API.
@@ -1333,7 +1333,7 @@ Choose the correct answers (select 2).
 </details>
 
 ## Question 39 (Kafka Core Concepts):
-Kafka is a distributed system consisting of servers and clients that communicate via a simple high-performance network protocol. Which network protocol is used by Kafka to achieve the high performance? (Choose one)
+Kafka is a distributed system consisting of servers and clients that communicate via a simple high-performance network protocol. Which network protocol is used by Kafka to achieve the high performance? 
 
 - A. SMPT
 - B. TCP
@@ -1368,7 +1368,7 @@ Kafka uses a binary protocol over TCP. The protocol defines all APIs as request 
 </details>
 
 ## Question 40 (Kafka Consumers):
-A company monitors their production consumer application and observed that the fetch-rate is very high, but each fetch is small. How could the company increase throughput in this situation? (Choose one)
+A company monitors their production consumer application and observed that the fetch-rate is very high, but each fetch is small. How could the company increase throughput in this situation? 
 
 - A. Decrease fetch.max.bytes.
 - B. Decrease fetch.min.bytes.
@@ -1403,7 +1403,7 @@ Choose the correct answer.
 </details>
 
 ## Question 41 (Programming & Serialization):
-Which of the following options best describes unit testing? (Choose one)
+Which of the following options best describes unit testing? 
 
 - A. Unit tests verify that development environments behave as expected.
 - B. Unit tests verify that production deployments work as expected.
@@ -1473,7 +1473,7 @@ The consumer configuration “auto.offset.reset“ tells the consumer what to do
 </details>
 
 ## Question 43 (Kafka Consumers):
-A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s the simplest way to manually commit the offsets? (Choose one)
+A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s the simplest way to manually commit the offsets? 
 
 - A. Use the close() API.
 - B. Use the commitSync() API.
@@ -1543,7 +1543,7 @@ KafkaProducer is a Kafka client that publishes records to the Kafka cluster. The
 </details>
 
 ## Question 45 (Kafka Consumers):
-A company is developing a new sales strategy for which the Kafka topic receives all the underlying customer asked questions. Two different departments want to process all the available messages independently from each other. How should the consumption of these messages be organized when the topic has 3 partitions and the company aims for optimal resource usage and performance? (Choose one)
+A company is developing a new sales strategy for which the Kafka topic receives all the underlying customer asked questions. Two different departments want to process all the available messages independently from each other. How should the consumption of these messages be organized when the topic has 3 partitions and the company aims for optimal resource usage and performance? 
 
 - A. Create two consumer groups for two department applications with 6 consumers in each.
 - B. Create 6 consumers in the same group with 3 consumers for each department application.
@@ -1648,7 +1648,7 @@ In a Kafka cluster, one (and only one) of the brokers serves as the controller, 
 </details>
 
 ## Question 48 (Kafka Producers):
-Which of the following components is not part of the Kafka producer workflow? (Choose one)
+Which of the following components is not part of the Kafka producer workflow? 
 
 - A. Partitioner
 - B. ProducerRecord
@@ -1714,7 +1714,7 @@ Choose the correct answer.
 </details>
 
 ## Question 50 (Kafka Setup and Operations):
-For the initial connection to a Kafka cluster, why can it be useful to set the “bootstrap-server“ property to a comma-separated list of host and port pairs that are the addresses of the Kafka brokers instead of just using one host and port pair? (Choose one)
+For the initial connection to a Kafka cluster, why can it be useful to set the “bootstrap-server“ property to a comma-separated list of host and port pairs that are the addresses of the Kafka brokers instead of just using one host and port pair? 
 
 - A. In case one of the brokers is experiencing a down time.
 - B. Not every broker knows everything about the other brokers, topics and partitions.
@@ -1749,7 +1749,7 @@ The bootstrap.server property is a comma-separated list of host and port pairs t
 </details>
 
 ## Question 51 (Stream Processing):
-What‘s a benefit of using a GlobalKTable when joining input data? (Choose one)
+What‘s a benefit of using a GlobalKTable when joining input data? 
 
 - A. Input topics of the join automatically have the same number of partitions.
 - B. Joins against a GlobalKTable are always windowed and therefore more efficient.
@@ -1784,7 +1784,7 @@ Like a KTable, a GlobalKTable is an abstraction of a changelog stream, where eac
 </details>
 
 ## Question 52 (Kafka Setup and Operations):
-Which CLI command can be used to find out all the partitions without a leader? (Choose one)
+Which CLI command can be used to find out all the partitions without a leader? 
 
 - A. bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topics-with-overrides
 - B. bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-min-isr-partitions
@@ -1889,7 +1889,7 @@ Correct:
 </details>
 
 ## Question 55 (Kafka Setup and Operations):
-Which Kafka metric could be used if there is a lot of load on the system and you want to figure out what could be the problem for lag spikes? (Choose one)
+Which Kafka metric could be used if there is a lot of load on the system and you want to figure out what could be the problem for lag spikes? 
 
 - A. Reassigning Partitions
 - B. Under Replicated Partitions

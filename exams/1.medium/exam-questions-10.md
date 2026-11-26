@@ -104,7 +104,7 @@ In case the consumer has the wrong leader of a partition, it will issue a metada
 </details>
 
 ## Question 4 (Kafka Consumers):
-What happens if two consumers have the same group id and subscribe to the same topic? (Choose one)
+What happens if two consumers have the same group id and subscribe to the same topic? 
 
 - A. Each consumer will be assigned all of the partitions in the topic.
 - B. One consumer will be assigned all of the partitions in the topic and one consumer will be idle.
@@ -139,7 +139,7 @@ The group.id is a unique string that identifies the consumer group a consumer be
 </details>
 
 ## Question 5 (Kafka Consumers):
-Which API can be used to shutdown a consumer from another thread? (Choose one)
+Which API can be used to shutdown a consumer from another thread? 
 
 - A. flush()
 - B. close()
@@ -174,7 +174,7 @@ Multithreading is the ability of a central processing unit (CPU) to provide mult
 </details>
 
 ## Question 6 (Kafka Core Concepts):
-Which of the following options are true about topics in Kafka? (Choose two)
+Which of the following options are true about topics in Kafka? 
 
 - A. You can have as many topics as you want.
 - B. A topic is identified by its unique id.
@@ -244,7 +244,7 @@ At-least once guarantee means you will definitely receive and process every mess
 </details>
 
 ## Question 8 (Kafka Setup and Operations):
-Using Kafka security features, how can you allow a specific user to read and write to the topic “test-topic“? (Choose one)
+Using Kafka security features, how can you allow a specific user to read and write to the topic “test-topic“? 
 
 - A. Add an ACL with the --allow-principal and --allow-host properties for read and write operations.
 - B. Use SASL as the default authentication service.
@@ -279,7 +279,7 @@ Apache Kafka ships with a pluggable, out-of-the-box Authorizer implementation th
 </details>
 
 ## Question 9 (Stream Processing):
-Which processing guarantees does Kafka Streams support? (Choose two)
+Which processing guarantees does Kafka Streams support? 
 
 - A. exactly-once processing
 - B. at-most-once processing
@@ -310,7 +310,7 @@ Choose the correct answers (select 2).
 </details>
 
 ## Question 10 (Programming & Serialization):
-After a FORWARD schema evolution, which order of upgrading producer and consumer clients should you prefer? (Choose one)
+After a FORWARD schema evolution, which order of upgrading producer and consumer clients should you prefer? 
 
 - A. Upgrade producers first.
 - B. Upgrade consumers first.
@@ -345,7 +345,7 @@ The configured compatibility type has an implication on the order for upgrading 
 </details>
 
 ## Question 11 (Kafka Consumers):
-Which offset commit strategy should be used in an at-most once consuming scenario? (Choose one)
+Which offset commit strategy should be used in an at-most once consuming scenario? 
 
 - A. Do not commit the offsets in Kafka, as this will be handled automatically.
 - B. Commit the offsets in Kafka, during processing the data.
@@ -415,7 +415,7 @@ Unit testing, integration testing, and schema compatibility are all important st
 </details>
 
 ## Question 13 (Kafka Internals):
-Which of the following options is true about log compaction? (Choose one)
+Which of the following options is true about log compaction? 
 
 - A. Log compaction re-orders messages based on key hashes.
 - B. Log compaction does not remove data from the active segment.
@@ -450,7 +450,7 @@ Log Compaction ensures that Kafka will always retain at least the last known val
 </details>
 
 ## Question 14 (Kafka Consumers):
-A company uses a consumer application to do complex big data calculations for the Kafka input data before writing the outputs into a data warehouse. The calculations take about 9 to 10 minutes to finish, but the consumer application rebalances even though the calculation is still running. What‘s the best solution to solve this problem? (Choose one)
+A company uses a consumer application to do complex big data calculations for the Kafka input data before writing the outputs into a data warehouse. The calculations take about 9 to 10 minutes to finish, but the consumer application rebalances even though the calculation is still running. What‘s the best solution to solve this problem? 
 
 - A. Decrease max.poll.interval.ms to 600000.
 - B. Decrease session.timeout.ms to 20000.
@@ -590,7 +590,7 @@ Choose the correct answers (select 3).
 </details>
 
 ## Question 18 (Programming & Serialization):
-Which curl command can be used to fetch a schema by globally unique ID 1? (Choose one)
+Which curl command can be used to fetch a schema by globally unique ID 1? 
 
 - A. curl -X GET http://localhost:8081/ids/1
 - B. curl -X GET http://localhost:9092/ids/1
@@ -625,7 +625,7 @@ The best way to test the Schema Registry API is to use CURL (command line tool a
 </details>
 
 ## Question 19 (Kafka Consumers):
-In Kafka, what is the most important consumer configuration? (Choose one)
+In Kafka, what is the most important consumer configuration? 
 
 - A. heartbeat interval
 - B. key deserializer
@@ -660,7 +660,7 @@ Choose the correct answer.
 </details>
 
 ## Question 20 (Kafka Consumers):
-Which option is true about a consumer group coordinator in Kafka? (Choose one)
+Which option is true about a consumer group coordinator in Kafka? 
 
 - A. A group coordinator is one of the brokers.
 - B. For every consumer there is one equivalent group coordinator.
@@ -870,7 +870,7 @@ Applications that need to read data from Kafka use a KafkaConsumer to subscribe 
 </details>
 
 ## Question 26 (Kafka Consumers):
-Which of the following options best describes the concept of rebalancing a consumer group? (Choose one)
+Which of the following options best describes the concept of rebalancing a consumer group? 
 
 - A. Rebalancing a consumer group re-assigns consumers so that each consumer receives messages from all the available topic partitions.
 - B. Rebalancing a consumer group re-assigns partitions so that each consumer receives messages from all the available topic partitions.
@@ -975,7 +975,7 @@ To optimize for throughput, producers and consumers must move as much data as po
 </details>
 
 ## Question 29 (Kafka Consumers):
-What‘s one of the main tasks of the consumer group leader? (Choose one)
+What‘s one of the main tasks of the consumer group leader? 
 
 - A. The group leader is one of the consumers in the consumer group and is responsible for sending requests to join the group.
 - B. The group leader is one of the consumers in the consumer group and is responsible for assigning a subset of topic partitions to each consumer.
@@ -1115,7 +1115,7 @@ Choose the correct answer.
 </details>
 
 ## Question 33 (Programming & Serialization):
-Using the Confluent Schema Registry, where are all schemas stored? (Choose one)
+Using the Confluent Schema Registry, where are all schemas stored? 
 
 - A. In the Schema Registry filesystem.
 - B. In the _schemas Kafka topic.
@@ -1150,7 +1150,7 @@ Kafka is used as Schema Registry storage backend. The special Kafka topic (defau
 </details>
 
 ## 🚫 Question 34 (Kafka Ecosystem):
-Which ksqlDB queries read or write data to Kafka? (Choose three)
+Which ksqlDB queries read or write data to Kafka?
 
 - A. CREATE TABLE AS SELECT
 - B. COUNT
@@ -1290,7 +1290,7 @@ If more than one similar config is specified, the smaller unit size will take pr
 </details>
 
 ## Question 38 (Kafka Core Concepts):
-What‘s the main advantage of Kafka‘s pub / sub message communication model over classical request / response (point-to-point) systems? (Choose one)
+What‘s the main advantage of Kafka‘s pub / sub message communication model over classical request / response (point-to-point) systems? 
 
 - A. Decoupling
 - B. Scalability
@@ -1360,7 +1360,7 @@ Correct
 </details>
 
 ## Question 40 (Kafka Setup and Operations):
-What tool can be used together with Kafka to mirror a source Kafka cluster into a target Kafka cluster? (Choose one)
+What tool can be used together with Kafka to mirror a source Kafka cluster into a target Kafka cluster? 
 
 - A. MirrorMaker
 - B. Kafka Connect
@@ -1395,7 +1395,7 @@ With MirrorMaker, Kafka administrators can replicate topics, topic configuration
 </details>
 
 ## Question 41 (Kafka Consumers):
-When creating a new Kafka consumer, which of the following options can be used as the partition assignment strategy? (Choose two)
+When creating a new Kafka consumer, which of the following options can be used as the partition assignment strategy? 
 
 - A. ResourceBasedAssignor
 - B. RoundRobinAssignor
@@ -1535,7 +1535,7 @@ If a Kafka producer produces messages faster than the broker can take, the recor
 </details>
 
 ## Question 45 (Kafka Consumers):
-Which offset commit strategy should you use for a consumer log application, if it‘s ok if messages will be lost? (Choose one)
+Which offset commit strategy should you use for a consumer log application, if it‘s ok if messages will be lost? 
 
 - A. At-least once
 - B. Exactly once
@@ -1570,7 +1570,7 @@ At-most once guarantee means the message will be processed exactly once, or not 
 </details>
 
 ## Question 46 (Stream Processing):
-Which of the following options describe the concept of stream-table duality best? (Choose two)
+Which of the following options describe the concept of stream-table duality best? 
 
 - A. A table can be considered a changelog of a stream, where each data record in the table captures a state change of the stream.
 - B. A stream can be considered a changelog of a table, where each data record in the stream captures a state change of the table.
@@ -1605,7 +1605,7 @@ Kafka Streams is a library for building streaming applications, specifically app
 </details>
 
 ## Question 47 (Programming & Serialization):
-A company wants to send binary data through the REST proxy, so the data needs to be base64 encoded. Which component needs to encode the binary data into base64? (Choose one)
+A company wants to send binary data through the REST proxy, so the data needs to be base64 encoded. Which component needs to encode the binary data into base64? 
 
 - A. Zookeeper
 - B. Producer
@@ -1710,7 +1710,7 @@ In Kafka, producers create and write messages to topic partitions. There are the
 </details>
 
 ## Question 50 (Stream Processing):
-Which of the following joins does not require input topics to be having the same number of partitions? (Choose one)
+Which of the following joins does not require input topics to be having the same number of partitions? 
 
 - A. KStream-KStream
 - B. KStream-KTable
@@ -1745,7 +1745,7 @@ When joining streams or tables input data must be co-partitioned. This ensures t
 </details>
 
 ## Question 51 (Stream Processing):
-What kind of Kafka Streams window has fixed-size, is non-overlapping and gap-less? (Choose one)
+What kind of Kafka Streams window has fixed-size, is non-overlapping and gap-less? 
 
 - A. Sliding time window
 - B. Session window
@@ -1850,7 +1850,7 @@ The broker property unclean.leader.election.enable allows you to specify a prefe
 </details>
 
 ## Question 54 (Kafka Connect):
-Which connector configurations are mandatory for every connector using Kafka Connect? (Choose three)
+Which connector configurations are mandatory for every connector using Kafka Connect?
 
 - A. Unique connector name.
 - B. The maximum number of tasks that should be created for this connector.

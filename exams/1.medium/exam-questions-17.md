@@ -1,5 +1,5 @@
 ## 🚫 Question 1 (Kafka Ecosystem):
-Using ksqlDB or Kafka Streams, what happens to internal topics if automatic topic creation is turned off? (Choose one)
+Using ksqlDB or Kafka Streams, what happens to internal topics if automatic topic creation is turned off? 
 
 - A. ksqlDB and Kafka Streams applications will break as topics cannot be created.
 - B. Existing ksqlDB and Kafka Streams applications continue to work but new applications will break as topics cannot be created.
@@ -606,7 +606,7 @@ Option C. The broker will start, and won’t be online until all the data it nee
 </details>
 
 ## Question 18 (Kafka Producers):
-Which of the following producer configurations can be used to increase the chances of batching messages? (Choose one)
+Which of the following producer configurations can be used to increase the chances of batching messages? 
 
 - A. max.request.size=1048576
 - B. batch.size=32768
@@ -711,7 +711,7 @@ The best dataset to be modeled as a KTable in Kafka Streams for a shoe store is:
 </details>
 
 ## Question 21 (Programming & Serialization):
-Using Avro schemas, what type of schema changes are allowed for BACKWARD schema evolution? (Choose two)
+Using Avro schemas, what type of schema changes are allowed for BACKWARD schema evolution? 
 
 - A. Add fields
 - B. Delete fields
@@ -997,7 +997,7 @@ D. It depends on the consumer configuration. The precise assignment of partition
 </details>
 
 ## Question 29 (Kafka Setup and Operations):
-By default, what‘s the encryption mechanism used by Apache Kafka? (Choose one)
+By default, what‘s the encryption mechanism used by Apache Kafka? 
 
 - A. SASL
 - B. TLS
@@ -1223,7 +1223,7 @@ Option B. broker 0 and 1. The correct answer is brokers 0 and 1, because Kafka�
 </details>
 
 ## Question 35 (Programming & Serialization):
-A producer application is using KafkaAvroSerializer to send messages of Avro type to Kafka. What happens if the schema is not present in the local cache for schemas but exists in Schema Registry? (Choose one)
+A producer application is using KafkaAvroSerializer to send messages of Avro type to Kafka. What happens if the schema is not present in the local cache for schemas but exists in Schema Registry? 
 
 - A. The producer throws a warning but creates the schema.
 - B. The Kafka broker throws an exception.
@@ -1293,7 +1293,7 @@ It specifies the producer‘s unique identifier. Explanation: In a Kafka produce
 </details>
 
 ## Question 37 (Kafka Internals):
-Kafka cluster: 6 brokers Rack A → brokers 0, 1 Rack B → brokers 2, 3 Rack C → brokers 4, 5 Topic: 10 partitions, replication factor = 3 Partition 0: Leader → broker 4 (Rack C) First replica → broker 2 (Rack B) Question: Which broker can host the last replica? (Choose two)
+Kafka cluster: 6 brokers Rack A → brokers 0, 1 Rack B → brokers 2, 3 Rack C → brokers 4, 5 Topic: 10 partitions, replication factor = 3 Partition 0: Leader → broker 4 (Rack C) First replica → broker 2 (Rack B) Question: Which broker can host the last replica? 
 
 - A. 5
 - B. 1
@@ -1363,7 +1363,7 @@ To find out all the partitions where one or more replicas are not in-sync with t
 </details>
 
 ## Question 39 (Kafka Core Concepts):
-Which of the following options is not a Kafka guarantee? (Choose one)
+Which of the following options is not a Kafka guarantee? 
 
 - A. Consumers read messages in the order stored in a topic-partition and total ordering is guaranteed.
 - B. As long as the number of partitions remains constant for a topic, the same key will always go to the same partition.
@@ -1896,7 +1896,7 @@ The correct configuration setting to enforce the use of SSL for all communicatio
 </details>
 
 ## 🚫 Question 53 (Kafka Ecosystem):
-Using ksqlDB or Kafka Streams, what happens to internal topics if automatic topic creation is turned off? (Choose one)
+Using ksqlDB or Kafka Streams, what happens to internal topics if automatic topic creation is turned off? 
 
 - A. ksqlDB and Kafka Streams applications will break as topics cannot be created.
 - B. Existing ksqlDB and Kafka Streams applications will break but new applications use the default topic creation property, which is turned on.

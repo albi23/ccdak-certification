@@ -1,5 +1,5 @@
 ## Question 1 (Kafka Setup and Operations):
-Which command can be used to create a Kafka topic to store your events?(Choose one)
+Which command can be used to create a Kafka topic to store your events?
 
 - A. bin/zookeeper-topics.sh --create --topic first-topic --bootstrap-server localhost:9092
 - B. bin/topics.sh --create --topic first-topic --bootstrap-server localhost:9092
@@ -34,7 +34,7 @@ In Kafka, events are organized and stored in topics. A topic is identified by it
 </details>
 
 ## Question 2 (Kafka Producers):
-Which of the following options are true for Kafka producers?(Choose two)
+Which of the following options are true for Kafka producers?
 
 - A. Kafka producers have no need for group coordination.
 - B. Kafka producers send a produce request to the leader of a topic partition.
@@ -104,7 +104,7 @@ In Avro, primitive types have no specified attributes. The set of primitive type
 </details>
 
 ## Question 4 (Kafka Setup and Operations):
-After producing to a Kafka topic, which script helps you to check whether everything worked and there is any data in the topic?(Choose one)
+After producing to a Kafka topic, which script helps you to check whether everything worked and there is any data in the topic?
 
 - A. bin/kafka-topic-data.sh
 - B. bin/kafka-console-consumer.sh
@@ -139,7 +139,7 @@ In Kafka, events are organized and stored in topics.The bin/kafka-console-consum
 </details>
 
 ## 🚫 Question 5 (Kafka Ecosystem):
-What could be the reason if ksqlDB doesn‘t clean up its internal topics?(Choose one)
+What could be the reason if ksqlDB doesn‘t clean up its internal topics?
 
 - A. Internal topics for ksqlDB need to be cleaned up manually.
 - B. Topic deletion for ksqlDB in not configured in the sql.properties file.
@@ -174,7 +174,7 @@ If ksqlDB doesn‘t clean up its internal topics make sure that your Kafka clust
 </details>
 
 ## Question 6 (Kafka Consumers):
-Using Kafka, how does a consumer commit an offset?(Choose one)
+Using Kafka, how does a consumer commit an offset?
 
 - A. Consumers produce messages to a special __consumer_offsets topic with the committed offset for each partition.
 - B. Consumers store committed offsets for each partition in a local internal database.
@@ -209,7 +209,7 @@ As a consumer in the group reads messages from the partitions assigned by the co
 </details>
 
 ## Question 7 (Reliable Data Delivery):
-Which of the following producer configurations best fits a company‘s requirement to have a very safe data pipeline without message loss?(Choose one)
+Which of the following producer configurations best fits a company‘s requirement to have a very safe data pipeline without message loss?
 
 - A. acks=1, replication.factor=3, min.insync.replicas=2
 - B. acks=all, replication.factor=3, min.insync.replicas=2
@@ -244,7 +244,7 @@ To make your data fault-tolerant, safe and highly-available, every Kafka topic c
 </details>
 
 ## Question 8 (Kafka Consumers):
-A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s the simplest way to manually commit the offsets?(Choose one)
+A company disabled auto commit of offsets for their consumer application in order to have more control over the time at which offsets are committed. What‘s the simplest way to manually commit the offsets?
 
 - A. Use the poll() API.
 - B. Use the fetch() API.
@@ -279,7 +279,7 @@ By default, the consumer is configured to auto-commit offsets. Using auto-commit
 </details>
 
 ## Question 9 (Programming & Serialization):
-A company produces Avro data on their production Kafka cluster that is integrated with the Confluent Schema Registry. After a schema change that is incompatible, the data gets rejected. Which component rejects the data?(Choose one)
+A company produces Avro data on their production Kafka cluster that is integrated with the Confluent Schema Registry. After a schema change that is incompatible, the data gets rejected. Which component rejects the data?
 
 - A. Kafka Broker
 - B. Kafka Client
@@ -314,7 +314,7 @@ Confluent Schema Registry provides a serving layer for your metadata. It provide
 </details>
 
 ## Question 10 (Kafka Internals):
-If you deploy a Kafka cluster on 4 brokers and the underlying topic has a replication factor of 3 and the number of partitions for that topic are 12, on how many brokers will each partition live?(Choose one)
+If you deploy a Kafka cluster on 4 brokers and the underlying topic has a replication factor of 3 and the number of partitions for that topic are 12, on how many brokers will each partition live?
 
 - A. 1
 - B. 3
@@ -349,7 +349,7 @@ To make your data fault-tolerant and highly-available, every Kafka topic can be 
 </details>
 
 ## Question 11 (Kafka Consumers):
-Which of the following options are possible to subscribe a single consumer simultaneously to the topics orders-topic, customers-topic, sales-topic and stocks-topic?(Choose two)
+Which of the following options are possible to subscribe a single consumer simultaneously to the topics orders-topic, customers-topic, sales-topic and stocks-topic?
 
 - A. consumer.subscribe(“orders-topic“);
 - B. consumer.subscribe(“customers-topic“);
@@ -392,7 +392,7 @@ To begin the consumption of Kafka messages, you must first subscribe to the topi
 </details>
 
 ## Question 12 (Kafka Setup and Operations):
-Which security concept allows you to protect your data in transit instead of using the default unsecured PLAINTEXT protocol?(Choose one)
+Which security concept allows you to protect your data in transit instead of using the default unsecured PLAINTEXT protocol?
 
 - A. Encryption - configured using the listener configuration and managing truststores and keystores.
 - B. Authorization - configured using the LDAP Authorizer.
@@ -427,7 +427,7 @@ By default, there is no encryption or authentication, nor are ACLs configured. A
 </details>
 
 ## Question 13 (Kafka Producers):
-Consider the following producer example of how to use a callback: private class DemoProducerCallback implements Callback { @Override public void onCompletion(RecordMetadata recordMetadata, Exception e) { if (e != null) { e.printStackTrace(); } } } ProducerRecord record = new ProducerRecord<>(“topic“, “key“, “value“); producer.send(record, new DemoProducerCallback()); What‘s the main benefit for adding a callback when sending a record? (Choose one)
+Consider the following producer example of how to use a callback: private class DemoProducerCallback implements Callback { @Override public void onCompletion(RecordMetadata recordMetadata, Exception e) { if (e != null) { e.printStackTrace(); } } } ProducerRecord record = new ProducerRecord<>(“topic“, “key“, “value“); producer.send(record, new DemoProducerCallback()); What‘s the main benefit for adding a callback when sending a record? 
 
 - A. Receiving a success response from the broker the moment the leader replica received the message.
 - B. Sending messages asynchronously and still handle error scenarios.
@@ -462,7 +462,7 @@ In order to send messages asynchronously and still handle error scenarios, the p
 </details>
 
 ## Question 14 (Programming & Serialization):
-A company wants to send binary data through the REST proxy, so the data needs to be base64 encoded. Which component needs to encode the binary data into base64?(Choose one)
+A company wants to send binary data through the REST proxy, so the data needs to be base64 encoded. Which component needs to encode the binary data into base64?
 
 - A. Kafka Broker
 - B. Consumer
@@ -497,7 +497,7 @@ The Confluent REST Proxy provides a RESTful interface to a Kafka cluster, making
 </details>
 
 ## Question 15 (Kafka Setup and Operations):
-Using the Kafka CLI, which command can be used to display the Kafka version? (Choose one)
+Using the Kafka CLI, which command can be used to display the Kafka version? 
 
 - A. bin/zookeeper.sh --version
 - B. bin/kafka.sh --version
@@ -532,7 +532,7 @@ Option D. bin/kafka-console-producer.sh --version The --version option is suppor
 </details>
 
 ## Question 16 (Kafka Core Concepts):
-Which of the following options are true for Kafka messages?(Choose two)
+Which of the following options are true for Kafka messages?
 
 - A. Messages are immutable.
 - B. Messages from the same producer will always go to the same topic partition.
@@ -567,7 +567,7 @@ Kafka messages have the following properties: – Logs are append-only and data 
 </details>
 
 ## Question 17 (Kafka Producers):
-Which of the following options prevents the consistent mapping of keys to partitions using the default partitioner?(Choose one)
+Which of the following options prevents the consistent mapping of keys to partitions using the default partitioner?
 
 - A. Adding an additional topic partition.
 - B. Regrouping the consumer application.
@@ -602,7 +602,7 @@ Kafka messages are key-value pairs and while it is possible to create a Producer
 </details>
 
 ## Question 18 (Kafka Core Concepts):
-What option best describes a Kafka Broker? (Choose one)
+What option best describes a Kafka Broker? 
 
 - A. A Kafka Broker is a JVM process that runs on a machine and publishes streams of events.
 - B. A Kafka Broker is a JVM process that runs on a machine and subscribes to streams of events.
@@ -672,7 +672,7 @@ Connector configurations are simple key-value mappings. For standalone mode thes
 </details>
 
 ## Question 20 (Kafka Consumers):
-Which of the following options best describes the concept of rebalancing a consumer group?(Choose one)
+Which of the following options best describes the concept of rebalancing a consumer group?
 
 - A. Rebalancing a consumer group re-assigns consumers so that each consumer receives messages from all the available topic partitions.
 - B. Rebalancing a consumer group re-assigns partitions so that each consumer receives messages from all the available topic partitions.
@@ -707,7 +707,7 @@ Applications that need to read data from Kafka use a KafkaConsumer to subscribe 
 </details>
 
 ## Question 21 (Kafka Consumers):
-A company is developing a new sales strategy for which the Kafka topic receives all the underlying customer asked questions. Two different departments want to process all the available messages independently from each other. How should the consumption of these messages be organized when the topic has 3 partitions and the company aims for optimal resource usage and performance?(Choose one)
+A company is developing a new sales strategy for which the Kafka topic receives all the underlying customer asked questions. Two different departments want to process all the available messages independently from each other. How should the consumption of these messages be organized when the topic has 3 partitions and the company aims for optimal resource usage and performance?
 
 - A. Create two consumer groups for two department applications with 6 consumers in each.
 - B. Create 3 consumers in the same group, one for each partition. Split them among the department applications as needed for optimal performance and resource usage.
@@ -742,7 +742,7 @@ Kafka assigns the partitions of a topic to the consumer in a group, so that each
 </details>
 
 ## Question 22 (Kafka Producers):
-Consider the following producer record: ProducerRecord record = new ProducerRecord<>(“first“, “second“, “third“); Which of the three producer record arguments is the message key? (Choose one)
+Consider the following producer record: ProducerRecord record = new ProducerRecord<>(“first“, “second“, “third“); Which of the three producer record arguments is the message key? 
 
 - A. second
 - B. first
@@ -773,7 +773,7 @@ Kafka‘s ProducerRecord is a key / value pair to be sent to Kafka. This consist
 </details>
 
 ## Question 23 (Kafka Producers):
-Why can it be very challenging to add partitions later, if you are sending messages to partitions based on keys?(Choose one)
+Why can it be very challenging to add partitions later, if you are sending messages to partitions based on keys?
 
 - A. After adding partitions later, it cannot be guaranteed that old messages with the same key will still be on the same partition.
 - B. After adding partitions later, it cannot be guaranteed that old messages will be on the same partition as new messages with the same key.
@@ -808,7 +808,7 @@ Kafka messages are key-value pairs and while it is possible to create a Producer
 </details>
 
 ## Question 24 (Kafka Ecosystem):
-What are the programming languages Apache Kafka is written in?(Choose two)
+What are the programming languages Apache Kafka is written in?
 
 - A. PHP
 - B. Scala
@@ -843,7 +843,7 @@ Apache Kafka is a distributed event streaming platform used by thousands of comp
 </details>
 
 ## Question 25 (Programming & Serialization):
-Which of the following options best describes the process of serialization and deserialization?(Choose one)
+Which of the following options best describes the process of serialization and deserialization?
 
 - A. Serialization is the process of producing key / value based Avro messages into a Kafka topic. Deserialization does the opposite of serialization, in which we consume key / value based Avro messages from a Kafka topic.
 - B. Serialization is the process of converting bytes of arrays into the desired data type that are used for transmission. Deserialization does the opposite of serialization, in which we convert an object into a stream of bytes.
@@ -878,7 +878,7 @@ When writing messages to Kafka you need to create a producer object with the pro
 </details>
 
 ## 🚫 Question 26 (Kafka Setup and Operations):
-What file systems should you choose for your production deployment of Kafka?(Choose two)
+What file systems should you choose for your production deployment of Kafka?
 
 - A. FAT12
 - B. HFS
@@ -913,7 +913,7 @@ You should run Kafka on XFS or ext4. – XFS is a very high performance, scalabl
 </details>
 
 ## Question 27 (Programming & Serialization):
-Which of the following options best describes unit testing?(Choose one)
+Which of the following options best describes unit testing?
 
 - A. Unit tests verify that end-to-end tests with other services work as expected.
 - B. Unit tests verify that production deployments work as expected.
@@ -948,7 +948,7 @@ Unit testing, integration testing, and schema compatibility are all important st
 </details>
 
 ## Question 28 (Kafka Consumers):
-Which offset commit strategy should be used in an at-least once consuming scenario?(Choose one)
+Which offset commit strategy should be used in an at-least once consuming scenario?
 
 - A. Commit the offsets in Kafka, after processing the data.
 - B. Do not commit the offsets in Kafka, as this will be handled automatically.
@@ -983,7 +983,7 @@ At-least once guarantee means you will definitely receive and process every mess
 </details>
 
 ## Question 29 (Kafka Setup and Operations):
-Which of the following options is true for the kafka-console-consumer CLI? (Choose one)
+Which of the following options is true for the kafka-console-consumer CLI? 
 
 - A. When used with the default options it always uses the same group id.
 - B. When used with the default options it uses the group id of the last created consumer group.
@@ -1018,7 +1018,7 @@ Option C. When used with the default options it uses a random group id. Correct 
 </details>
 
 ## Question 30 (Reliable Data Delivery):
-How could you guarantee that each message in Kafka will be written to an external system exactly once?(Choose one)
+How could you guarantee that each message in Kafka will be written to an external system exactly once?
 
 - A. Writing results to a system that has support for unique keys.
 - B. Using record.topic() + record.partition() as the unique message key.
@@ -1053,7 +1053,7 @@ Some applications require not just at-least-once semantics (meaning no data loss
 </details>
 
 ## Question 31 (Kafka Setup and Operations):
-What‘s the use of the Kafka Admin API?(Choose one)
+What‘s the use of the Kafka Admin API?
 
 - A. The Admin API supports managing and inspecting topics, brokers, acls, and other Kafka objects.
 - B. The Admin API supports managing Zookeeper configuration.
@@ -1088,7 +1088,7 @@ The Admin API supports managing and inspecting topics, brokers, acls, and other 
 </details>
 
 ## Question 32 (Kafka Producers):
-What happens if a Kafka producer produces messages faster than the broker can take them?(Choose one)
+What happens if a Kafka producer produces messages faster than the broker can take them?
 
 - A. The data retention period increases for unprocessed messages.
 - B. Kafka automatically scales up the number of brokers to process messages faster.
@@ -1123,7 +1123,7 @@ If a Kafka producer produces messages faster than the broker can take, the recor
 </details>
 
 ## Question 33 (Kafka Setup and Operations):
-When creating a Kafka topic, which parameter can be used to execute the topic creation only if it does not already exist?(Choose one)
+When creating a Kafka topic, which parameter can be used to execute the topic creation only if it does not already exist?
 
 - A. --if-available
 - B. --if-exists
@@ -1158,7 +1158,7 @@ Using the script bin/kafka-topics.sh, you can set the property –if-exists to e
 </details>
 
 ## Question 34 (Kafka Consumers):
-What‘s the main way to scale data consumption from a Kafka topic?(Choose one)
+What‘s the main way to scale data consumption from a Kafka topic?
 
 - A. Scale the default ConsumerCoordinator horizontally by adding more clients.
 - B. Refactor your topic and add more partitions to it.
@@ -1193,7 +1193,7 @@ Applications that need to read data from Kafka use a KafkaConsumer to subscribe 
 </details>
 
 ## Question 35 (Kafka Consumers):
-A company monitors their production consumer application and observed that the fetch-rate is very high, but each fetch is small. How could the company increase throughput in this situation?(Choose one)
+A company monitors their production consumer application and observed that the fetch-rate is very high, but each fetch is small. How could the company increase throughput in this situation?
 
 - A. Increase fetch.max.bytes.
 - B. Decrease fetch.max.bytes.
@@ -1228,7 +1228,7 @@ fetch.min.bytes is the minimum amount of data the server should return for a fet
 </details>
 
 ## Question 36 (Stream Processing):
-What kind of Kafka Streams window has fixed-size, is non-overlapping and gap-less?(Choose one)
+What kind of Kafka Streams window has fixed-size, is non-overlapping and gap-less?
 
 - A. Hopping time window
 - B. Sliding time window
@@ -1263,7 +1263,7 @@ Windowing lets you control how to group records that have the same key for state
 </details>
 
 ## Question 37 (Kafka Consumers):
-Which option is true about a consumer group coordinator in Kafka?(Choose one)
+Which option is true about a consumer group coordinator in Kafka?
 
 - A. For every consumer there is one equivalent group coordinator.
 - B. A group coordinator always is the leader broker.
@@ -1298,7 +1298,7 @@ The group coordinator is nothing but one of the brokers which receives heartbeat
 </details>
 
 ## Question 38 (Kafka Core Concepts):
-In a point-to-point messaging domain, where are the messages exchanged between senders and receivers?(Choose one)
+In a point-to-point messaging domain, where are the messages exchanged between senders and receivers?
 
 - A. Queue
 - B. Bucket
@@ -1333,7 +1333,7 @@ In a point-to-point domain, message producers are called senders and consumers a
 </details>
 
 ## Question 39 (Kafka Setup and Operations):
-Using Kafka security features, how can you allow a specific user to read and write to the topic “test-topic“?(Choose one)
+Using Kafka security features, how can you allow a specific user to read and write to the topic “test-topic“?
 
 - A. Use SASL as the default authentication service.
 - B. Add an ACL with the --allow-principal and --allow-host properties for read and write operations.
@@ -1368,7 +1368,7 @@ Apache Kafka ships with a pluggable, out-of-the-box Authorizer implementation th
 </details>
 
 ## Question 40 (Kafka Internals):
-When you enable SSL encryption within Kafka, which feature cannot be used then anymore?(Choose one)
+When you enable SSL encryption within Kafka, which feature cannot be used then anymore?
 
 - A. Data Compression
 - B. Data Batching
@@ -1403,7 +1403,7 @@ Most traditional data systems use random-access memory (RAM) for data storage, a
 </details>
 
 ## Question 41 (Stream Processing):
-Which of the following options describe the concept of stream-table duality best?(Choose two)
+Which of the following options describe the concept of stream-table duality best?
 
 - A. A stream can be considered a changelog of a table, where each data record in the stream captures a state change of the table.
 - B. A table can be considered a changelog of a stream, where each data record in the table captures a state change of the stream.
@@ -1438,7 +1438,7 @@ Kafka Streams is a library for building streaming applications, specifically app
 </details>
 
 ## Question 42 (Kafka Core Concepts):
-For the initial connection to a Kafka cluster, why can it be useful to set the “bootstrap-server“ property to a comma-separated list of host and port pairs that are the addresses of the Kafka brokers instead of just using one host and port pair?(Choose one)
+For the initial connection to a Kafka cluster, why can it be useful to set the “bootstrap-server“ property to a comma-separated list of host and port pairs that are the addresses of the Kafka brokers instead of just using one host and port pair?
 
 - A. In case one of the brokers is experiencing a down time.
 - B. You need to connect to at least two brokers to get connected to the whole cluster.
@@ -1473,7 +1473,7 @@ The bootstrap.server property is a comma-separated list of host and port pairs t
 </details>
 
 ## Question 43 (Kafka Consumers):
-When creating a new Kafka consumer, which of the following options can be used as the partition assignment strategy?(Choose two)
+When creating a new Kafka consumer, which of the following options can be used as the partition assignment strategy?
 
 - A. WeightedAssignor
 - B. RangeAssignor
@@ -1508,7 +1508,7 @@ The first step to start consuming records is to create a KafkaConsumer instance.
 </details>
 
 ## Question 44 (Kafka Consumers):
-Which consumer becomes the group leader of a consumer application?(Choose one)
+Which consumer becomes the group leader of a consumer application?
 
 - A. The first consumer to join the group.
 - B. The group leader is elected by the Kafka brokers.
@@ -1543,7 +1543,7 @@ When a consumer wants to join a group, it sends a JoinGroup request to the group
 </details>
 
 ## Question 45 (Kafka Setup and Operations):
-Which Kafka metric could be used if there is a lot of load on the system and you want to figure out what could be the problem for lag spikes?(Choose one)
+Which Kafka metric could be used if there is a lot of load on the system and you want to figure out what could be the problem for lag spikes?
 
 - A. Reassigning Partitions
 - B. Bytes In Per Sec
@@ -1578,7 +1578,7 @@ The Confluent Control Center monitors a lot of important operational broker metr
 </details>
 
 ## Question 46 (Reliable Data Delivery):
-Which Kafka API supports exactly-once delivery? (Choose one)
+Which Kafka API supports exactly-once delivery? 
 
 - A. Connect API
 - B. Consumer API
@@ -1613,7 +1613,7 @@ Option C (Streams API): Kafka Streams API natively supports exactly-once (EOS) s
 </details>
 
 ## Question 47 (Kafka Setup and Operations):
-Which CLI command can be used to find out all the partitions where one or more of the replicas for the partition are not in-sync with the leader?(Choose one)
+Which CLI command can be used to find out all the partitions where one or more of the replicas for the partition are not in-sync with the leader?
 
 - A. bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions
 - B. bin/kafka-topics.sh --bootstrap-server localhost:9092 --list --under-min-isr-partitions
@@ -1683,7 +1683,7 @@ Option D – Plaintext By default, Apache Kafka communicates in plaintext with n
 </details>
 
 ## Question 49 (Reliable Data Delivery):
-Using the configuration “replication.factor=3“, “min.insync.replicas=2“ and “acks=all“, what happens if two brokers are down and a consumer group tries to consume from Kafka?(Choose one)
+Using the configuration “replication.factor=3“, “min.insync.replicas=2“ and “acks=all“, what happens if two brokers are down and a consumer group tries to consume from Kafka?
 
 - A. There will be a NOT_ENOUGH_REPLICAS exception.
 - B. A new broker will be initialized and synced with the remaining replica.
@@ -1753,7 +1753,7 @@ GroupBy Stateful groupBy reorganizes the stream into keyed groups for aggregatio
 </details>
 
 ## Question 51 (Kafka Consumers):
-How to see if a consumer group is committing offsets at all, or how often offsets are being committed?(Choose one)
+How to see if a consumer group is committing offsets at all, or how often offsets are being committed?
 
 - A. Consumer offsets are automatically stored and visualized in the Confluent Control Center.
 - B. Read the consumer log located under /bin/log/consumer-log.txt
@@ -1788,7 +1788,7 @@ It is sometimes useful to see what offsets are being committed for the cluster�
 </details>
 
 ## Question 52 (Kafka Consumers):
-Which concept can be used to fetch a specific message with specific offsets or to replay data for a consumer?(Choose one)
+Which concept can be used to fetch a specific message with specific offsets or to replay data for a consumer?
 
 - A. Use the fetch() API.
 - B. Use the commitSync() API.
@@ -1823,7 +1823,7 @@ By default, the consumer is configured to auto-commit offsets. Using auto-commit
 </details>
 
 ## Question 53 (Programming & Serialization):
-Using Avro schemas, what type of schema changes are allowed for BACKWARD schema evolution? (Choose two)
+Using Avro schemas, what type of schema changes are allowed for BACKWARD schema evolution? 
 
 - A. Add fields
 - B. Delete optional fields
@@ -1858,7 +1858,7 @@ An important aspect of data management is schema evolution. After the initial sc
 </details>
 
 ## Question 54 (Kafka Consumers):
-Which method can be used for a consumer to read messages from a specific topic?(Choose one)
+Which method can be used for a consumer to read messages from a specific topic?
 
 - A. .listen()
 - B. .subscribe()
@@ -1893,7 +1893,7 @@ The first step to start consuming records is to create a KafkaConsumer instance.
 </details>
 
 ## Question 55 (Kafka Core Concepts):
-What happens if you try to produce to a topic that does not yet exist?(Choose one)
+What happens if you try to produce to a topic that does not yet exist?
 
 - A. There will be a runtime error.
 - B. The topic gets created with the default server settings without any errors or warnings.
