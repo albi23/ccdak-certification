@@ -6,7 +6,7 @@ Which of the following options best describe the benefits of the Confluent Schem
 - C. Confluent Schema Registry allows evolution of schemas according to the configured compatibility settings and expanded support for these schema types.
 - D. Confluent Schema Registry is a distributed storage layer for schemas which uses Kafka as its underlying storage mechanism.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -181,7 +181,7 @@ What are possible deployment options for ksqlDB?
 - C. Controlled ksqlDB deployment
 - D. Iterative ksqlDB deployment
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -216,7 +216,7 @@ Which of the following properties are mandatory for creating a Kafka producer?
 - C. key.serializer
 - D. compression.type
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -426,7 +426,7 @@ In Kafka, if the property “auto.create.topics.enable“ is set to true, what a
 - C. If the number of partitions for the topic gets updated.
 - D. If a consumer reads a message from the topic.
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -461,7 +461,7 @@ Which of the following options are true for a Kafka Controller?
 - C. It is a Kafka broker which is responsible for partition leader election.
 - D. It is a Kafka broker which is responsible for consumer group rebalances.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -566,7 +566,7 @@ Using Kafka Connect, which type of connectors are there to copy data between Kaf
 - C. SourceConnectors to export data to another system.
 - D. SourceConnectors to import data from another system.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -671,7 +671,7 @@ Using ksqlDB, which of the following two options together allow you to use Avro 
 - C. Configure your Kafka cluster to use SQL as the default programming language.
 - D. Configure the “ksql.schema.registry.url“ property in the ksqlDB server configuration to point to Schema Registry.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -881,7 +881,7 @@ Using Avro schemas, what type of schema changes are allowed for FORWARD schema e
 - C. Delete fields
 - D. Add fields
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -951,7 +951,7 @@ Which of the following data formats are supported by ksqlDB?
 - C. JSON
 - D. XML
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1156,7 +1156,7 @@ Which processing guarantees does Kafka Streams support?
 - B. at-least-once processing
 - C. at-most-once processing
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1216,14 +1216,14 @@ The way consumers maintain membership in a consumer group and ownership of the p
 </details>
 
 ## Question 36 (Stream Processing):
-Which of the following Kafka Streams domain specific language operations are stateful?(Select three)
+Which of the following Kafka Streams domain specific language operations are stateful?
 
 - A. Aggregate
 - B. Filter
 - C. Reduce
 - D. Join
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1293,7 +1293,7 @@ Which of the following properties should be configured to aim for a high through
 - C. compression.type
 - D. linger.ms
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1538,7 +1538,7 @@ By default, Kafka ships with no authentication. Which of the following authentic
 - C. HTTP Basic Auth
 - D. SASL/PLAIN
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

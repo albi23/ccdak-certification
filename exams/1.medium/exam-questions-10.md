@@ -41,7 +41,7 @@ Which of the following data formats are supported by ksqlDB?
 - C. DELIMITED
 - D. Avro message values
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -181,7 +181,7 @@ Which of the following options are true about topics in Kafka?
 - C. The number of topics is limited to 500.
 - D. Topics are always multi-producer and multi-subscriber.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -285,7 +285,7 @@ Which processing guarantees does Kafka Streams support?
 - B. at-most-once processing
 - C. at-least-once processing
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -562,7 +562,7 @@ In Kafka, if the property “auto.create.topics.enable“ is set to true, what a
 - C. If a client requests metadata for the topic.
 - D. If the number of partitions for the topic gets updated.
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -912,7 +912,7 @@ Which of the following options are true for Kafka messages?
 - C. Messages are immutable.
 - D. Messages with the same key will always go to the same topic partition.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -947,7 +947,7 @@ Which of the following properties should be configured to aim for a high through
 - C. max.in.flight.requests.per.connection
 - D. batch.size
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1045,14 +1045,14 @@ Configuring retries for a Kafka producer will cause the client to resend any rec
 </details>
 
 ## Question 31 (Stream Processing):
-Which of the following Kafka Streams domain specific language operations are stateful? (Select three)
+Which of the following Kafka Streams domain specific language operations are stateful? 
 
 - A. Reduce
 - B. Join
 - C. Aggregate
 - D. Filter
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1157,7 +1157,7 @@ Which ksqlDB queries read or write data to Kafka?
 - C. CREATE STREAM AS SELECT
 - D. EXPLAIN
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1402,7 +1402,7 @@ When creating a new Kafka consumer, which of the following options can be used a
 - C. RangeAssignor
 - D. WeightedAssignor
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1472,7 +1472,7 @@ By default, Kafka ships with no authentication. Which of the following authentic
 - C. HTTP Basic Auth
 - D. ACLs
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1577,7 +1577,7 @@ Which of the following options describe the concept of stream-table duality best
 - C. A table can be considered a snapshot, at a point in time, of the latest value for each key in a stream.
 - D. A stream can be considered a snapshot, at a point in time, of the latest value for each key in a table.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1857,7 +1857,7 @@ Which connector configurations are mandatory for every connector using Kafka Con
 - C. The Java class for the connector.
 - D. The key and value converter set by the worker.
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

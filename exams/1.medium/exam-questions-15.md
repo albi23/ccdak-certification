@@ -1,12 +1,12 @@
 ## Question 1 (Kafka Core Concepts):
-When the auto.create.topics.enable setting is configured as true in Kafka, what are the conditions in which a Kafka broker will autonomously generate a topic? (Select three)
+When the auto.create.topics.enable setting is configured as true in Kafka, what are the conditions in which a Kafka broker will autonomously generate a topic? 
 
 - A. Consumer reads message from a topic
 - B. Producer sends message to a topic
 - C. Client requests metadata for a topic
 - D. Client alters number of partitions of a topic
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -388,7 +388,7 @@ What two effects will occur when the compression.type=snappy setting is used in 
 - D. The Producers have to compress the data
 - E. The Consumers have to de-compress the data
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1167,7 +1167,7 @@ catch (Exceptio? { e.printStackTrace();}
 - C. InvalidPartitionsException
 - D. BufferExhaustedException
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

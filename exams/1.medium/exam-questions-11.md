@@ -321,7 +321,7 @@ Using Avro schemas, what type of schema changes are allowed for FULL schema evol
 - C. Add optional fields
 - D. Delete optional fields
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -632,7 +632,7 @@ Which Java versions are supported by Kafka?
 - C. Java 8
 - D. Java 5
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -908,7 +908,7 @@ What are the main benefits of using ksqlDB together with Kafka?
 - C. ksqlDB allows you to use SQL-like syntax to setup your Kafka cluster.
 - D. ksqlDB does not require proficiency with a programming language such as Java or Scala, and you don‘t have to install a separate processing cluster technology.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1048,7 +1048,7 @@ Which of the following options are true for Kafka consumers?
 - C. Consumers can read data from more than one partition.
 - D. If you have more consumers than partitions, some consumers will read data from the same partition.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1184,7 +1184,7 @@ Which of the following options can be used to interact with the ksqlDB servers t
 - C. Confluent Control Center
 - D. Kafka Streams API
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1359,7 +1359,7 @@ Which of the following message schema formats are supported out-of-the-box with 
 - C. ProtoBuf
 - D. Bytes
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1429,7 +1429,7 @@ In Kafka, what are the most important producer configurations?
 - C. replication factor
 - D. acks
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1569,7 +1569,7 @@ Which of the following properties are mandatory for creating a Kafka producer?
 - C. compression.type
 - D. value.serializer
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1639,7 +1639,7 @@ Which properties must be set when producing messages to Kafka by creating a Prod
 - C. Partition
 - D. Key
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1779,7 +1779,7 @@ Using Kafka Connect, which type of connectors are there to copy data between Kaf
 - C. SinkConnectors to export data to another system.
 - D. SinkConnectors to import data from another system.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1849,7 +1849,7 @@ A Kafka producer is producing at a very high rate and the batches are completely
 - C. Increase linger.ms
 - D. Decrease linger.ms
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1919,7 +1919,7 @@ Which of the following options are true regarding multi-threaded-message process
 - C. One Kafka consumer can be safely used in multiple threads.
 - D. The Kafka consumer is not thread-safe and it is the responsibility of the user to ensure that multi-threaded access is properly synchronized.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

@@ -356,7 +356,7 @@ Which Java versions are supported by Kafka?
 - C. Java 8
 - D. Java 16
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -601,7 +601,7 @@ What are the main benefits of using ksqlDB together with Kafka?
 - C. ksqlDB just requires a Python runtime environment and you are ready to operate your Kafka cluster at real-time and at scale using intuitive SQL-like syntax.
 - D. ksqlDB does not require proficiency with a programming language such as Java or Scala, and you don‘t have to install a separate processing cluster technology.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1025,7 +1025,7 @@ What file systems should you choose for your production deployment of Kafka?
 - C. FAT12
 - D. HFS
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1165,7 +1165,7 @@ In Kafka, what are the most important producer configurations?
 - C. compression
 - D. batch size
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1305,7 +1305,7 @@ Using ksqlDB, which of the following two options together allow you to use Avro 
 - C. To use Avro data with ksqlDB you must have Schema Registry installed.
 - D. Configure the “enable.avro.registry“ property in the ksqlDB server configuration and use the Confluent Control Center to point to the Schema Registry.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1620,7 +1620,7 @@ Which of the following options are true for a Kafka Controller?
 - C. It is a Kafka broker which is elected by Zookeeper.
 - D. It is a Kafka broker which is responsible for consumer group rebalances.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

@@ -528,7 +528,7 @@ ssl.truststore.location. To secure the communication between Confluent REST Prox
 </details>
 
 ## Question 16 (Reliable Data Delivery):
-Select all that apply (select THREE):
+Select all that apply :
 
 - A. min.insync.replicas only matters if acks=all
 - B. min.insync.replicas is a producer setting
@@ -537,7 +537,7 @@ Select all that apply (select THREE):
 - E. min.insync.replicas is a topic setting
 - F. acks is a topic setting
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -718,7 +718,7 @@ Using Avro schemas, what type of schema changes are allowed for BACKWARD schema 
 - C. Add optional fields
 - D. Delete optional fields
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1067,7 +1067,7 @@ Kafka Manager. Explanation: Kafka Manager is a tool commonly used for monitoring
 </details>
 
 ## Question 31 (Kafka Producers):
-A Kafka producer application wants to send log messages to a topic that does not include any key. What are the properties that are mandatory to configure for the producer configuration? (select three)
+A Kafka producer application wants to send log messages to a topic that does not include any key. What are the properties that are mandatory to configure for the producer configuration? 
 
 - A. key.serializer
 - B. value
@@ -1076,7 +1076,7 @@ A Kafka producer application wants to send log messages to a topic that does not
 - E. value.serializer
 - F. partition
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1110,7 +1110,7 @@ bootstrap.servers – This property specifies the Kafka brokers to connect to. v
 </details>
 
 ## Question 32 (Kafka Producers):
-Your producer is producing at a very high rate and the batches are completely full each time. How can you improve the producer throughput? (select two)
+Your producer is producing at a very high rate and the batches are completely full each time. How can you improve the producer throughput? 
 
 - A. Decrease batch.size
 - B. Enable compression
@@ -1119,7 +1119,7 @@ Your producer is producing at a very high rate and the batches are completely fu
 - E. Increase linger.ms
 - F. Disable compression
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1300,7 +1300,7 @@ Kafka cluster: 6 brokers Rack A → brokers 0, 1 Rack B → brokers 2, 3 Rack C 
 - C. 3
 - D. 0
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

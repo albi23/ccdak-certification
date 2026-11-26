@@ -1517,7 +1517,7 @@ In the context of a shoe store, what type of dataset is highly suitable for repr
 - C. Inventory contents right now
 - D. Money made until now
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1685,7 +1685,7 @@ The strategy you can employ to handle cases where consumers may lag behind in ad
 </details>
 
 ## Question 49 (Kafka Consumers):
-Which actions will trigger partition rebalance for a consumer group? (select three)
+Which actions will trigger partition rebalance for a consumer group? 
 
 - A. Increase partitions of a topic
 - B. Add a broker to the cluster
@@ -1693,7 +1693,7 @@ Which actions will trigger partition rebalance for a consumer group? (select thr
 - D. Add a new consumer to consumer group
 - E. Remove a broker from the cluster
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

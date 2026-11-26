@@ -6,7 +6,7 @@ Which of the following options are true regarding multi-threaded-message process
 - C. One Kafka producer can be safely used in multiple threads.
 - D. One Kafka consumer can be safely used in multiple threads.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -287,7 +287,7 @@ A Kafka producer is producing at a very high rate and the batches are completely
 - C. Enable compression
 - D. Increase batch.size
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -392,7 +392,7 @@ Using Avro schemas, what type of schema changes are allowed for FULL schema evol
 - C. Delete fields
 - D. Delete optional fields
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -532,7 +532,7 @@ Which of the following options are true for Kafka consumers?
 - C. If you have more consumers than partitions, some consumers will read data from the same partition.
 - D. Consumers read data in order within each topic partition.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -979,7 +979,7 @@ Which properties must be set when producing messages to Kafka by creating a Prod
 - C. Topic
 - D. Key
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1154,7 +1154,7 @@ Consider the following producer example: ProducerRecord<String, String> record =
 - C. Using Future.get() will return a RecordMetadata object if there was an error.
 - D. Using Future.get() will throw an exception if the record is not send successfully to Kafka.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1541,7 +1541,7 @@ In a scenario where you have a consumer group consisting of 12 consumers, and a 
 - E. decrease max.poll.interval.ms
 - F. Increase session.timeout.ms
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1757,7 +1757,7 @@ Which ksqlDB queries read or write data to Kafka?
 - C. COUNT
 - D. EXPLAIN
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1792,7 +1792,7 @@ Which of the following options can be used to interact with the ksqlDB servers t
 - C. ksqlDB CLI
 - D. Kafka Streams API
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1893,7 +1893,7 @@ Which of the following options are true about topics in Kafka?
 - C. Topics are always multi-producer and multi-subscriber.
 - D. The number of topics is limited to 500.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

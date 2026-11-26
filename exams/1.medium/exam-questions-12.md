@@ -41,7 +41,7 @@ Which of the following options are true for Kafka producers?
 - C. Kafka guarantees that all producer messages will be sent to the same partition.
 - D. Kafka producers can send data with a key, in which case the data will be send round-robin to all available brokers.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -76,7 +76,7 @@ Which of the following options are Avro primitive types?
 - C. timestamp
 - D. null
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -358,7 +358,7 @@ Which of the following options are possible to subscribe a single consumer simul
 - E. consumer.subscribe(Arrays.asList(“orders-topic“, “customers-topic“, “sales-topic“, “stocks-topic“));
 - F. consumer.subscribe(Pattern.compile(“.*topic“));
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -539,7 +539,7 @@ Which of the following options are true for Kafka messages?
 - C. Messages with the same key will always go to the same topic partition.
 - D. Messages with keys can be modified.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -644,7 +644,7 @@ Which connector configurations are mandatory for every connector using Kafka Con
 - C. Unique connector name.
 - D. The maximum number of tasks that should be created for this connector.
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -815,7 +815,7 @@ What are the programming languages Apache Kafka is written in?
 - C. Python
 - D. Java
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -885,7 +885,7 @@ What file systems should you choose for your production deployment of Kafka?
 - C. ext4
 - D. XFS
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1410,7 +1410,7 @@ Which of the following options describe the concept of stream-table duality best
 - C. A table can be considered a snapshot, at a point in time, of the latest value for each key in a stream.
 - D. A stream can be considered a snapshot, at a point in time, of the latest value for each key in a table.
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1480,7 +1480,7 @@ When creating a new Kafka consumer, which of the following options can be used a
 - C. ResourceBasedAssignor
 - D. RoundRobinAssignor
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1718,14 +1718,14 @@ In Kafka, producers create and write messages to topic partitions and consumers 
 </details>
 
 ## Question 50 (Stream Processing):
-Which of the following Kafka Streams domain specific language operations are stateless? (Select Two)
+Which of the following Kafka Streams domain specific language operations are stateless? 
 
 - A. GroupBy
 - B. Branch
 - C. Count
 - D. FlatMapValues
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1830,7 +1830,7 @@ Using Avro schemas, what type of schema changes are allowed for BACKWARD schema 
 - C. Add optional fields
 - D. Delete fields
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>

@@ -556,7 +556,7 @@ Which actions will trigger partition rebalance for a consumer group?
 - D. Remove a broker from the cluster
 - E. A consumer in a consumer group shuts down
 
-Choose the correct answers (select 3).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -614,14 +614,14 @@ Kafka logs are append-only and the data is immutable
 </details>
 
 ## Question 19 (Kafka Consumers):
-Select all the way for one consumer to subscribe simultaneously to the following topics – topic.history, topic.sports, topic.politics? (select two)
+Select all the way for one consumer to subscribe simultaneously to the following topics – topic.history, topic.sports, topic.politics? 
 
 - A. ```consumer.subscribe(Arrays.asList(“topic.history“, “topic.sports“, “topic.politics“));```
 - B. ```consumer.subscribe(Pattern.compile(“topic\..*“));```
 - C. ```consumer.subscribe(“topic.history“); consumer.subscribe(“topic.sports“); consumer.subscribe(“topic.politics“);```
 - D. ```consumer.subscribePrefix(“topic.“);```
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -987,14 +987,14 @@ Kafka Connect Sink is used to export data from Kafka to external databases and K
 </details>
 
 ## Question 30 (Stream Processing):
-Which of the following event processing application is stateless? (select two)
+Which of the following event processing application is stateless? 
 
 - A. Publish the top 10 stocks each day
 - B. Find the minimum and maximum stock prices for each day of trading
 - C. Read log messages from a stream and writes ERROR events into a high-priority stream and the rest of the events into a low-priority stream
 - D. Read events from a stream and modifies them from JSON to Avro
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1154,7 +1154,7 @@ Keys are necessary if you require strong ordering or grouping for messages that 
 </details>
 
 ## Question 35 (Programming & Serialization):
-What client protocol is supported for the schema registry? (select two)
+What client protocol is supported for the schema registry? 
 
 - A. SASL
 - B. HTTPS
@@ -1162,7 +1162,7 @@ What client protocol is supported for the schema registry? (select two)
 - D. Websocket
 - E. JDBC
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1446,7 +1446,7 @@ How do Kafka brokers ensure great performance between the producers and consumer
 - D. It compresses the messages as it writes to the disk
 - E. It leverages zero-copy optimisations to send data straight from the page-cache
 
-Choose the correct answers (select 2).
+Choose the correct answers .
 
 <details>
 <summary>Response:</summary>
@@ -1648,7 +1648,7 @@ Choose the correct answer.
 </details>
 
 ## Question 49 (Stream Processing):
-Which of the following Kafka Streams operators are stateful? (select all that apply)
+Which of the following Kafka Streams operators are stateful?
 
 - A. count
 - B. reduce
@@ -1657,7 +1657,7 @@ Which of the following Kafka Streams operators are stateful? (select all that ap
 - E. flatmap
 - F. joining
 
-Choose the correct answers (select 4).
+Choose the correct answers.
 
 <details>
 <summary>Response:</summary>
